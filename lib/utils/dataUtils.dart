@@ -86,7 +86,7 @@ class DataUtils {
             await prefs.setString("token", response['data']['token']??"");
             await prefs.setInt("userid",int.parse(userid));
 
-            Map<String, String> userinfo= await  DataUtils().getuserinfo(context, userid);
+            Map<String, dynamic> userinfo= await  DataUtils().getuserinfo(context, userid);
             print(userinfo);
             final model =  Provider.of<GlobleProvider>(context);
             await model.setlogin(userinfo);
@@ -119,12 +119,12 @@ class DataUtils {
     return loginstat;
   }
 
-  Future<Map<String, String>> getuserinfo(BuildContext context,String customerId) async {
+  Future<Map<String, dynamic>> getuserinfo(BuildContext context,String customerId) async {
     SharedPreferences prefs = await _prefs;
     Map<String, String> params = {
       "customerId": prefs.getInt("userid").toString()
     };
-    Map<String, String> userinfo={};
+    Map<String, dynamic> userinfo;
 
     await HttpUtils.get("/api/customer/info", params, context: context,withtoken: true)
         .then((response) async {

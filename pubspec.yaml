@@ -59,6 +59,10 @@ dependencies:
   fluro: ^1.4.0
   sqflite: any
 
+  decorated_flutter: any
+  amap_location_fluttify: any
+  amap_map_fluttify: any
+
   provider: ^3.0.0
 #  scoped_model: any
   shared_preferences: any
@@ -97,6 +101,7 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
   assets:
     - assets/
     - images/

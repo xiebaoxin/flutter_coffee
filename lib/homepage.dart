@@ -7,6 +7,10 @@ import 'utils/comUtil.dart';
 import 'views/myInfopage.dart';
 import './globleConfig.dart';
 import 'views/Indexpage.dart';
+import 'views/shoppage.dart';
+import 'views/categorypage.dart';
+import 'views/cartpage.dart';
+import 'views/showmap.dart';
 import './utils/dataUtils.dart';
 
 class HomePage extends StatefulWidget {
@@ -54,9 +58,10 @@ class HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin{
   // 页面内容
   var _pages=[
     IndexPageHome(),
-    MyInfoPage(),
-    MyInfoPage(),
-    MyInfoPage(),
+    CategoryHome(),
+    ShowMapScreen(),
+//    ShopHomePage(),
+    CartHomePage(),
     MyInfoPage(),
   ];
 
@@ -107,7 +112,7 @@ class HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin{
     });
   }
 
-  Widget build11(BuildContext context) {
+  Widget build(BuildContext context) {
     return
       WillPopScope(
         onWillPop: () async{
@@ -120,10 +125,7 @@ class HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin{
 //              color: Color(0xFFFFFFFF),
               borderOnForeground: false,
               child: Scaffold(
-                body: IndexedStack(
-                  children: _pages,
-                  index: _tabIndex,
-                ),
+                body: _pages[_tabIndex],
                 bottomNavigationBar: CupertinoTabBar(
                   items: getBottomNavigationBarItem(),
                   currentIndex: _tabIndex,
@@ -135,24 +137,13 @@ class HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin{
                     });
                   },
                 ),
-                floatingActionButton: Container(
-                  padding: EdgeInsets.all(5),
-                  child: FloatingActionButton(
-                    onPressed: () {},
-                    child: Icon(Icons.security,color: KColorConstant.themeColor,),
-                    backgroundColor: KColorConstant.greybackcolor,
-                  ),
-                ),
-                // 设置 floatingActionButton 在底部导航栏中间
-                floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-
               ),
             )
         ));
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget buildqq(BuildContext context) {
     int i=-1;
     super.build(context);
     return  WillPopScope(
@@ -167,7 +158,7 @@ class HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin{
           child: Row(
             children:
             _pages.map((it) {
-              i+=1;
+              i++;
               return  GestureDetector(onTap: () => _onItemTapped(i),
                 child:Container(
                   height: 45,width: 40,
@@ -179,53 +170,10 @@ class HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin{
                   ),
                 ) ,);
             }).toList(),
-        /*    <Widget>[
-              GestureDetector(onTap: () => _onItemTapped(0),
-              child:Container(
-                height: 45,width: 40,
-                child: Column(
-                  children: <Widget>[
-                    getTabIcon(0),
-                    getTabTitle(0)
-                  ],
-                ),
-              ) ,),
-              GestureDetector(onTap: () => _onItemTapped(1),
-                child:Container(
-                  height: 45,width: 40,
-                  child: Column(
-                    children: <Widget>[
-                      getTabIcon(1),
-                      getTabTitle(1)
-                    ],
-                  ),
-                ) ,)
-              ,
-              GestureDetector(onTap: () => _onItemTapped(2),
-                child:Container(
-                  height: 45,width: 40,
-                  child: Column(
-                    children: <Widget>[
-                      getTabIcon(2),
-                      getTabTitle(2)
-                    ],
-                  ),
-                ) ,),
-              GestureDetector(onTap: () => _onItemTapped(3),
-                child:   Container(
-                  height: 45,width: 40,
-                  child: Column(
-                    children: <Widget>[
-                      getTabIcon(3),
-                      getTabTitle(3)
-                    ],
-                  ),
-                ),)
-            ],*/
             mainAxisAlignment: MainAxisAlignment.spaceAround,
           ),
         ),
-        shape: CircularNotchedRectangle(),
+//        shape: CircularNotchedRectangle(),
       ),
 
     ));

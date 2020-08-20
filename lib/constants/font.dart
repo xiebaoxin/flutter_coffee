@@ -1,7 +1,24 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'color.dart';
 
 class KfontConstant {
+  static final double appbat18Title= 18.0;
+  static final double title16= 16.0;
+  static final double title14= 14.0;
+  static final double title12= 12.0;
+
+  static final ShapeBorder cardallshape = const RoundedRectangleBorder(
+      side: BorderSide(color: Color.fromRGBO(238, 238, 238, 0.5)),
+    borderRadius: BorderRadius.only(
+      topLeft: Radius.circular(5.0),
+      topRight: Radius.circular(5.0),
+      bottomLeft: Radius.circular(5.0),
+      bottomRight: Radius.circular(5.0),
+    ),
+  );
+
 
   static TextStyle defaultStyle = TextStyle(
     fontSize: 14,
@@ -14,12 +31,21 @@ class KfontConstant {
   );
 
 
-
+  /**
+   * 白色字
+   */
   static TextStyle defaultAppbarTitleStyle = TextStyle(
   color: Color(0xFFFFFFFF),
-  fontSize: 18,
-//  fontWeight: FontWeight.w600
+  fontSize: appbat18Title,
+  fontWeight: FontWeight.w600
   );
+
+  static TextStyle defaultAppbarTitleMainColrStyle = TextStyle(
+      color: KColorConstant.mainColor,
+      fontSize: appbat18Title,
+      fontWeight: FontWeight.w600
+  );
+
 
   static TextStyle defaultBonStyle = TextStyle(
     fontSize: 14,

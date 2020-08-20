@@ -100,10 +100,24 @@ Color randomColor() {
       .withOpacity(1.0);
 }
 
+/**
+ * 11位时间戳转为时间格式
+ */
 String readTimestamp(int timestamp) {
+//  return formatDate(timestamp, [yyyy, '年', mm, '月', dd])
   var date = new DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
   return "${date.year.toString()}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}";
 }
+//时间转时间戳
+int strtotimestamp(String datetime){
+//  String datetime = "2020-8-15  16:00:00";//注意格式否则在DateTime.parse()时会报错
+  var _strtimes = DateTime.parse(datetime );//首先先将字符串格式的时间转为DateTime类型，因为millisecondsSinceEpoch方法转换要求为该格式
+  var _intendtime = _strtimes .millisecondsSinceEpoch;//方法一
+//  var _intendtime =  DateTime.fromMillisecondsSinceEpoch(_strtimes );//方法二
+  return _intendtime;
+  //_intendtime 为以及转换好的时间戳
+}
+
 
 int timetonowdays(int timestamp) {
   var now = new DateTime.now();

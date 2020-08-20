@@ -18,6 +18,8 @@ class GlobalConfig {
   static final String aliossfacedir=aliossimgbase+"/image/";
 
   static final String wxAppId='wx10e64c57c456e417';
+  static final String aMapAppId="bdd600f2668b2e07b4420b4f63077be8";
+  static final String aMapIosAppId="26b329caee06b1c0a1f84cd54dac4c4f";
   static final Widget rightArrowIcon = Icon(Icons.chevron_right, color: Colors.black26);
 
 }
