@@ -4,6 +4,8 @@ class Userinfo {
   String name;
   String avtar;
   String phone;
+  num money;
+  bool paypwd;
   Map<String, dynamic> json;
 
   Userinfo(
@@ -12,6 +14,8 @@ class Userinfo {
       this.id =0,
       this.name = '未注册',
       this.avtar = "",
+        this.money=0.0,
+        this.paypwd=false,
       this.json
       });
 
@@ -22,6 +26,8 @@ class Userinfo {
           name: '未注册',
           id: 0,
           avtar: '',
+          money: 0.0,
+        paypwd:false,
           json: {},
          );
 
@@ -30,6 +36,8 @@ class Userinfo {
         id: json['id'] ??0,
         name: json['nickName'],
         avtar: json['avatar']??'',
+        money: json['money']??0.0,
+        paypwd: json['isPaymentPassword'],
         json: json
     );
   }

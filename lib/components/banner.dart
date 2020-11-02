@@ -3,6 +3,7 @@ import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../components/swipper_indicator_style.dart';
 import '../components/loading_gif.dart';
+import '../routers/application.dart';
 import '../model/banner.dart';
 
 class RectSwiperPaginationBuilder extends SwiperPlugin {
@@ -75,7 +76,9 @@ class SwipperBanner extends StatelessWidget {
       height: height,
       child: Swiper(
         itemBuilder: (BuildContext context, index) {
-          return  CachedNetworkImage(
+          return  ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+          child:CachedNetworkImage(
             errorWidget: (context, url, error) =>Container(
               height: height,
               width: width,
@@ -86,15 +89,21 @@ class SwipperBanner extends StatelessWidget {
             ),
             placeholder: (context, url) =>  Loading(),
             imageUrl:  bannerlist.items[index].picUrl,
+            imageBuilder: (context, imageProvider) => Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: imageProvider,
+                  fit: BoxFit.cover,
+//                        colorFilter:
+//                        ColorFilter.mode(Colors.red, BlendMode.colorBurn)
+                ),
+              ),
+            ),
             height: height,
             width: width,
             fit: BoxFit.fill,
+          )
           );
-          /* return Image.network(
-            banners[index],
-            width: width,
-            height: height,
-          );*/
         },
         itemCount: bannerlist.items.length,
         //viewportFraction: 0.9,
@@ -122,9 +131,10 @@ class SwipperBanner extends StatelessWidget {
         autoplay: true,
         index: defindex,
         onTap: (index){
-          print('点击了第$index个');
-//          if(iamgeitem!=null)
-//          Application().adpage(context, iamgeitem[index]);
+//          print('点击了第$index个');
+//          print(bannerlist.items[index].href);
+          if(bannerlist.items[index].type==3)
+          Application.webto(context, '/web',url:bannerlist.items[index].href);
 
         }  ,
       ),

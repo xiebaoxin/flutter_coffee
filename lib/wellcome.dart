@@ -6,7 +6,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'routers/application.dart';
 import './utils/DialogUtils.dart';
 import './utils/dataUtils.dart';
-import './components/upgradeApp.dart';
 
 class WellCome extends StatefulWidget {
   @override
@@ -97,15 +96,13 @@ class SplashScreenState extends State<WellCome>{
           right: 10,
         ),
         new Positioned(
-          child: _tims <= 10
-              ? FlatButton(
+          child: FlatButton(
                   color: Colors.green,
                   onPressed: () {
 //                    print('点击了立即开启');
                     gohome();
                   },
-                  child: Text("立即开启"))
-              : Text("系统调试升级中，${_tims.toString()}秒之后恢复正常！"),
+                  child: Text("立即开启")),
           height: pageViewIndex == 2 ? width / 10 : 0,
           bottom: width / 10 - 2,
           right: 20,
@@ -163,30 +160,6 @@ class SplashScreenState extends State<WellCome>{
 
   }
 
-  void _checkUpdateApp() async {
-    SharedPreferences prefs = await _prefs;
-    String isupdate = prefs.getString('update') ?? ''; //暂时每次更新
-
-    if (isupdate == '') {
-      if (await DataUtils().checkDownloadApp(context)) {
-        _isupdate = await DialogUtils().showMyDialog(context, '有更新版本，是否马上更新?');
-        if (!_isupdate) {
-          prefs.setString("update", 'yes');
-        } else {
-          prefs.remove('update');
-          await Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => UpgGradePage(),
-            ),
-          );
-        }
-      }
-    }
-     prefs.setBool('wellcomeok',true);
-
-  }
-
   int _tims = 0;
   _startTimer() {
     timer = new Timer.periodic(new Duration(seconds: 1), (timer) async {
@@ -210,9 +183,7 @@ class SplashScreenState extends State<WellCome>{
   bool _iswellcomepage = false;
   void checkwellcome() async {
     SharedPreferences prefs = await _prefs;
-//    setState(() {
-      _iswellcomepage = prefs.getBool('wellcomeok') ?? false; //已经观看过
-//    });
+    _iswellcomepage = prefs.getBool('wellcomeok') ?? false; //已经观看过
     if(_iswellcomepage)
      {
        if (timer != null) {
@@ -221,16 +192,12 @@ class SplashScreenState extends State<WellCome>{
        Application.goto(context, "/home");
      }else
        {
-         //    getNowVersion();
-
          if(mounted){
            setState(() {
              _tims = TIMERWELL;
            });
-//           await _checkUpdateApp();
            await _startTimer();
          }
-
        }
   }
 

@@ -45,8 +45,8 @@ class MyInfoPageState extends State<ShopHomePage>
                       Stack(
                         alignment: Alignment.topCenter,
                         children: <Widget>[
-                          ComWidget().hometopbackground(context,topbgheight: 180.0),
-                          ComWidget().topTitleWidget("商城"),
+                          ComWidget.hometopbackground(context,topbgheight: 180.0),
+                          ComWidget.topTitleWidget("商城"),
                         ],
                       ),
                       Container(

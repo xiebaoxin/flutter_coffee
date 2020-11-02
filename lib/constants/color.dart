@@ -10,8 +10,9 @@ class KColorConstant {
   //页面背景
   static const Color backgroundColor=Color(0xffF9FAFA);
 
-
   static final Color greybackcolor= Color(0xFFeeeeee);
+
+  static final Color greyinputbackground=Color(0xffF6F6F6);
 
   static const Color txtFontColor =Color.fromRGBO(144,144,144,0.8);//Color(0xFF2f2f2f);
   static const Color tabtxtColor = Color.fromRGBO(88, 88, 88, 0.9);

@@ -4,9 +4,10 @@ import 'list_view_item.dart';
 
 class RightListView extends StatefulWidget {
   final double height;
+  final Map<String, dynamic> info;
   final List<SubCategoryListModel> dataItems;
   final ValueChanged<int> listViewChanged;
-  RightListView({Key key, this.height, this.dataItems, this.listViewChanged})
+  RightListView({Key key, this.height, this.dataItems, this.listViewChanged,this.info})
       : super(key: key);
   @override
   State<StatefulWidget> createState() => RightListViewState();
@@ -28,7 +29,7 @@ class RightListViewState extends State<RightListView> {
       // child: NotificationListener<ScrollEndNotification>(
       //   onNotification: (a){
       //     if(a.depth==0){
-      //       //判断一下是否是滑动的整块,纠正一下 
+      //       //判断一下是否是滑动的整块,纠正一下
       //     }
       //   },
       child: Card(
@@ -37,7 +38,6 @@ class RightListViewState extends State<RightListView> {
     child:Container(
       alignment: Alignment.topLeft,
       child:ListView.builder(
-
       physics: NeverScrollableScrollPhysics(), //禁用手动滑动，于是有了上面的注释
       padding: EdgeInsets.all(0),
       controller: controller,
@@ -51,7 +51,7 @@ class RightListViewState extends State<RightListView> {
 
   Widget _itembuilder(BuildContext context, int index) {
     var data = widget.dataItems[index];
-    return SubCategoryList(data: data, height: widget.height, goPage: goPage);
+    return SubCategoryList(data: data,info: widget.info, height: widget.height, goPage: goPage);
   }
 
   void goPage(String tag) {

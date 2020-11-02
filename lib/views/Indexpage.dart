@@ -1,31 +1,31 @@
 import 'dart:io';
 import 'dart:ui';
+import 'dart:convert';
 import 'package:amap_map_fluttify/amap_map_fluttify.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:amap_core_fluttify/amap_core_fluttify.dart';
 import 'package:amap_location_fluttify/amap_location_fluttify.dart';
-import 'package:decorated_flutter/decorated_flutter.dart';
 import '../routers/application.dart';
 import '../model/banner.dart';
 import 'comm/comwidget.dart';
 import '../components/in_text_dot.dart';
-import '../utils/utils.dart';
-import '../components/fiexdAppbar.dart';
-import '../components/toproundbg.dart';
 import '../constants/config.dart';
 import '../model/globle_provider.dart';
+import '../model/carts_provider.dart';
 import '../globleConfig.dart';
-import '../routers/application.dart';
 import '../model/userinfo.dart';
 import '../utils/dataUtils.dart';
 import '../utils/DialogUtils.dart';
+import '../utils/comUtil.dart';
 import '../components/banner.dart';
-import 'usersetting.dart';
+import 'comm/gotopay.dart';
+import '../views/person/usersetting.dart';
+import '../globalutils/global.dart';
 
 class IndexPageHome extends StatefulWidget {
   @override
@@ -33,37 +33,28 @@ class IndexPageHome extends StatefulWidget {
 }
 
 class HomeIndexPageState extends State<IndexPageHome>
-    with AutomaticKeepAliveClientMixin, TickerProviderStateMixin,AmapSearchDisposeMixin{
+    with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
   @override
   // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
 
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   var _futureBannerBuilderFuture;
+  var _futureLocationBuilderFuture;
 
-  final double statusBarHeight = MediaQueryData.fromWindow(window).padding.top;
+  double statusBarHeight = MediaQueryData.fromWindow(window).padding.top;
 
   ScrollController _strollCtrl = ScrollController();
   Userinfo _userinfo;
   bool showMore = false; //是否显示底部加载中提示
   double topimgheight = 160.0;
-  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-  List<Map<String, dynamic>> _tabs = [
-    {
-      'text': "",
-      'cat_id': 0,
-      'lists': [],
-    }
-  ];
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
+
     return Material(
         child: Scaffold(
             backgroundColor: KColorConstant.backgroundColor,
-//          backgroundColor: KColorConstant.mainColor,
-            key: _scaffoldKey,
             body: EasyRefresh(
                 header: ClassicalHeader(
                     refreshedText: "松开刷新",
@@ -71,20 +62,13 @@ class HomeIndexPageState extends State<IndexPageHome>
                     bgColor: KColorConstant.mainColor,
                     textColor: Color(0xFFFFFFFF)),
                 onRefresh: () async {
-                  setState(() {
-                    _getbannerd = false;
-                    _futureBannerBuilderFuture = _getbannerdata();
-
-                    _page = 0;
-                    _shopsList = List();
-                    comShopList();
-                  });
+//                  await DataUtils().checkUpdateApp(context);
+                  await freshdata();
                 },
                 child: mainbody())));
   }
 
   Widget topbarWidget() {
-
     return Positioned(
         top: statusBarHeight,
         left: 0,
@@ -99,13 +83,39 @@ class HomeIndexPageState extends State<IndexPageHome>
                   children: <Widget>[
                     Padding(
                       padding: const EdgeInsets.only(left: 10.0, right: 8.0),
-                      child: Image.asset(
-                        "images/qrscan.png",
-                        height: 25,
-                        width: 25,
-                        fit: BoxFit.fill,
-                      )
-                      ,
+                      child: FlatButton(
+                        onPressed: () async {
+                          String v = await ComFun.scanqr();
+                          print(v);
+                          if (v = null) {
+                            Map<String, dynamic> payoddata = {
+                              "drinkId": '61',
+                              "sugarRule": "1", //糖规则（0=无糖，1=少糖，2=标准，3=多糖）
+                              "deviceId": '33', //设备id
+                            };
+
+                            Navigator.of(context)
+                                .push(PageRouteBuilder(
+                                    opaque: false,
+                                    pageBuilder: (context, animation,
+                                        secondaryAnimation) {
+                                      return GoToPayPage(
+                                        "",
+                                        data: payoddata,
+                                        money: 0.01,
+                                      );
+                                    }))
+                                .then((value) => Navigator.of(context).pop());
+                          }
+                        },
+                        color: KColorConstant.mainColor,
+                        child: Image.asset(
+                          "images/qrscan.png",
+                          height: 25,
+                          width: 25,
+                          fit: BoxFit.fill,
+                        ),
+                      ),
                     ),
                     Expanded(
                         child: Container(
@@ -177,10 +187,8 @@ class HomeIndexPageState extends State<IndexPageHome>
                                           ),
                                     onPressed: !provider.loginStatus
                                         ? () {
-                                            Application().checklogin(context,
-                                                () {
-
-                                            });
+                                            Application()
+                                                .checklogin(context, () {});
                                           }
                                         : () {
                                             Navigator.push(
@@ -215,9 +223,6 @@ class HomeIndexPageState extends State<IndexPageHome>
   List<Widget> listviewchildren() {
     List<Widget> itemlist = <Widget>[
       _topHeadbuild(),
-      Container(
-        height: 10,
-      ),
       Center(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -265,19 +270,32 @@ class HomeIndexPageState extends State<IndexPageHome>
           )),
         ),
       ),
-      machineitem({}),
-      machineitem({}),
-      machineitem({}),
-
     ];
 
-
-    if (_shopsList != null && _shopsList.length > 0){
-      _shopsList.forEach((it) {
-        itemlist.add(machineitem(it),);
-      });
-
+    if (_location == null)
+      itemlist.add(
+        Center(
+            child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            "正在搜索附近咖啡机……",
+            style: TextStyle(fontSize: 10),
+          ),
+        )),
+      );
+    else {
+      itemlist.add(FutureBuilder<List<Map<String, dynamic>>>(
+          future: _futureLocationBuilderFuture,
+          builder: _buildMachineListBody));
+      /* if (_shopsList != null && _shopsList.length > 0){
+        _shopsList.forEach((it) {
+          itemlist.add(ComWidget.machineitem(it),);
+        });
+      }else
+        itemlist.add(ComWidget.machineitem({}),);
+*/
     }
+
     itemlist.add(Padding(
       padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 0),
       child: Card(
@@ -295,54 +313,81 @@ class HomeIndexPageState extends State<IndexPageHome>
         elevation: 1.0,
         child: Container(
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SizedBox(
-                height: 30,
-              ),
-            )),
+          padding: const EdgeInsets.all(8.0),
+          child: SizedBox(
+            height: 30,
+          ),
+        )),
       ),
     ));
-
-    itemlist.add(Visibility(
-        visible: _location!=null,
-        child: Text(
-      _location.toString(),
-      textAlign: TextAlign.center,
-    )));
+    if (_location != null && _location.address != null)
+      itemlist.add(Text(
+        "${_location.address ?? 'null'}[${_location.latLng.latitude},${_location.latLng.longitude},${_location.altitude}]",
+        softWrap: true,
+        textAlign: TextAlign.center,
+      ));
     return itemlist;
+  }
+
+  Widget _buildMachineListBody(BuildContext context,
+      AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
+    switch (snapshot.connectionState) {
+      case ConnectionState.none:
+      case ConnectionState.active:
+      case ConnectionState.waiting:
+        return Center(
+            child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text('正在获取附近咖啡机信息……', style: TextStyle(fontSize: 10))));
+      case ConnectionState.done:
+        if (snapshot.hasError) {
+          DialogUtils.showToastDialog(context, 'Error: ${snapshot.error}');
+          return Center(
+              child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text('获取附近咖啡机信息异常', style: TextStyle(fontSize: 10))));
+        }
+        if (snapshot.hasData && snapshot.data != null) {
+          if (_shopsList != null && _shopsList.length > 0) {
+            return Column(
+              children:
+                  _shopsList.map((it) => ComWidget.machineitem(it)).toList(),
+            );
+          } else
+            return ComWidget.machineitem({});
+        }
+    }
+    return ComWidget.machineitem({});
   }
 
   Widget _topHeadbuild() {
     return Stack(
       alignment: Alignment.topCenter,
       children: <Widget>[
-        ComWidget()
-            .hometopbackground(context, topbgheight: 180.0, bottomheight: 55),
+        ComWidget.hometopbackground(context,
+            topbgheight: 180.0, bottomheight: 78),
         topbarWidget(),
-        Positioned(top:( statusBarHeight+Klength.topBarHeight), left: 10, right: 10, child: mainheadbanner())
+        Positioned(
+            top: (statusBarHeight + Klength.topBarHeight + 5),
+            left: 10,
+            right: 10,
+            child: mainheadbanner())
       ],
     );
   }
 
   Widget mainheadbanner() {
-    return Container(
-      height: topimgheight,
-      child: ClipRRect(
-          borderRadius: BorderRadius.circular(Klength.circular),
-          child: Image.asset(
-            "images/topbg_img.jpg",
-            fit: BoxFit.cover,
-//                    ),
-          )),
-    );
-
     return FutureBuilder(
       future: _futureBannerBuilderFuture,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         //snapshot就是_calculation在时间轴上执行过程的状态快照
         switch (snapshot.connectionState) {
           case ConnectionState.none:
-            return new Text('需重新加载'); //如果_calculation未执行则提示：请点击开始
+            return Center(
+                child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: new Text('需重新加载'),
+            )); //如果_calculation未执行则提示：请点击开始
           case ConnectionState.waiting:
             return Container(
                 height: topimgheight,
@@ -428,6 +473,7 @@ class HomeIndexPageState extends State<IndexPageHome>
         margin: EdgeInsets.all(0),
         child: InkWell(
           onTap: () {
+//            Application.coffeeDetail(context, 1);
 //            Application.goodsDetail(context, item['goods_id'].toString());
           },
           child: Card(
@@ -473,126 +519,76 @@ class HomeIndexPageState extends State<IndexPageHome>
         ));
   }
 
-  Widget machineitem(Map<String, dynamic> machine) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 0, bottom: 0),
-      child: Card(
-        shape: const RoundedRectangleBorder(
-          side: BorderSide(color: Color.fromRGBO(238, 238, 238, 0.5)),
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(0.0),
-            topRight: Radius.circular(0.0),
-            bottomLeft: Radius.circular(0.0),
-            bottomRight: Radius.circular(0.0),
-          ),
-        ),
-        clipBehavior: Clip.antiAlias,
-        margin: EdgeInsets.all(0),
-        elevation: 1.0,
-        child: Container(
-            child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: ListTile(
-            title: Text("万达新天地咖啡机(NO.0012)",style: TextStyle(fontWeight: FontWeight.bold),),
-            subtitle: Text.rich(
-              TextSpan(
-                text: '[2.3km]',
-                style: TextStyle(
-                  fontSize: KfontConstant.title12,
-                  color: Colors.black,
-                ),
-                children: <TextSpan>[
-                  TextSpan(
-                      text: '深圳宝安南山区万象城3楼',
-                      style: TextStyle(fontSize: KfontConstant.title12)),
-                  TextSpan(
-                      text: '\t\n 营业【0：00-24：00】',
-                      style: TextStyle(fontSize: KfontConstant.title12, color: KColorConstant.mainColor)),
-                ],
-              ),
-            ),
-            trailing: Icon(Icons.chevron_right)
-         /*   Container(
-              width: 55,
-              child: Row(
-                children: <Widget>[
-                  Text("去看看",style: TextStyle(fontSize: 10),),
-                  Icon(Icons.chevron_right)
-                ],
-              ),
-            ),*/
-          ),
-          /*   Column(
-            children: <Widget>[
-              SizedBox(height: 40,),
-            ],
-          ),*/
-        )),
-      ),
-    );
+  void shownoopenmsg({String strt = '即将开放，敬请期待'}) async {
+    await DialogUtils.showToastDialog(context, strt);
   }
 
-  void shownoopenmsg({String strt = '即将开放，敬请期待'}) {
-    _scaffoldKey.currentState.showSnackBar(SnackBar(
-      content: Text(strt),
-    ));
-  }
-
-  int _page = 0;
-  int pagesize = 20;
   List<Map<String, dynamic>> _shopsList = List();
-  Future comShopList() async {
-/*    List<Map<String, dynamic>> shopsList = List();
-    shopsList = await ShopUtils.priorityShopList(context, _page, pagesize: pagesize);
+  Future<List<Map<String, dynamic>>> _getDeviceList() async {
+    if (_location != null && _location.latLng != null) {
+      Map<String, String> params = {
+        "longitudeLatitude":
+            "${_location.latLng.longitude},${_location.latLng.latitude}",
+        "range": "5000"
+      };
+      _shopsList = await DataUtils.getNearByDevice(context, params);
+      /*[{latitudeLongitude: 113.926727,22.647089,
+     address: 广东省深圳市宝安区创维科技工业园, serialNumber: 1234567891,
+     distance: 361, name: 测试, id: 9, status: 0},
+    */
+      if (_shopsList != null && _shopsList.length > 0) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    if (shopsList.length > 0) {
-      _page+=pagesize;
-      _shopsList += shopsList;
-      setState(() { });
-    }else
-      setState(() {
-        showMore = true;
-      });*/
+        for (int i = 0; i < _shopsList.length; i++) {
+          if (_shopsList[i]['status'] == 1) {
+            await prefs.setString("machine", jsonEncode(_shopsList[i]));
+            break;
+          }
+        }
+      }
+//      setState(() {  });
+    }
+    return _shopsList;
   }
 
-  List<Map<String, dynamic>> _listbanner = [];
-  bool _getbannerd = false;
   Future _getbannerdata() async {
-
     BannerList banners;
-    if (_getbannerd) return _listbanner;
+
     List<Map<String, dynamic>> imagessList = List();
-//    _listbanner = await DataUtils.getIndexTopSwipperBanners(context);
-    if (_listbanner != null && _listbanner.length > 0) {
-      _listbanner.forEach((ele) {
-        if (ele['PICURL'] != null) {
-          var el = {'ad_code': ele['RID'], 'ad_link': servpic(ele['PICURL'])};
+    List<Map<String, dynamic>> listbanner =
+        await DataUtils.getIndexTopSwipperBanners(context);
+
+    /*
+    *{"code":200,"message":"成功!","data":[{"orderId":2,"link":1,
+    * "linkUrl":"%","linkType":3,"title":"汽车","picture":"https://dss0.bdstatic.co"}]}
+    * */
+    if (listbanner != null && listbanner.length > 0) {
+      listbanner.forEach((ele) {
+        if (ele['picture'] != null) {
+          var el = {
+            'ad_code': ele['orderId'],
+            'ad_link': ele['picture'],
+            'ad_href': ele['linkUrl'],
+            'ad_type': ele['linkType']
+          };
           imagessList.add(el);
         }
       });
 
       banners = BannerList.fromJson(imagessList);
     }
-    _getbannerd = true;
-    return banners;
-  }
 
-  Future _getinitdata() async {
-    await AmapCore.init(GlobalConfig.aMapIosAppId);
-    await AmapService.instance.init(
-      iosKey: GlobalConfig.aMapIosAppId,
-      androidKey: GlobalConfig.aMapAppId,
-    );
-    await fetchLocation();
+    return banners;
   }
 
   @override
   void initState() {
-    _getinitdata();
+    fetchLocation();
     super.initState();
+
     _futureBannerBuilderFuture = _getbannerdata();
     // TODO: implement initState
-//    _getalldata();
+
     _strollCtrl.addListener(() {
       if (_strollCtrl.position.pixels == _strollCtrl.position.maxScrollExtent) {
 //        print('滑动到了最底部${_strollCtrl.position.pixels}');
@@ -607,16 +603,19 @@ class HomeIndexPageState extends State<IndexPageHome>
   void dispose() {
     super.dispose();
     _futureBannerBuilderFuture = null;
+    _futureLocationBuilderFuture = null;
   }
 
   void freshdata() async {
+    if (mounted) {
+      var cartdemoInfo = Provider.of<CartsProvider>(context);
+      await cartdemoInfo.initcartdemo();
+    }
 
-    _getbannerd = false;
     _futureBannerBuilderFuture = _getbannerdata();
+    _getDeviceList();
 
-    _page = 0;
-    _shopsList = List();
-    await comShopList();
+    setState(() {});
   }
 
   bool _loading = false;
@@ -637,16 +636,16 @@ class HomeIndexPageState extends State<IndexPageHome>
       });
     }
   }
+
   Location _location;
-void  fetchLocation() async {
-  if(await Permission.location.request().isGranted) {
-  final location = await AmapLocation.instance.fetchLocation();
+  void fetchLocation() async {
+    if (await Permission.location.request().isGranted) {
+      final location = await AmapLocation.instance.fetchLocation();
 
-  print("--${location.address},[${location.latLng.latitude},${location.latLng.longitude}],${location.altitude}--");
-  setState(() => _location = location);
+      setState(() => _location = location);
+      _futureLocationBuilderFuture = _getDeviceList();
+      print(
+          "--${location.address},[${location.latLng.latitude},${location.latLng.longitude}],${location.altitude}--");
+    }
   }
-  }
-
-
-
 }

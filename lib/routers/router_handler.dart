@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluro/fluro.dart';
 import '../views/login.dart';
 import '../views/myInfopage.dart';
+import '../views/categorypage.dart';
 import '../homepage.dart';
 import '../wellcome.dart';
 import '../components/webView.dart';
@@ -50,3 +51,7 @@ Handler userPageHandler = Handler(
       return MyInfoPage();//MyInfoPage()user_id,status,phone,name,avatar
     });
 
+Handler cartgoryPageHandler = Handler(
+    handlerFunc: (BuildContext context, Map<String, dynamic> params) {
+      return CategoryHome();//MyInfoPage()user_id,status,phone,name,avatar
+    });

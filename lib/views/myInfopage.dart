@@ -7,17 +7,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:core';
 import 'package:provider/provider.dart';
+import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_luban/flutter_luban.dart';
 import 'comm/comwidget.dart';
 import '../utils/DialogUtils.dart';
+import '../utils/dataUtils.dart';
 import '../model/globle_provider.dart';
 import '../model/userinfo.dart';
 import 'package:flutter/cupertino.dart';
 import '../globleConfig.dart';
 import '../utils/alioss/aliossapi.dart';
-import '../components/upgradeApp.dart';
+import '../routers/application.dart';
+import '../views/person/order_list.dart';
+import 'person/rechage.dart';
+import '../views/person/usersetting.dart';
 
 class MyInfoPage extends StatefulWidget {
   @override
@@ -29,9 +34,8 @@ class MyInfoPageState extends State<MyInfoPage>
   @override
   bool get wantKeepAlive => true;
 
-
   final double statusBarHeight = MediaQueryData.fromWindow(window).padding.top;
-final double userwidgetheight=65.0;
+  final double userwidgetheight = 65.0;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   ScrollController _strollCtrl = ScrollController();
   Userinfo _userinfo = Userinfo.fromJson({});
@@ -48,174 +52,339 @@ final double userwidgetheight=65.0;
             child: Scaffold(
                 backgroundColor: KColorConstant.backgroundColor,
                 key: _scaffoldKey,
-                body: ListView(
-                    padding: EdgeInsets.all(0),
-                    controller: _strollCtrl,
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    children: <Widget>[
-                      Stack(
-                        alignment: Alignment.topCenter,
-                        children: <Widget>[
-                          ComWidget()
-                              .hometopbackground(context, topbgheight: 180.0,bottomheight: 110),
-                          ComWidget().topTitleWidget("个人中心"),
-                          userInfoWidget(),
-                          userMoneyWidget()
-                        ],
-                      ),
-                      Container(
-                        height: 10,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(Klength.blankwidth),
-                        child: Card(
-                          shape: KfontConstant.cardallshape,
-                          elevation: 5,
-                          color: Colors.white,
-                          child: Column(
-                            children: <Widget>[
-                              optionItem("我的收藏", "images/icon_03.png", () {
-                                ;
-                              }),
-                              Divider(),
-                              optionItem("我的订单", "images/icon_04.png", () {
-                                ;
-                              }),
-                              Divider(),
-                              optionItem("我的积分", "images/icon_01.png", () {
-                                ;
-                              }),
-                              Divider(),
-                              optionItem("关于我们", "images/icon_06.png", () {
-                                ;
-                              }),
-                              Divider(),
-                              optionItem("投诉建议", "images/icon_07.png", () {
-                                ;
-                              }),
-                              Divider(),
-                              optionItem("咖啡机操作说", "images/icon_08.png", () {
-                                ;
-                              }),
-                              SizedBox(
-                                height: 8,
-                              )
-                            ],
-                          ),
-                        ),
-                      )
-                    ]))));
+                body:EasyRefresh(
+        header: ClassicalHeader(
+        refreshedText: "松开刷新",
+        refreshReadyText: "下拉刷新",
+        bgColor: KColorConstant.mainColor,
+        textColor: Color(0xFFFFFFFF)),
+    onRefresh: () async {
+          await DataUtils().freshlogin(context);
+    },
+    child: mainbody() ) )));
   }
+Widget mainbody(){
+    return ListView(
+        padding: EdgeInsets.all(0),
+        controller: _strollCtrl,
+        physics: const AlwaysScrollableScrollPhysics(),
+        children: <Widget>[
+          Consumer<GlobleProvider>(
+              builder: (context, GlobleProvider provider, _) =>
+                  Stack(
+                    alignment: Alignment.topCenter,
+                    children: <Widget>[
+                      ComWidget.hometopbackground(context,
+                          topbgheight: 180.0, bottomheight: 80),
+                      ComWidget.topTitleWidget("个人中心"),
+                      Positioned(
+                        top: MediaQueryData.fromWindow(window)
+                            .padding
+                            .top,
+                        right: 10,
+                        child: IconButton(
+                            icon: !provider.loginStatus
+                                ? Icon(
+                              Icons.settings,
+                              color: Colors.white60,
+                            )
+                                : Icon(
+                              Icons.settings,
+                              color: Colors.white,
+                            ),
+                            onPressed: !provider.loginStatus
+                                ? () {
+                              Application()
+                                  .checklogin(context, () {});
+                            }
+                                : () {
+                              Navigator.push(
+                                context,
+                                new MaterialPageRoute(
+                                    builder: (context) =>
+                                        SetUserinfo()),
+                              ).then((v)async {
+                                await DataUtils().freshlogin(context);
+                              });
+                            }),
+                      ),
+                      userInfoWidget(provider),
+                      userMoneyWidget(provider)
+                    ],
+                  )),
+          Padding(
+            padding: const EdgeInsets.all(Klength.blankwidth),
+            child: Card(
+              shape: KfontConstant.cardallshape,
+              elevation: 5,
+              color: Colors.white,
+              child: Column(
+                children: <Widget>[
+                  optionItem("我的收藏", "images/icon_03.png", () {
+                    ;
+                  }),
+                  Divider(),
+                  optionItem("我的订单", "images/icon_04.png", () {
+                    Application().checklogin(context, () {
+                      Navigator.push(
+                        context,
+                        new MaterialPageRoute(
+                            builder: (context) => OrderListPage()),
+                      );
+                    });
+                  }),
+                  Divider(),
+                  optionItem("我的积分", "images/icon_01.png", () {
+                    ;
+                  }),
+                  Divider(),
+                  optionItem("关于我们", "images/icon_06.png", () {
+                    ;
+                  }),
+                  Divider(),
+                  optionItem("投诉建议", "images/icon_07.png", () {
+                    ;
+                  }),
+                  Divider(),
+                  optionItem("咖啡机操作说", "images/icon_08.png", () {
+                    ;
+                  }),
+                  SizedBox(
+                    height: 8,
+                  )
+                ],
+              ),
+            ),
+          )
+        ]);
+}
 
-  Widget userInfoWidget() {
+  Widget userInfoWidget(GlobleProvider provider) {
     return Positioned(
-        top: statusBarHeight+Klength.topBarHeight,
+        top: statusBarHeight + Klength.topBarHeight,
         left: 0,
         right: 0,
         child: Padding(
             padding: const EdgeInsets.all(0),
-            child: Consumer<GlobleProvider>(
-                builder: (context, GlobleProvider provider, _) => Container(
-                      height: userwidgetheight,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Container(
+              height: userwidgetheight,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10.0),
+                    child: GestureDetector(
+                      onTap: _openImage,
+                      child: CircleAvatar(
+                        radius: 30.0,
+                        backgroundImage: provider.userinfo.avtar.isNotEmpty
+                            ? NetworkImage(provider.userinfo.avtar)
+                            : AssetImage('images/logo-no.png'),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.only(left: 10.0),
-                            child: GestureDetector(
-                              onTap: _openImage,
-                              child: CircleAvatar(
-                                radius: 30.0,
-                                backgroundImage:
-                                    provider.userinfo.avtar.isNotEmpty
-                                        ? NetworkImage(provider.userinfo.avtar)
-                                        : AssetImage('images/logo-no.png'),
-                              ),
-                            ),
+                          Text(
+                            provider.userinfo.name ?? "name",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold),
                           ),
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.all(5.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Text(
-                                    provider.userinfo.name ?? "name",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  Text(
-                                    "个人资料[${provider.userinfo.phone}]",
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                ],
-                              ),
-                            ),
+                          Text(
+                            "个人资料[${provider.userinfo.phone}]",
+                            style: TextStyle(color: Colors.white),
                           ),
-                          Padding(
-                              padding: const EdgeInsets.only(right: 0),
-                              child: Container(
-                                  decoration: new BoxDecoration(
-                                    color: Color(0xffFEFFFF),
-                                    borderRadius:
-//                              const BorderRadius.all(Radius.circular(20)),
-                                        const BorderRadius.horizontal(
-                                            left: Radius.circular(20)),
-                                    border: null,
-                                  ),
-                                  child: Container(
-                                      child: Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 5, right: 5.0),
-                                          child: SizedBox(
-                                              height: 38,
-                                              child: Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 5.0, right: 10),
-                                                child: Row(
-                                                  children: <Widget>[
-                                                    Text("我的积分",style: TextStyle(color: KColorConstant.mainColor),),
-                                                    Text("98",style: TextStyle(color: KColorConstant.mainColor,fontSize: KfontConstant.title16,fontWeight:FontWeight.bold),),
-                                                  ],
-                                                ),
-                                              ))))))
                         ],
                       ),
-                    ))));
+                    ),
+                  ),
+                  Padding(
+                      padding: const EdgeInsets.only(right: 0),
+                      child: GestureDetector(
+                        onTap: () {},
+                        child: Container(
+                            decoration: new BoxDecoration(
+                              color: Color(0xffFEFFFF),
+                              borderRadius:
+//                              const BorderRadius.all(Radius.circular(20)),
+                                  const BorderRadius.horizontal(
+                                      left: Radius.circular(20)),
+                              border: null,
+                            ),
+                            child: Container(
+                                child: Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 5, right: 5.0),
+                                    child: SizedBox(
+                                        height: 38,
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 5.0, right: 10),
+                                          child: Row(
+                                            children: <Widget>[
+                                              Text(
+                                                "我的积分",
+                                                style: TextStyle(
+                                                    color: KColorConstant
+                                                        .mainColor),
+                                              ),
+                                              Text(
+                                                "98",
+                                                style: TextStyle(
+                                                    color: KColorConstant
+                                                        .mainColor,
+                                                    fontSize:
+                                                        KfontConstant.title16,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                            ],
+                                          ),
+                                        ))))),
+                      ))
+                ],
+              ),
+            )));
   }
 
-  Widget userMoneyWidget() {
+  Widget userMoneyWidget(GlobleProvider provider) {
     return Positioned(
-        top: statusBarHeight+Klength.topBarHeight+userwidgetheight+5,
-        left: Klength.blankwidth,
-        right: Klength.blankwidth,
-        child: Padding(
-            padding: const EdgeInsets.all(0),
-            child: Consumer<GlobleProvider>(
-                builder: (context, GlobleProvider provider, _) =>
-                    Card(
-                    shape: KfontConstant.cardallshape,
-                    elevation: 5,
-                    color: Colors.white,
-                    child: Container(
-                      height: 120,
-                      child: Center(
-                        child: Container(
-                          height: 90,
-                          child: Row(
-                            children: <Widget>[
-                              Expanded(child: Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: Container(
-                                  child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                  Container(
-                                  padding: EdgeInsets.all(5),
+      top: statusBarHeight + Klength.topBarHeight + userwidgetheight + 8,
+      left: Klength.blankwidth,
+      right: Klength.blankwidth,
+      child: Padding(
+          padding: const EdgeInsets.all(0),
+          child: Card(
+              shape: KfontConstant.cardallshape,
+              elevation: 5,
+              color: Colors.white,
+              child: Container(
+                padding: EdgeInsets.all(0),
+                child: Center(
+                  child: Container(
+                    height: 88,
+                    child: Row(
+                      children: <Widget>[
+                        Expanded(
+                            child: GestureDetector(
+                                onTap: () {
+                                  Application().checklogin(context, () {
+                                    Navigator.push(
+                                      context,
+                                      new MaterialPageRoute(
+                                          builder: (context) => Recharge()),
+                                    ).then((value) async => await DataUtils().freshlogin(context));
+                                  });
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(5.0),
+                                  child: Container(
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        Container(
+                                            padding: EdgeInsets.all(5),
+                                            height: 40,
+                                            width: 40,
+                                            decoration: BoxDecoration(
+                                              color: Color(0xffFDF7EB),
+                                              shape: BoxShape.circle,
+                                            ),
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(0),
+                                              child: Center(
+                                                child: Image.asset(
+                                                  "images/icon_01.png",
+                                                  width: 28,
+                                                  height: 28,
+                                                ),
+                                              ),
+                                            )),
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Center(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: <Widget>[
+                                                Row(
+                                                  children: <Widget>[
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              0),
+                                                      child: Text(
+                                                        "¥",
+                                                        style: TextStyle(
+                                                            fontSize:
+                                                                KfontConstant
+                                                                    .title14,
+                                                            color:
+                                                                KColorConstant
+                                                                    .mainColor),
+                                                      ),
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              0),
+                                                      child: Text(
+                                                        "${provider.userinfo.money}",
+                                                        style: TextStyle(
+                                                            fontSize: 22,
+                                                            color:
+                                                                KColorConstant
+                                                                    .mainColor,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(5),
+                                                  child: Text(
+                                                    "账户余额",
+                                                    style: TextStyle(
+                                                        fontSize: KfontConstant
+                                                            .title14),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ))),
+                        Container(
+                          width: 1,
+                          height: 60,
+                          color: KColorConstant.greybackcolor,
+                        ),
+                        Expanded(
+                            child: Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: Container(
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Container(
+                                    padding: EdgeInsets.all(5),
                                     height: 40,
                                     width: 40,
                                     decoration: BoxDecoration(
@@ -226,126 +395,88 @@ final double userwidgetheight=65.0;
                                       padding: const EdgeInsets.all(0),
                                       child: Center(
                                         child: Image.asset(
-                                          "images/icon_01.png",
+                                          "images/icon_02.png",
                                           width: 28,
                                           height: 28,
                                         ),
                                       ),
                                     )),
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Center(
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: <Widget>[
-
-                                              Row(
-                                                children: <Widget>[
-                                                  Padding(
-                                                    padding: const EdgeInsets.all(0),
-                                                    child: Text("¥",style: TextStyle(fontSize: KfontConstant.title14,color: KColorConstant.mainColor),),
-                                                  ),
-                                                  Padding(
-                                                    padding: const EdgeInsets.all(0),
-                                                    child: Text("380.0",style: TextStyle(fontSize: 22,
-                                                        color: KColorConstant.mainColor,fontWeight: FontWeight.bold),),
-                                                  ),
-                                                ],
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.all(5),
-                                                child: Text("账户余额",style: TextStyle(fontSize: KfontConstant.title14),),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              )),
-                              Container(width: 1,height:80,color: KColorConstant.greybackcolor,),
-                              Expanded(child: Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: Container(
-                                  child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      Container(
-                                          padding: EdgeInsets.all(5),
-                                          height: 40,
-                                          width: 40,
-                                          decoration: BoxDecoration(
-                                            color: Color(0xffFDF7EB),
-                                            shape: BoxShape.circle,
-                                          ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(0),
-                                            child: Center(
-                                              child: Image.asset(
-                                                "images/icon_02.png",
-                                                width: 28,
-                                                height: 28,
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Center(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Row(
+                                          children: <Widget>[
+                                            Padding(
+                                              padding: const EdgeInsets.all(0),
+                                              child: Text(
+                                                "3",
+                                                style: TextStyle(
+                                                    fontSize: 22,
+                                                    color: KColorConstant
+                                                        .mainColor,
+                                                    fontWeight:
+                                                        FontWeight.bold),
                                               ),
                                             ),
-                                          )),
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Center(
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: <Widget>[
-
-                                              Row(
-                                                children: <Widget>[
-                                                  Padding(
-                                                    padding: const EdgeInsets.all(0),
-                                                    child: Text("3",style: TextStyle(fontSize: 22,
-                                                        color: KColorConstant.mainColor,fontWeight: FontWeight.bold),),
-                                                  ),
-                                                  Padding(
-                                                    padding: const EdgeInsets.all(0),
-                                                    child: Text("张",style: TextStyle(fontSize: KfontConstant.title14,color: KColorConstant.mainColor),),
-                                                  ),
-
-                                                ],
+                                            Padding(
+                                              padding: const EdgeInsets.all(0),
+                                              child: Text(
+                                                "张",
+                                                style: TextStyle(
+                                                    fontSize:
+                                                        KfontConstant.title14,
+                                                    color: KColorConstant
+                                                        .mainColor),
                                               ),
-                                              Padding(
-                                                padding: const EdgeInsets.all(5),
-                                                child: Text("优惠劵",style: TextStyle(fontSize: KfontConstant.title14),),
-                                              ),
-                                            ],
+                                            ),
+                                          ],
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(5),
+                                          child: Text(
+                                            "优惠劵",
+                                            style: TextStyle(
+                                                fontSize:
+                                                    KfontConstant.title14),
                                           ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              )),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                      ),
-                    )))));
+                        )),
+                      ],
+                    ),
+                  ),
+                ),
+              ))),
+    );
   }
 
   Widget optionItem(String title, String img, Function callback) {
     return ListTile(
-      leading: Image.asset(
-        img,
-        width: 28,
-        height: 28,
-      ),
-      title: Text(
-        title,
-      ),
-      trailing: Icon(
-        Icons.keyboard_arrow_right,
-        color: Colors.grey,
-      ),
-      onTap: callback,
-    );
+        leading: Image.asset(
+          img,
+          width: 28,
+          height: 28,
+        ),
+        title: Text(
+          title,
+        ),
+        trailing: Icon(
+          Icons.keyboard_arrow_right,
+          color: Color(0xFF9F9F9F),
+        ),
+        onTap: () {
+          Application().checklogin(context, callback);
+        });
   }
 
   @override
@@ -359,6 +490,7 @@ final double userwidgetheight=65.0;
     // TODO: implement dispose
     super.dispose();
     _strollCtrl = null;
+    _prefs = null;
   }
 
   final picker = ImagePicker();

@@ -40,30 +40,15 @@ class AddPlusState extends State<Addplus> {
               }
             });
           },
-          child: Container(
-            width: 30,
-            height: 30,
-            decoration: BoxDecoration(
-                /* borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(3.0),
-                  bottomLeft: Radius.circular(3.0),
-                ),*/
-                border: _getRemoveBtBorder()),
-            child: Icon(
-              Icons.remove,
-              color: _getRemovebuttonColor(),
-              size: 10,
-            ),
-          ),
+          child: Icon(Icons.remove_circle,
+              size: 20,
+              color: _getRemovebuttonColor()),
         ),
         Expanded(child: Container(
           alignment: Alignment.center,
-          width: 50,
-          height: 30,
-          decoration: BoxDecoration(
-              border: Border.all(
-                  color: KColorConstant.txtFontColor, width: 1)),
-          child: CupertinoTextField(
+            child: Padding(
+    padding: const EdgeInsets.only(left:3.0,right: 3),
+    child: CupertinoTextField(
             controller: _countCtrl,
             focusNode: _focusNode,
 //            autofocus: true,
@@ -98,8 +83,8 @@ class AddPlusState extends State<Addplus> {
              });
 
             }, */
-          ),
-        )),
+          ))),
+        ),
         GestureDetector(
           onTap: () {
             {
@@ -112,17 +97,9 @@ class AddPlusState extends State<Addplus> {
               });
             }
           },
-          child: Container(
-            alignment: Alignment.center,
-            width: 30,
-            height: 30,
-            decoration: BoxDecoration(border: _getAddBtBorder()),
-            child: Icon(
-              Icons.add,
-              color: _getAddbuttonColor(),
-              size: 10,
-            ),
-          ),
+          child:  Icon(Icons.add_circle,
+              size: 20,
+              color: _getAddbuttonColor()),
         ),
       ],
     );

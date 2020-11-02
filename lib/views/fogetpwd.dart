@@ -14,6 +14,7 @@ class FogetpwdPage extends StatefulWidget {
 class FogetpwdPageState extends State<FogetpwdPage> {
   GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
   TextEditingController _phoneNoCtrl = TextEditingController();
+  TextEditingController _PasswordCtrl = TextEditingController();
   TextEditingController _verifyCodeCtrl = TextEditingController();
 
 
@@ -30,31 +31,44 @@ class FogetpwdPageState extends State<FogetpwdPage> {
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
+        centerTitle: true,
         title: new Text('忘记密码'),
       ),
+      backgroundColor: Color(0xFFFFFFFF),
       body: new Center(
         child: Container(
-            margin: EdgeInsets.all(20.0),
-            color: Colors.white,
+            margin: EdgeInsets.all(10.0),
             child: Form(
               //绑定状态属性
               key: _formKey,
               child: Padding(
-                padding: new EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 0.0),
+                padding: new EdgeInsets.all(0),
                 child: ListView(
                   children: [
+                    Padding(
+                        padding: new EdgeInsets.all(40),
+                        child: Center(
+                          child: Image.asset(
+                            'images/logo.png',
+                            width: 48,
+                            height: 48,
+                            fit: BoxFit.fill,
+                          ),
+                        )),
                     _buildPhoneText(),
                     _buildVerifyCodeEdit(),
                     _buidPassword(),
                     const SizedBox(height: 24.0),
-                    GestureDetector(
+              Padding(
+                padding: new EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 25.0),
+                child:GestureDetector(
                       onTap: _forSubmitted,
                       child: Container(
-                        width: 80,
-                        height: 40,
+                        width: double.infinity,
+                        height: 46,
                         decoration: new BoxDecoration(
                           color: KColorConstant.themeColor,
-                          borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                          borderRadius: BorderRadius.all(Radius.circular(23.0)),
                           border: Border.all(
                               width: 1.0, color: KColorConstant.themeColor),
                         ),
@@ -66,7 +80,7 @@ class FogetpwdPageState extends State<FogetpwdPage> {
                           ),
                         ),
                       ),
-                    )
+                    ))
 
 
                   ],
@@ -143,10 +157,10 @@ class FogetpwdPageState extends State<FogetpwdPage> {
     final form = _formKey.currentState;
 //    _verifyCode=_verifyCodeCtrl.text;
     _phoneNo= _phoneNoCtrl.text.trim();
-
+_password=_PasswordCtrl.text;
     form.save();
 //    && _verifyCode != ''
-    if (_phoneNo!='' && _password!='' ) {
+    if (_phoneNo.isNotEmpty && _password.isNotEmpty ) {
 
       String timestap = ComFun.timestamp;
       Map<String, String> params = {
@@ -170,7 +184,26 @@ class FogetpwdPageState extends State<FogetpwdPage> {
   }
 
   Widget _buidPassword() {
-    return TextFormField(
+    return Padding(
+      padding: new EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 25.0),
+      child: ComFun.buideloginInput(
+        context,
+        "至少6位密码",
+        _PasswordCtrl,
+        header: IconButton(
+          icon: new Icon(
+              _obscureText ? Icons.visibility_off : Icons.visibility,
+              color: KColorConstant.mainColor),
+          onPressed: () {
+            setState(() {
+              _obscureText = !_obscureText;
+            });
+          },
+        ),
+        obscure: _obscureText,
+      ),
+    );
+     TextFormField(
       obscureText: _obscureText,
       validator: (String value) {
         if (value.isEmpty || value.trim().length <= 6) {
@@ -214,105 +247,50 @@ class FogetpwdPageState extends State<FogetpwdPage> {
 
   Widget _buildPhoneText() {
     var node = new FocusNode();
-    return TextFormField(
-      controller: _phoneNoCtrl,
-//      autovalidate: true,
-      decoration: InputDecoration(
-        contentPadding: const EdgeInsets.symmetric(vertical: 12.0),
-        icon: Icon(Icons.phone,color: KColorConstant.themeColor,) ,
-        hintText:  "请输入手机号码",
-        filled: true,
-        fillColor: Colors.white,
+    return  Padding(
+      padding: new EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 25.0),
+      child: ComFun.buideloginInput(
+          context, "手机号码", _phoneNoCtrl,
+          textInputType: TextInputType.phone,
+          header:
+          Icon(Icons.phone, color: KColorConstant.mainColor)
       ),
-//      style: Theme.of(context).textTheme.headline,
-      maxLines: 1,
-      maxLength: 11,
-      //键盘展示为号码
-      keyboardType: TextInputType.phone,
-      //只能输入数字
-      inputFormatters: <TextInputFormatter>[
-        WhitelistingTextInputFormatter.digitsOnly,
-      ],
-      validator: (String value) {
-        if (value.isEmpty) {
-          return '';
-        } else {
-          if (!ComFun.isChinaPhoneLegal(value.trim())) return '号码有误';
-        }
-      },
-      onSaved: (String value) {
-        _phoneNo = value.trim();
-      },
-
     );
   }
 
   Widget _buildVerifyCodeEdit() {
     var node = new FocusNode();
-    Widget verifyCodeEdit = new TextFormField(
-      controller: _verifyCodeCtrl,
-//      autovalidate: true,
-       decoration: new InputDecoration(
-        contentPadding: const EdgeInsets.symmetric(vertical: 12.0),
-        icon: Icon(Icons.assignment_late,color: KColorConstant.themeColor,) ,
-        hintText:  "请输入验证码",
-        filled: true,
-        fillColor: Colors.white,
-        errorStyle: TextStyle(fontSize: 8),
-      ),
-      maxLines: 1,
-      maxLength: 4,
-      //键盘展示为数字
-      keyboardType: TextInputType.number,
-      //只能输入数字
-      inputFormatters: <TextInputFormatter>[
-        WhitelistingTextInputFormatter.digitsOnly,
-      ],
-
-      validator: (String value) {
-        if (value.isEmpty) {
-          return '请填写验证码';
-        }
-      },
-      onSaved: (String value) {
-//        _verifyCode = value.trim();
-      },
-
-    );
-    Widget verifyCodeBtn = new InkWell(
+     Widget verifyCodeBtn = new GestureDetector(
       onTap: (_seconds == 0) ? _getsmsCode : null,
       child: new Container(
-//        alignment: Alignment.bottomRight,
+        alignment: Alignment.center,
         width: 80.0,
         height: 26.0,
         padding: EdgeInsets.fromLTRB(5.0, 5.0, 5.0, 5.0),
         decoration: BoxDecoration(
-            border: new Border.all(
-              width: 1.0,
-              color: Colors.grey,
-            )
-        ),
+          border: Border(
+              bottom: BorderSide(
+                  width: 1.0, color:KColorConstant.mainColor)),),
         child: Text(
-          '$_verifyStr',
-          style: new TextStyle(fontSize: 11),
+          _verifyStr,
+          style: new TextStyle(fontSize: 11,color: KColorConstant.mainColor),
         ),
       ),
     );
 
-    return new Padding(
-      padding: const EdgeInsets.only(
-        left: 0,
-        right: 0,
-        top: 5.0,
-      ),
-      child: new Stack(
-        children: <Widget>[
-          verifyCodeEdit,
-          new Align(
-            alignment: Alignment.topRight,
-            child: verifyCodeBtn,
-          ),
-        ],
+    return  Padding(
+      padding: new EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 25.0),
+      child: ComFun.buideloginInput(
+        context,
+        "验证码",
+        _verifyCodeCtrl,
+        textInputType: TextInputType.number,
+        header: Icon(
+            Icons.assignment_late,
+            color: KColorConstant.mainColor),
+        suffix: Container(
+          child: verifyCodeBtn,
+        ),
       ),
     );
   }

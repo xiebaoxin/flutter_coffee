@@ -2,12 +2,14 @@
 
 class BannerItem {
   int adid;
+  int type;
   String href;
   String picUrl;
-  BannerItem({this.adid,this.href, this.picUrl});
+  BannerItem({this.adid,this.href, this.picUrl,this.type});
   BannerItem.fromJson(Map<String, dynamic> json)
       : adid = json['ad_code'],
-        href = json['ad_link'],
+        href = json['ad_href'],
+        type = json['ad_type'],
         picUrl = json['ad_link'];
 }
 

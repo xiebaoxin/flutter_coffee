@@ -92,7 +92,7 @@ class HttpUtils {
     } else {
       dio.options.headers = {
         'Accept': 'application/json, text/plain, */*',
-        'token': "C20AD4D76FE97759AA27A0C99BFF6710",
+        'token': GlobalConfig.gtoken,
       };
     }
 

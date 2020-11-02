@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/material.dart';
@@ -7,10 +8,10 @@ import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../model/banner.dart';
 import 'comm/comwidget.dart';
+import '../utils/dataUtils.dart';
 import '../components/in_text_dot.dart';
 import '../utils/utils.dart';
 import '../constants/config.dart';
-import '../model/globle_provider.dart';
 import '../globleConfig.dart';
 import '../utils/DialogUtils.dart';
 import '../components/banner.dart';
@@ -19,7 +20,7 @@ import 'category/right_list_view.dart';
 import 'category/search_bar.dart';
 import 'category/sub_category.dart';
 import 'category/categorydata.dart';
-
+import 'comm/map_location.dart';
 
 class CategoryHome extends StatefulWidget {
   @override
@@ -34,44 +35,34 @@ class CategoryHomePageState extends State<CategoryHome>
 
   final double statusBarHeight = MediaQueryData.fromWindow(window).padding.top;
 
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  var _futureBannerBuilderFuture;
-
-  var _categoryData=[
-    {"name":"dsfad",'icon':"",'ucid':"1","data":[
-      {"sname":"dsfad",'icon':"",'goodsid':"1",},
-      {"sname":"dsad",'icon':"",'goodsid':"2",},
-      {"sname":"ds3dd",'icon':"",'goodsid':"3",},
-      {"sname":"dsfa3333d",'icon':"",'goodsid':"4"}
-    ]},
-    {"name":"2ds2fad",'icon':"",'ucid':"2","data":[
-    {"sname":"2dsfad",'icon':"",'goodsid':"1",},
-    {"sname":"2dsad",'icon':"",'goodsid':"2",},
-    {"sname":"2ds3dd",'icon':"",'goodsid':"3",},
-    {"sname":"2dsfa3333d",'icon':"",'goodsid':"4"}]},
-    {"name":"3ds432fad",'icon':"",'ucid':"3","data":[
-      {"sname":"3dsfad",'icon':"",'goodsid':"1",},
-      {"sname":"3dsad",'icon':"",'goodsid':"2",},
-      {"sname":"3ds3dd",'icon':"",'goodsid':"3",},
-      {"sname":"3dsfa3333d",'icon':"",'goodsid':"4"
-    }]},
-    {"name":"444eer4",'icon':"",'ucid':"4","data":[
-      {"sname":"4dsfad",'icon':"",'goodsid':"1",},
-      {"sname":"4dsad",'icon':"",'goodsid':"2",},
-      {"sname":"4ds3dd",'icon':"",'goodsid':"3",},
-      {"sname":"4dsfa3333d",'icon':"",'goodsid':"4"
-    }]}];
+  final GlobalKey<ScaffoldState> _scaffoldcgKey = GlobalKey<ScaffoldState>();
+  var _futureBuilderFuture;
 
   GlobalKey<RightListViewState> rightListviewKey =
-  new GlobalKey<RightListViewState>();
+      new GlobalKey<RightListViewState>();
   GlobalKey<CategoryMenueState> categoryMenueKey =
-  new GlobalKey<CategoryMenueState>();
-  List<SubCategoryListModel> listViewData = [];
+      new GlobalKey<CategoryMenueState>();
+
 
   ScrollController _strollCtrl = ScrollController();
   bool showMore = false; //是否显示底部加载中提示
   double topimgheight = 160.0;
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+var _categoryData=categoryData;
+  List<SubCategoryListModel> listViewData = [];
+
+  Map<String, dynamic> _machine;
+
+   double dheight = MediaQuery
+      .of(Constants.navigatorKey.currentContext)
+      .size
+      .height;
+
+  double extralHeight = Klength.topBarHeight + //顶部标题栏高度
+      Klength.bottomBarHeight + //底部tab栏高度
+      10 + //状态栏高度ScreenUtil.statusBarHeight
+      30; //IPhoneX底部状态栏bottomBarHeight
+
 
   @override
   Widget build(BuildContext context) {
@@ -79,8 +70,7 @@ class CategoryHomePageState extends State<CategoryHome>
     return Material(
         child: Scaffold(
             backgroundColor: KColorConstant.backgroundColor,
-//          backgroundColor: KColorConstant.mainColor,
-            key: _scaffoldKey,
+            key: _scaffoldcgKey,
             body: EasyRefresh(
                 header: ClassicalHeader(
                     refreshedText: "松开刷新",
@@ -88,140 +78,188 @@ class CategoryHomePageState extends State<CategoryHome>
                     bgColor: KColorConstant.mainColor,
                     textColor: Color(0xFFFFFFFF)),
                 onRefresh: () async {
-                  setState(() {
-                    _getbannerd = false;
-                    _futureBannerBuilderFuture = _getbannerdata();
-
-                  /*  _page = 0;
-                    _shopsList = List();
-                    comShopList();*/
-                  });
+                    _futureBuilderFuture = getmachinedata();
+                    setState(() {  });
                 },
-                child: mainbody())));
+                child:  FutureBuilder<Map<String, dynamic>>(
+                    future: _futureBuilderFuture, builder: _buildMachineBody))));
   }
 
-  Widget mainbody() {
-    final double dheight=MediaQuery.of(context).size.height;
+  Widget _buildMachineBody(
+      BuildContext context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
 
-    double extralHeight = Klength.topBarHeight + //顶部标题栏高度
-        Klength.bottomBarHeight + //底部tab栏高度
-        10 + //状态栏高度ScreenUtil.statusBarHeight
-        30; //IPhoneX底部状态栏bottomBarHeight
+    switch (snapshot.connectionState) {
+      case ConnectionState.none:
+      case ConnectionState.active:
+      case ConnectionState.waiting:
+//       showLoadingDialog("获取咖啡机信息……");
+        return Center(child: Padding(padding: const EdgeInsets.all(16.0), child: Text('获取咖啡机信息……')));
+      case ConnectionState.done:
+        if (snapshot.hasError){
+           DialogUtils.showToastDialog(context,'Error: ${snapshot.error}');
+          return Center(child: Padding(padding: const EdgeInsets.all(16.0), child: Text('获取咖啡机信息异常')));
+        }
+        if (snapshot.hasData && snapshot.data!=null)
+            return mainbody(snapshot.data);
+        }
+        return errobody();
+
+    }
+
+
+Widget errobody() {
+  return Padding(
+      padding: const EdgeInsets.all(0),
+      child: Container(
+          height: dheight - Klength.bottomBarHeight,
+          child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+            _topHeadbuild(success: false),
+            Expanded(
+                child: Container(
+                    child: Center(
+                        child: Text("没有找到附近等咖啡机")
+                    )))
+          ])));
+}
+
+  Widget mainbody(Map<String, dynamic> machine) {
+
+    print("------drtypelist  --------");
+
+    print(machine);
+    _categoryData=machine['drinktypelist'] ;
+    print(_categoryData);
+
+    print("------3333--------");
+    listViewData = _categoryData.map((i) {
+      return SubCategoryListModel.fromJson(i);
+    }).toList();
 
     return Padding(
       padding: const EdgeInsets.all(0),
       child: Container(
-        height: dheight-Klength.bottomBarHeight,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-        /*  padding: EdgeInsets.all(0),
-          controller: _strollCtrl,
-          physics: const AlwaysScrollableScrollPhysics(),*/
-          children:[
-            _topHeadbuild(),
-            Container(
-              height: 10,
-            ),
-            Expanded(child:
-            Container(
-
-              child: Center(child:
-              Column(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(Klength.blankwidth),
-                    child: Card(
-                        shape: KfontConstant.cardallshape,
-                        elevation: 5,
-                        color: Colors.white,
-                        child: Container(
-                          height: 100,
-                          child: Center(
-                            child: Container(
-
+        height: dheight - Klength.bottomBarHeight,
+        child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+          _topHeadbuild(),
+          Expanded(
+              child: Container(
+            child: Center(
+                child: Column(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(top:Klength.blankwidth,left:Klength.blankwidth,right:Klength.blankwidth),
+                  child: Card(
+                      shape: KfontConstant.cardallshape,
+                      elevation: 5,
+                      color: Colors.white,
+                      child: Container(
+                        child: Center(
+                          child: Container(
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 8.0, right: 8.0),
                               child: Row(
                                 children: <Widget>[
+                                  Container(
+                                      padding: EdgeInsets.all(5),
+                                      height: 34,
+                                      width: 34,
+                                      decoration: BoxDecoration(
+                                        color: Color(0xffFDF7EB),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(0),
+                                        child: Center(
+                                          child: Icon(
+                                            Icons.location_on,
+                                            color: KColorConstant.mainColor,
+                                          ),
+                                        ),
+                                      )),
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: ListTile(
+                                        title: Text("${_machine['name']}(NO.${_machine['serialNumber']})",
+                                          style: TextStyle(fontWeight: FontWeight.bold,fontSize: 12),),
+                                        subtitle: Text.rich(
+                                          TextSpan(
+                                            text: '[${_machine['distance']*0.001}km]',
+                                            style: TextStyle(
+                                              fontSize: KfontConstant.title12,
+                                              color: Colors.black,
+                                            ),
+                                            children: <TextSpan>[
+                                              TextSpan(
+                                                  text: '${_machine['address']}',
+                                                  style: TextStyle(fontSize: KfontConstant.title12)),
+                                               ],
+                                          ),
+                                        ),
+                                        onTap: ()=>Navigator.of(context).push(MaterialPageRoute(builder: (_) {
+                                          return MapLocationScreen(_machine
+                                          );
+                                        })),
+                                      ),
 
-                                          Container(
-                                              padding: EdgeInsets.all(5),
-                                              height: 40,
-                                              width: 40,
-                                              decoration: BoxDecoration(
-                                                color: Color(0xffFDF7EB),
-                                                shape: BoxShape.circle,
-                                              ),
-                                              child: Padding(
-                                                padding: const EdgeInsets.all(0),
-                                                child: Center(
-                                                  child: Icon(Icons.location_on,color: KColorConstant.mainColor,),
-                                                ),
-                                              )),
-                                          Expanded(child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: ListTile(
-                                              title: Text("万达新天地咖啡机(NO.0012)",style: TextStyle(fontWeight: FontWeight.bold),),
-                                              subtitle: Text.rich(
-                                                TextSpan(
-                                                  text: '[2.3km]',
-                                                  style: TextStyle(
-                                                    fontSize: KfontConstant.title12,
-                                                    color: Colors.black,
-                                                  ),
-                                                  children: <TextSpan>[
-                                                    TextSpan(
-                                                        text: '深圳宝安南山区万象城3楼',
-                                                        style: TextStyle(fontSize: KfontConstant.title12)),
-                                                      ],
-                                                ),
-                                              ),
-                                              trailing: Icon(Icons.chevron_right),
-                                          ),),)
-
+                                    ),
+                                  )
                                 ],
                               ),
                             ),
                           ),
-                        )),
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(Klength.blankwidth),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          SingleChildScrollView(
-                            child: Card(
-                              color: Color(0xFFffffff),
-
-                              child:Container(
-                                width:  75,
-                                child:CategoryMenue(
-                                    key: categoryMenueKey,
-                                    items: _categoryData.map((i){
-                                      print(i['name'].toString());
-                                      return i['name'].toString();
-                                    }).toList(),
-                                    itemHeight:40,
-                                    itemWidth: 75,
-                                    menueTaped: menueItemTap) ,
-                              ) ,
+                        ),
+                      )),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(left:Klength.blankwidth,right:Klength.blankwidth),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        SingleChildScrollView(
+                          child: Card(
+                            color: Color(0xFFffffff),
+                            child: Container(
+                              width: 80,
+                              child: Column(
+                                children: [
+                                  Column(children: [
+                                    Icon(Icons.search),
+                                    Text("搜索",style: TextStyle(fontSize: 10,fontWeight: FontWeight.bold),)
+                                  ],),
+                                  CategoryMenue(
+                                      key: categoryMenueKey,
+                                      items: _categoryData.map((i) {
+//                                        print(i['name'].toString());
+                                        return i['name'].toString();
+                                      }).toList(),
+                                      itemHeight: 40,
+                                      itemWidth: 75,
+                                      menueTaped: menueItemTap),
+                                ],
+                              ),
                             ),
                           ),
-               RightListView(
-                              key: rightListviewKey,
-                              height:MediaQuery.of(context).size.height-extralHeight ,//widget.rightListViewHeight,
-                              dataItems: listViewData,
-                              listViewChanged: listViewChanged)
-
-                        ],
-                      ),
+                        ),
+                        RightListView(
+                            key: rightListviewKey,
+                            height: MediaQuery.of(context).size.height -
+                                extralHeight, //widget.rightListViewHeight,
+                            dataItems: listViewData,
+                            info: machine,
+                            listViewChanged: listViewChanged)
+                      ],
                     ),
-                  )
-                ],
-              )),))
-          ]// listviewchildren(),
-        ),
+                  ),
+                )
+              ],
+            )),
+          ))
+        ] // listviewchildren(),
+            ),
       ),
     );
   }
@@ -232,29 +270,34 @@ class CategoryHomePageState extends State<CategoryHome>
       Container(
         height: 10,
       ),
-      Expanded(child:
-      Container(
+      Expanded(
+          child: Container(
         color: Colors.black26,
-        child: SizedBox(height: 400,),))
-
+        child: SizedBox(
+          height: 400,
+        ),
+      ))
     ];
 
     return itemlist;
   }
 
-  Widget _topHeadbuild() {
+  Widget _topHeadbuild({bool success=false}) {
     return Stack(
       alignment: Alignment.topCenter,
       children: <Widget>[
-        ComWidget()
-            .hometopbackground(context, topbgheight: 180.0, bottomheight: 85),
-        ComWidget().topTitleWidget("菜单"),
-        Positioned(top: ( statusBarHeight+Klength.topBarHeight), left: 10, right: 10, child: mainheadbanner())
+        ComWidget.hometopbackground(context, topbgheight: 180.0, bottomheight: 70),
+        ComWidget.topTitleWidget("菜单"),
+        Positioned(
+            top: (statusBarHeight + Klength.topBarHeight),
+            left: 10,
+            right: 10,
+            child: mainheadbanner(success:success))
       ],
     );
   }
 
-  Widget mainheadbanner() {
+  Widget mainheadbanner({bool success=false}) {
     return Container(
       height: topimgheight,
       child: ClipRRect(
@@ -266,143 +309,34 @@ class CategoryHomePageState extends State<CategoryHome>
           )),
     );
 
-    return FutureBuilder(
-      future: _futureBannerBuilderFuture,
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        //snapshot就是_calculation在时间轴上执行过程的状态快照
-        switch (snapshot.connectionState) {
-          case ConnectionState.none:
-            return new Text('需重新加载'); //如果_calculation未执行则提示：请点击开始
-          case ConnectionState.waiting:
-            return Container(
-                height: topimgheight,
-                child: ClipRRect(
-                    borderRadius: BorderRadius.circular(Klength.circular),
-                    child: Image.asset(
-                      "images/topbg_img.jpg",
-                      height: topimgheight,
-                      fit: BoxFit.fill,
-                    )));
-//                  return new Text('Awaiting result...');  //如果_calculation正在执行则提示：加载中
-          default: //如果_calculation执行完毕
-            if (snapshot.hasError) //若_calculation执行出现异常
-              return Container(
-                height: topimgheight,
-                child: ClipRRect(
-                    borderRadius: BorderRadius.circular(Klength.circular),
-                    child: Image.asset(
-                      "images/topbg_img.jpg",
-                      height: topimgheight,
-                      fit: BoxFit.fill,
-                    )),
-              );
-            else {
-              if (snapshot.hasData) {
-                BannerList banners = snapshot.data;
-                return Container(
-                    height: topimgheight,
-                    child: ClipRRect(
-                        borderRadius: BorderRadius.circular(Klength.circular),
-                        child: banners != null && banners.items.length > 0
-                            ? SwipperBanner(
-                          bannerlist: banners,
-                          nheight: topimgheight,
-                          widthsc: 32.0,
-                        )
-                            : Image.asset(
-                          "images/topbg_img.jpg",
-                          height: topimgheight,
-                          fit: BoxFit.cover,
-                        )));
-              } else {
-                return Container(
-                  height: topimgheight,
-                  child: ClipRRect(
-                      borderRadius: BorderRadius.circular(Klength.circular),
-                      child:
-//                      AspectRatio(
-//                          aspectRatio: 16.0 / 12.0,
-//                          child:
-                      Image.asset(
-                        "images/topbg_img.jpg",
-                        fit: BoxFit.cover,
-//                    ),
-                      )),
-                );
-              }
-            } //若_calculation执行正常完成
-//                    return new Text('Result: ${snapshot.data}');
-        }
-      },
-    );
   }
-
 
   menueItemTap(int i) {
     rightListviewKey.currentState.jumpTopage(i);
   }
 
-
   listViewChanged(i) {
     this.categoryMenueKey.currentState.moveToTap(i);
   }
 
-
   void shownoopenmsg({String strt = '即将开放，敬请期待'}) {
-    _scaffoldKey.currentState.showSnackBar(SnackBar(
+    _scaffoldcgKey.currentState.showSnackBar(SnackBar(
       content: Text(strt),
     ));
   }
 
-  int _page = 0;
-  int pagesize = 20;
-  List<Map<String, dynamic>> _shopsList = List();
-  Future comShopList() async {
-/*    List<Map<String, dynamic>> shopsList = List();
-    shopsList = await ShopUtils.priorityShopList(context, _page, pagesize: pagesize);
-
-    if (shopsList.length > 0) {
-      _page+=pagesize;
-      _shopsList += shopsList;
-      setState(() { });
-    }else
-      setState(() {
-        showMore = true;
-      });*/
-  }
-
-  List<Map<String, dynamic>> _listbanner = [];
-  bool _getbannerd = false;
-  Future _getbannerdata() async {
-    BannerList banners;
-    if (_getbannerd) return _listbanner;
-    List<Map<String, dynamic>> imagessList = List();
-//    _listbanner = await DataUtils.getIndexTopSwipperBanners(context);
-    if (_listbanner != null && _listbanner.length > 0) {
-      _listbanner.forEach((ele) {
-        if (ele['PICURL'] != null) {
-          var el = {'ad_code': ele['RID'], 'ad_link': servpic(ele['PICURL'])};
-          imagessList.add(el);
-        }
-      });
-
-      banners = BannerList.fromJson(imagessList);
-    }
-    _getbannerd = true;
-    return banners;
-  }
 
   @override
   void initState() {
     super.initState();
-    freshdata();
+    _futureBuilderFuture=getmachinedata();
     // TODO: implement initState
     _strollCtrl.addListener(() {
       if (_strollCtrl.position.pixels == _strollCtrl.position.maxScrollExtent) {
 //        print('滑动到了最底部${_strollCtrl.position.pixels}');
-        setState(() {
-          showMore = true;
-        });
+//        setState(() {
+//          showMore = true;
+//        });
       }
     });
   }
@@ -410,26 +344,65 @@ class CategoryHomePageState extends State<CategoryHome>
   @override
   void dispose() {
     super.dispose();
-    _futureBannerBuilderFuture = null;
+    _futureBuilderFuture = null;
   }
 
-  void freshdata() async {
+  Future<Map<String, dynamic>> getmachinedata() async {
+    final SharedPreferences prefs = await _prefs;
+    _machine=jsonDecode(prefs.getString("machine"))??null ;
 
-    _getbannerd = false;
-    _futureBannerBuilderFuture = _getbannerdata();
-    _categoryData.map((i){
+    print(_machine);
+  /*  _categoryData.map((i) {
       print(i['name']);
       return i['name'];
     }).toList();
-    /*_page = 0;
-    _shopsList = List();
-    await comShopList();*/
-    listViewData = _categoryData.map((i){
-      return SubCategoryListModel.fromJson(i);
-    }).toList();
-    setState(() {
 
-    });
+    listViewData = _categoryData.map((i) {
+      return SubCategoryListModel.fromJson(i);
+    }).toList();*/
+
+    List<Map<String, dynamic>> drtypelist= await DataUtils.getDrinkTypeList(context, _machine['id']);
+
+
+     _machine.putIfAbsent("drinktypelist", (){
+
+      return drtypelist;});
+
+   /*  _machine.putIfAbsent("drinklist", ()async{
+
+      return json.encode(await DataUtils.getDrinkList(context, _machine['id'],drtypelist[0]['id']));});
+*/
+
+    return _machine;
+
+
+  }
+
+  Future<void> setdrinklist(List<Map<String, dynamic>> typelist){
+  var tre=  typelist.map((it)async{
+    Map<String, dynamic> drinkitem;
+    /*{id: 15, name: 人气Top, deviceId: 16}, {id: 16, name: 经典拿铁, deviceId: 16}*/
+    drinkitem={
+      "name": it['name'],
+      'icon': "",
+      'ucid': "1",
+    };
+    List<Map<String, dynamic>> drinklist=await DataUtils.getDrinkList(context, _machine['id'],it['id']);
+
+    /*{idSugar: true, image: http://wangpei-iot.oss-cn-beijing.aliyuncs.com/images/8ce3e597-9f9a-4511-b9f7-2550391f56cf.jpg?Expires=1915848218&OSSAccessKeyId=LTAI4FyaLq1QXuXkfsZExVpk&Signature=4KGZL5huy1Scx7ZRVxMbH%2BIK%2B9k%3D,
+     coffeeName: 刘桂香, money: 0.01, id: 70, type: 1},
+     {idSugar: true, image: http://wangpei-iot.oss-cn-beijing.aliyuncs.com/images/403fd4f7-ca83-44bb-b128-8bcdb50e697a.jpg?Expires=1915773859&OSSAccessKeyId=LTAI4FyaLq1QXuXkfsZExVpk&Signature=n4ADKVoTmNyUoEaDVQpt5%2FZLgoc%3D,
+     coffeeName: 飞天茅台, money: 0.02, id: 69, type: 1}, {idSugar: false, image: http://wangpei-iot.oss-cn-beijing.aliyuncs.com/images/43753db9-8638-43f4-b4eb-54263e3e7640.jpg?Expires=1915773272&OSSAccessKeyId=LTAI4FyaLq1QXuXkfsZExVpk&Signature=o1qmLL5%2BrWEMBhaRf3gsLHUYZ6Y%3D, coffeeName: 生命之水, money: 0.01, id: 68, type: 1}]
+*/
+    drinkitem.putIfAbsent("data", () => drinklist
+//        {
+//      "sname": "热销1",
+//      'icon': "",
+//      'goodsid': "1",
+//    }
+    );
+     return drinkitem;
+   }).toList();
   }
 
   bool _loading = false;

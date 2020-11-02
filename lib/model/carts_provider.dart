@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:core';
 import 'package:flutter/material.dart';
 import 'cart.dart';
+import '../views/cart/cartdata.dart';
 
 class CartsProvider with ChangeNotifier {
 
@@ -100,7 +101,14 @@ class CartsProvider with ChangeNotifier {
       notifyListeners();
   }
 
-
+void initcartdemo(){
+  _cartitems=List();
+  cartData.forEach((element) {
+    CartItemModel item=CartItemModel.fromJson((element));
+    _cartitems.add(item);
+  });
+  notifyListeners();
+}
 
 
 }

@@ -1,24 +1,25 @@
 import 'dart:io';
 import 'dart:convert';
 import 'dart:async';
+import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:convert/convert.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:device_info/device_info.dart';
 import 'package:crypto/crypto.dart';
-
 import 'package:encrypt/encrypt.dart' as encry;
 import 'package:date_format/date_format.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_cupertino_date_picker/flutter_cupertino_date_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
-import '../routers/application.dart';
 import 'package:permission_handler/permission_handler.dart';
-import '../constants/color.dart';
-import '../model/globle_provider.dart';
-import 'dataUtils.dart';
+import 'package:barcode_scan/barcode_scan.dart';
+import 'package:flutter_coffee/constants/color.dart';
+import '../components/keyboard/keyboard_main.dart';
 import 'utils.dart';
+
 
 class EncryptUtil {
 
@@ -61,6 +62,14 @@ const String MAX_DATETIME = '2029-12-01 20:08:00';
 const String ENCSOUT = "wangpei";
 
 class ComFun {
+  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+
+  Future get theToken async {
+    SharedPreferences prefs = await _prefs;
+    return  prefs.getString("token");
+
+  }
+
   static String get timestamp =>
       DateTime.now().millisecondsSinceEpoch.toString();
 
@@ -70,7 +79,7 @@ class ComFun {
     return hex.encode(digest.bytes);
   }
 
-  static Map<String, String>  aesen(String head,Map<String, String> params){
+  static Map<String, String>  aesen(String head,Map<String, dynamic> params){
     Map<String, String> treeMap = Map();
     params.putIfAbsent("timestamp", ()=> timestamp );
 //先排序，按字段加密，
@@ -154,12 +163,18 @@ class ComFun {
     return rtstats;
   }
 
-  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
-  Future get theToken async {
-    SharedPreferences prefs = await _prefs;
-    return  prefs.getString("token");
-
+  Future<String>  getDeviceInfoName() async{
+    DeviceInfoPlugin deviceInfo = new DeviceInfoPlugin();
+    if(Platform.isIOS){
+//      print('IOS设备：');
+      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+      return "${iosInfo.name},${iosInfo.systemVersion}";
+    }else if(Platform.isAndroid){
+//      print('Android设备');
+      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      return "${androidInfo.brand},${androidInfo.model},${androidInfo.version.release}";
+    }
   }
 
   Future setdefaultunitindex(int uindex) async {
@@ -419,6 +434,34 @@ class ComFun {
         });
   }
 
+  static void getPassword(context, Function callback) {
+    Widget bottomShowWidget = Material(
+      color: Color.fromRGBO(0, 0, 0, 0.5),
+      child: SafeArea(
+          bottom: false,
+          child: Container(
+            height: MediaQuery.of(context).size.height,
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              color: Color(0xFFFFFFFF),
+              height: 400,
+              child: MpsKeyboard(),
+            ),
+          )),
+    );
+    Navigator.of(context)
+        .push(PageRouteBuilder(
+        opaque: false,
+        pageBuilder: (context, animation, secondaryAnimation) {
+          return bottomShowWidget;
+        }))
+        .then((v) {
+      if (v != null) {
+        callback(v);
+      }
+    });
+  }
+
   void selectHours(context, Function callback) {
     List<Map<String, dynamic>> inithlist = [
       {'name': "1小时", "value": 1},
@@ -576,7 +619,7 @@ class ComFun {
       context: context,
       builder: (context) => new AlertDialog(
         title: new Text('退出提示'),
-        content: new Text('确定将退出app吗？确定后系统将返回桌面。请保持App运行状态，否则影响门禁视频呼叫业务。'),
+        content: new Text('确定将退出app吗？确定后系统将返回桌面。'),
         actions: <Widget>[
           new FlatButton(
             onPressed: () => Navigator.of(context).pop(false),
@@ -597,6 +640,26 @@ class ComFun {
         false;
   }
 
+
+
+  static Future<String> scanqr() async {
+    String scmsg = "";
+    try {
+      var options = ScanOptions();
+      ScanResult result = await BarcodeScanner.scan(options: options);
+      scmsg = result.rawContent;
+    } on PlatformException catch (e) {
+      scmsg = "相机权限错误: $e";
+    } on FormatException {
+      scmsg = "二维码读取错误";
+    } catch (e) {
+      scmsg = e.toString();
+    }
+    print("扫描结果:$scmsg");
+    return scmsg;
+  }
+
+
   Widget buildMyButton(BuildContext context, String text, Function pressfun,
       {double width = 100,
         double height = 45,
@@ -610,59 +673,85 @@ class ComFun {
     return RaisedButton(
         color: bgcolor,
         elevation: 4,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular((height / 2) - 4.0)),
+        ),
         child: Container(
             alignment: Alignment.center,
             width: width,
             height: height,
+          /*  decoration: new BoxDecoration(
+              color: bgcolor, //背景
+              //设置四周圆角 角度 这里的角度应该为 父Container height 的一半
+              borderRadius: BorderRadius.all(Radius.circular(height / 2 - 4)),
+//                BorderRadius.all(Radius.circular(25.0)),
+              //设置四周边框
+              border: null, //new Border.all(width: 1, color: Colors.green),
+            ),*/
             child: Text(
               text,
               style: textstyle,
               maxLines: 1,
             )),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular((height / 2) - 4.0)),
-        ),
+
         onPressed: disabled ? null : pressfun);
   }
 
-  Widget buildConButton(
-      BuildContext context,
-      String text,
-      Function pressfun, {
-        double width,
-        double height,
-        Color bgcolor = const Color(0xFF5FB419),
-        bool disabled = false,
+
+ static Widget buideloginInput(BuildContext context, String Labtext,
+      TextEditingController textControllor,
+      { Widget header,
+        Widget suffix,
         TextStyle textstyle,
-      }) {
-    return InkWell(
-      onTap: disabled ? null : pressfun,
-      child: Container(
+        TextInputType textInputType,
+        bool enable = true,
+        bool obscure=false,
+        Function changfun}) {
+
+    Widget textInputRow = Container(
         alignment: Alignment.center,
-        width: width ?? 100,
-        height: height ?? 44,
+        width:double.infinity ,
+        height: 46,
         decoration: new BoxDecoration(
-          color: bgcolor, //背景
-          //设置四周圆角 角度 这里的角度应该为 父Container height 的一半
-          borderRadius: BorderRadius.all(Radius.circular(height / 2 - 4)),
-//                BorderRadius.all(Radius.circular(25.0)),
-          //设置四周边框
-          border: null, //new Border.all(width: 1, color: Colors.green),
+          color: KColorConstant.greyinputbackground,
+          borderRadius: BorderRadius.all(Radius.circular(23.0)),
+          border: Border.all(width: 1.0, color: KColorConstant.greyinputbackground),
         ),
-//              color: Colors.green,
-        child: Text(
-          text,
-          style: textstyle ??
-              TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontFamily: 'FZLanTing',
-                  fontSize: 12,
-                  color: Colors.white),
-          maxLines: 1,
-        ),
-      ),
-    );
+        child: Padding(
+                padding: new EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 0.0),
+                child: new Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      new Padding(
+                          padding:
+                          new EdgeInsets.fromLTRB(0.0, 0.0, 10.0, 0.0),
+                          child: header),
+                      new Expanded(
+                        child: new TextField(
+                          controller: textControllor,
+                          cursorColor: KColorConstant.mainColor,
+                          keyboardType: textInputType??TextInputType.streetAddress,
+
+                          obscureText: obscure,
+                          decoration: InputDecoration(
+                              hintText: '请输入$Labtext',
+                              contentPadding: EdgeInsets.all(9.0),
+                              border:InputBorder.none,
+                               suffixIcon: suffix,
+                          ),
+
+                        ),
+                      ),
+                    ])),
+         );
+
+    return !enable
+        ? IgnorePointer(
+      child:  textInputRow,
+    )
+        :  textInputRow;
   }
+
 }
 
 class AndroidBackTop {

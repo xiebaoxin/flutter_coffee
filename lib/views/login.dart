@@ -1,12 +1,13 @@
 import 'dart:core'; //timer
 import 'dart:async';
 import 'dart:io';
+import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../model/globle_provider.dart';
-//import 'package:fluwx/fluwx.dart' as fluwx;
-//import '../utils/dataUtils.dart';
+import 'package:fluwx/fluwx.dart' as fluwx;
+import '../utils/HttpUtils.dart';
 import '../globleConfig.dart';
 import '../utils/DialogUtils.dart';
 import '../utils/dataUtils.dart';
@@ -28,9 +29,10 @@ class LoginPageState extends State<LoginPage> {
   String _checkStr = '';
   TextEditingController _phonecontroller = new TextEditingController();
   TextEditingController _pwdcontroller = new TextEditingController();
-
+  GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
   final FocusNode _focusNode = FocusNode();
-
+  bool _loginbywx = false;
+  Map<String, dynamic> _wxuserInfo;
   bool _obscure = true;
   @override
   Widget build(BuildContext context) {
@@ -40,42 +42,169 @@ class LoginPageState extends State<LoginPage> {
           title: new Text("登录${_loading ? '中…' : ''}"),
           centerTitle: true,
         ),
+        backgroundColor: Color(0xFFFFFFFF),
         body: SingleChildScrollView(
             child: Container(
-          color: Color(0xFFFFFFFF),
+
           height: MediaQuery.of(context).size.height - 100,
-          child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
+          child:Form(
+    //绑定状态属性
+    key: _formKey,
+    child:ListView(
+//              mainAxisAlignment: MainAxisAlignment.start,
+//              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
 //                const SizedBox(height: 35.0),
                 new Padding(
-                    padding: new EdgeInsets.only(top: 60, bottom: 10.0),
-                    child: Image.asset(
-                      'images/logo.png',
-                      width: 88,
-                      height: 88,
-                      fit: BoxFit.cover,
+                    padding: new EdgeInsets.all(40),
+                    child: Center(
+                      child: Image.asset(
+                        'images/logo.png',
+                        width: 68,
+                        height: 68,
+                        fit: BoxFit.fill,
+                      ),
                     )),
+                Padding(
+                  padding: new EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 25.0),
+                  child: ComFun.buideloginInput(
+                      context, "手机号码", _phonecontroller,
+                      textInputType: TextInputType.phone,
+                      header:
+                          Icon(Icons.person, color: KColorConstant.mainColor)
+                  ),
+                ),
+                Padding(
+                  padding: new EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 15.0),
+                  child: ComFun.buideloginInput(
+                    context,
+                    "密码",
+                    _pwdcontroller,
+                    header: IconButton(
+                      icon: new Icon(
+                          _obscure ? Icons.visibility_off : Icons.visibility,
+                          color: KColorConstant.mainColor),
+                      onPressed: () {
+                        setState(() {
+                          _obscure = !_obscure;
+                        });
+                      },
+                    ),
+                   /* suffix: Container(
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => FogetpwdPage(),
+                              ));
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(5),
+                          child: Text(
+                            "忘记密码",
+                            style: new TextStyle(fontSize: 14.0),
+                          ),
+                        ),
+                      ),
+                    ),*/
+                    obscure: _obscure,
+                  ),
+                ),
+                buidcommit(),
 
-                    Center(child: mobilelogindiv()),
-                    Center(
+                Center(
+                    child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                        child: Center(
+                      child: GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => register(),
+                                ));
+                          },
+                          child: Text(
+                            "注册",
+                          )),
+                    )),
+                    Container(
+                      width: 2,
+                      color: KColorConstant.mainColor,
+                    ),
+                    Expanded(
+                        child: Container(
+                      child: Center(
                         child: GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => register(),
-                                  ));
-                            },
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => FogetpwdPage(),
+                                ));
+                          },
+                          child: Container(
+                            padding: EdgeInsets.all(5),
                             child: Text(
-                              "新用户注册",
-                            ))),
+                              "忘记密码",
+                              style: new TextStyle(fontSize: 14.0),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ))
+                  ],
+                )),
+                SizedBox(
+                  height: 30,
+                ),
+                Center(
+                    child: Text(
+                  "使用以下方式进行注册/登录",
+                  style: TextStyle(fontSize: 16, color: Color(0xff9F9F9F)),
+                )),
+                Padding(
+                  padding: const EdgeInsets.only(left:38.0,right: 38.0),
+                  child: Divider(),
+                ),
 
-                    Center(child: _buideRegtxt()),
-
+                Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: GestureDetector(
+                          onTap: () async {
+                            await fluwx.sendWeChatAuth(
+                                scope: "snsapi_userinfo", state: "wechat_sdk_demo_test");
+                          },
+                          child:Image.asset(
+                          'images/wechat.png',
+                          width: 52,
+                          height: 52,
+                          fit: BoxFit.cover,
+                        )),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Image.asset(
+                          'images/QQ.png',
+                          width: 52,
+                          height: 52,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+//                    Center(child: _buideRegtxt()),
               ]),
-        )));
+        )
+            )));
   }
 
   bool _loading = false;
@@ -84,7 +213,7 @@ class LoginPageState extends State<LoginPage> {
     setState(() {
       _loading = true;
     });
-    DialogUtils.showLoadingDialog(context,text:"登录中");
+    DialogUtils.showLoadingDialog(context, text: "登录中");
   }
 
   // 隐藏加载进度条
@@ -100,6 +229,21 @@ class LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
+    if (fluwx.isWeChatInstalled == false)
+      setState(() {
+        _loginbywx = false;
+      });
+
+    fluwx.weChatResponseEventHandler
+        .distinct((a, b) => a == b)
+        .listen((res) async {
+      if (res is fluwx.WeChatAuthResponse) {
+        if (res.errCode == 0) {
+          print("-------微信---state :${res.state}  response.code:${res.code}");
+          await _getUserWxInfo(res.code);
+        }
+      }
+    });
   }
 
   @override
@@ -109,6 +253,55 @@ class LoginPageState extends State<LoginPage> {
     _pwdState = null;
     _phonecontroller = null;
     _pwdcontroller = null;
+  }
+
+/*
+通过code传给服务器获取用户信息
+ */
+  Future _getUserWxInfo(String code) async {
+    Map<String, String> params = {
+      "code": code,
+    };
+    showLoadingDialog();
+    await HttpUtils.get("WxAppAuth/userWxInfo", params, context: context)
+        .then((response) async {
+      if (response['data']['unionid'].isNotEmpty) {
+        _wxuserInfo = response['data'];
+        setState(() {});
+        await _checkWxlogin();
+      } else {
+        _alertmag("微信认证失败!");
+        hideLoadingDialog();
+      }
+    });
+  }
+
+  /**
+   * 微信登录
+   * 如果未认证则注册,注册成功后再返回登录信息
+   * 如已认证则登录返回登录信息
+   */
+  Future _checkWxlogin() async {
+    if (_wxuserInfo.isNotEmpty) {
+      var pdata = {
+        "unionid": "_unionId",
+        "wxinfo": jsonEncode(_wxuserInfo),
+      };
+
+      var response =
+          await HttpUtils.post("PublicContr/checkWx", pdata, context: context);
+      if (response["code"] == 200) {
+//        返回登录后的用户信息 response["userinfo"]
+        if (await DataUtils().loginserv(context, response["userinfo"])) {
+          hideLoadingDialog();
+          Navigator.of(context).pop(true);
+        } else
+          _alertmag("登录失败");
+      } else
+        await _alertmag("微信登录失败:${response["message"]}");
+
+      hideLoadingDialog();
+    }
   }
 
   void _login() async {
@@ -133,13 +326,13 @@ class LoginPageState extends State<LoginPage> {
     var _pwd = _pwdcontroller.text;
 
     showLoadingDialog();
-   if(await DataUtils().login(context, _phone, _pwd)){
-     hideLoadingDialog();
-     Navigator.of(context).pop(true);
-   }else
-     _alertmag("登录失败");
-    hideLoadingDialog();
-
+    if (await DataUtils().login(context, _phone, _pwd)) {
+      hideLoadingDialog();
+      Navigator.of(context).pop(true);
+    } else {
+      _alertmag("登录失败");
+      hideLoadingDialog();
+    }
   }
 
   void _checkPhone() {
@@ -219,125 +412,30 @@ class LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget mobilelogindiv() {
-    return Padding(
-      padding: const EdgeInsets.all(10),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Padding(
-            padding: new EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 15.0),
-            child: new Stack(
-              alignment: new Alignment(1.0, 1.0),
-              //statck
-              children: <Widget>[
-                new Padding(
-                    padding: new EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 0.0),
-                    child: new Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          new Padding(
-                              padding:
-                                  new EdgeInsets.fromLTRB(0.0, 0.0, 5.0, 0.0),
-                              child: Icon(Icons.person,
-                                  color: KColorConstant.mainColor)),
-                          new Expanded(
-                            child: new TextField(
-                              controller: _phonecontroller,
-                              cursorColor: KColorConstant.mainColor,
-                              keyboardType: TextInputType.phone,
-                              //光标切换到指定的输入框
-                              onEditingComplete: () => FocusScope.of(context)
-                                  .requestFocus(_focusNode),
-                              decoration: new InputDecoration(
-                                hintText: '请输入手机号码',
-                                contentPadding: EdgeInsets.all(10.0),
-                              ),
-                            ),
-                          ),
-                        ])),
-              ],
+  Widget buidcommit() {
+    return Visibility(
+        visible: _termsChecked,
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: GestureDetector(
+            onTap: _loading ? null : _login,
+            child: Container(
+              width: double.infinity,
+              height: 46,
+              decoration: new BoxDecoration(
+                color: KColorConstant.mainColor,
+                borderRadius: BorderRadius.all(Radius.circular(23.0)),
+                border: Border.all(width: 1.0, color: KColorConstant.mainColor),
+              ),
+              child: Center(
+                child: Text(
+                  '登录',
+                  style: new TextStyle(color: Colors.white, fontSize: 18.0),
+                ),
+              ),
             ),
           ),
-          Padding(
-            padding: new EdgeInsets.fromLTRB(20.0, 5.0, 40.0, 10.0),
-            child: new Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  new Padding(
-                      padding: new EdgeInsets.fromLTRB(8.0, 0.0, 0.0, 0.0),
-                      child: IconButton(
-                        icon: new Icon(
-                            _obscure ? Icons.visibility_off : Icons.visibility,
-                            color: KColorConstant.mainColor),
-                        onPressed: () {
-                          setState(() {
-                            _obscure = !_obscure;
-                          });
-                        },
-                      )),
-                  new Expanded(
-                    child: TextField(
-                      controller: _pwdcontroller,
-                      // 光标颜色
-                      cursorColor: KColorConstant.mainColor,
-                      focusNode: _focusNode,
-                      decoration: new InputDecoration(
-                        hintText: '请输入密码',
-                        contentPadding: EdgeInsets.all(10.0),
-                        suffixIcon: Container(
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => FogetpwdPage(),
-                                  ));
-                            },
-                            child: Container(
-                              padding: EdgeInsets.all(15),
-                              child: Text(
-                                "忘记密码",
-                                style: new TextStyle(fontSize: 14.0),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      obscureText: _obscure,
-                    ),
-                  ),
-                ]),
-          ),
-          SizedBox(
-            height: 16,
-          ),
-          Visibility(
-              visible: _termsChecked,
-              child: GestureDetector(
-                onTap: _loading ? null : _login,
-                child: Container(
-                  width: MediaQuery.of(context).size.width / 2,
-                  height: 40,
-                  decoration: new BoxDecoration(
-                    color: KColorConstant.themeColor,
-                    borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                    border: Border.all(
-                        width: 1.0, color: KColorConstant.themeColor),
-                  ),
-                  child: Center(
-                    child: Text(
-                      '登录',
-                      style: new TextStyle(color: Colors.white, fontSize: 16.0),
-                    ),
-                  ),
-                ),
-              )),
-          SizedBox(
-            height: 8,
-          ),
-        ],
-      ),
-    );
+        ));
   }
+
 }

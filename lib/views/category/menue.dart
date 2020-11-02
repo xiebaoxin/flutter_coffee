@@ -29,6 +29,11 @@ class CategoryMenueState extends State<CategoryMenue>
         child: Container(
             height: widget.itemHeight,
             alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: currentItemIndex == i
+                  ? KColorConstant.backgroundColor
+                  : Color(0xFFFFFFFF),
+            ),
             child: Text(
               widget.items[i],
               style: TextStyle(
@@ -42,8 +47,9 @@ class CategoryMenueState extends State<CategoryMenue>
 
     return Stack(
       children: <Widget>[
+        Column(children: widgets) ,
         Positioned(
-            width: widget.itemWidth,
+            width: 4,
             height: widget.itemHeight,
             top: animation.value,
             child: Stack(
@@ -52,16 +58,16 @@ class CategoryMenueState extends State<CategoryMenue>
                   color: Color(0xFFFFFFFF),
                 ),
                 Positioned(
-                  top: 12.5,
+                  top: 0,
                   child: Container(
                     width: 3,
-                    height: 20,
-                    color: Color.fromRGBO(132, 95, 63, 1.0),
+                    height: widget.itemHeight,
+                    color: KColorConstant.themeColor,//Color.fromRGBO(132, 95, 63, 1.0),
                   ),
                 )
               ],
             )),
-        Column(children: widgets)
+
       ],
     );
   }

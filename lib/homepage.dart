@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:core';
 import 'package:flutter_app_badger/flutter_app_badger.dart';
+import 'package:amap_map_fluttify/amap_map_fluttify.dart';
+import 'package:amap_core_fluttify/amap_core_fluttify.dart';
+import 'package:amap_location_fluttify/amap_location_fluttify.dart';
+import 'package:decorated_flutter/decorated_flutter.dart';
 import 'utils/comUtil.dart';
 import 'views/myInfopage.dart';
 import './globleConfig.dart';
@@ -14,6 +18,8 @@ import 'views/showmap.dart';
 import './utils/dataUtils.dart';
 
 class HomePage extends StatefulWidget {
+  final int tabindex;
+  HomePage({this.tabindex=0});
   @override
   HomePageState createState() => new HomePageState();
 }
@@ -53,7 +59,7 @@ class HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin{
   ];
 
   // 菜单文案'商城','直播',
-  var tabTitles = ['首页', '菜单', '商城', '购物车', '我的']; //'灵芝鸡蛋',
+  var tabTitles = ['首页', '菜单', '附近', '购物车', '我的']; //'灵芝鸡蛋',
 
   // 页面内容
   var _pages=[
@@ -127,6 +133,7 @@ class HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin{
               child: Scaffold(
                 body: _pages[_tabIndex],
                 bottomNavigationBar: CupertinoTabBar(
+
                   items: getBottomNavigationBarItem(),
                   currentIndex: _tabIndex,
 //              activeColor: KColorConstant.mainColor,
@@ -187,6 +194,8 @@ class HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin{
   }
   @override
   void initState() {
+    _tabIndex=widget.tabindex;
+    _getinitdata();
     checkappdot();
     super.initState();
 //    if (mounted) {
@@ -201,6 +210,16 @@ class HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin{
   @override
   void dispose() {
     super.dispose();
+  }
+
+
+  Future _getinitdata() async {
+    await AmapCore.init(GlobalConfig.aMapIosAppId);
+    await AmapService.instance.init(
+      iosKey: GlobalConfig.aMapIosAppId,
+      androidKey: GlobalConfig.aMapAppId,
+    );
+
   }
 
 }

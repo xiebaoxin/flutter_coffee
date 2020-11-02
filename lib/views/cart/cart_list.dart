@@ -18,13 +18,26 @@ CartListWidget({this.isedit=false});
 
   @override
   Widget build(BuildContext context) {
-
     return Consumer<CartsProvider>(
         builder: (context, CartsProvider model, _) {
       if(model.itemsCount==0)
         return Center(child: Padding(
-          padding: const EdgeInsets.all(28.0),
-          child: Text("空空如也,快去购物吧"),
+          padding: const EdgeInsets.all(18.0),
+          child:
+          Column(
+            children: [
+              Image.asset(
+                'images/backgroud/nocart.png',
+                width: 200,
+                fit: BoxFit.contain,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(18.0),
+                child: Text("购物车是空的……",style: TextStyle(color: Colors.grey),),
+              )
+            ],
+          ),
+
         ));
       else
       return Container(
@@ -61,7 +74,7 @@ CartListWidget({this.isedit=false});
                       model.downCount(i);
                     },
                     index: index,
-                    showtype: 1,
+                    showtype: 0,
                     switchChaned: (i){ model.switchSelect(i);},
                   ),
                 /*  Positioned(

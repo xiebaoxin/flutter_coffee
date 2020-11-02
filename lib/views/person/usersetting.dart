@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import '../utils/utils.dart';
 import 'package:provider/provider.dart';
-import '../utils/DialogUtils.dart';
-import '../routers/application.dart';
-import '../utils/cache.dart';
-import '../components/ImageCropPage.dart';
-import '../model/globle_provider.dart';
-import '../globleConfig.dart';
-import '../components/upgradeApp.dart';
-import '../utils/HttpUtils.dart';
-import '../utils/comUtil.dart';
-import '../model/userinfo.dart';
+import '../../utils/utils.dart';
+import '../../utils/DialogUtils.dart';
+import '../../routers/application.dart';
+import '../../utils/cache.dart';
+import '../../components/ImageCropPage.dart';
+import '../../model/globle_provider.dart';
+import '../../globleConfig.dart';
+import '../../components/upgradeApp.dart';
+import '../../utils/dataUtils.dart';
+import '../../utils/comUtil.dart';
+import '../../utils/HttpUtils.dart';
+import '../../model/userinfo.dart';
+import 'set_paypwd.dart';
 
 class SetUserinfo extends StatefulWidget {
   @override
@@ -30,30 +32,15 @@ class SetUserinfoState extends State<SetUserinfo> {
 String _cache="";
   @override
   Widget build(BuildContext context) {
+    final model =  Provider.of<GlobleProvider>(context);
+    _userinfo = model.userinfo;
+    _userAvatar = model.userinfo.avtar;
+    _sex = _userinfo.json['sex'];
+
     return new Scaffold(
       appBar: new AppBar(
         title: new Text('账户设置'),
         centerTitle: true,
-/*        actions: <Widget>[
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.only(right: 8.0),
-              child: InkWell(
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: Text(_isedit ? "保存" : "编辑"),
-                ),
-                onTap: () {
-                  setState(() {
-                    if (_isedit) upSubmitted();
-
-                    _isedit = !_isedit;
-                  });
-                },
-              ),
-            ),
-          )
-        ],*/
       ),
       body: Form(
           //绑定状态属性
@@ -108,7 +95,7 @@ String _cache="";
                           ],
                         ),
                         onTap: () {
-                      /*    Application().checklogin(context, () {
+                          Application().checklogin(context, () {
                             Navigator.push(
                               context,
                               new MaterialPageRoute(
@@ -116,7 +103,7 @@ String _cache="";
                             );
                           }).then((v) {
                             initinfo();
-                          });*/
+                          });
                         },
                       ),
                     /*  renderRow(
@@ -149,7 +136,7 @@ String _cache="";
 //                                icon: Icon(Icons.phone)
                                             ),
                                           ))
-                                      : Text(_userinfo.name),
+                                      : Text(_userinfo.name??_userinfo.phone),
                                 ],
                               ),
                             ),
@@ -232,10 +219,20 @@ String _cache="";
                       ),*/
                       renderRow(
                           Icon(Icons.play_for_work, color: _iconcolor),
-                          _userinfo.phone != ''
-                              ? "${_userinfo.phone} 已绑定"
-                              : "未绑定手机",
+                          "手机",
+                          texti: _userinfo.phone != ''
+                              ? _userinfo.phone
+                              : "未绑定",
                           index: 6),
+
+                      renderRow(
+                          Icon(Icons.payment, color: _iconcolor),
+                          "支付密码",
+                          texti: _userinfo.paypwd
+                          ? "修改"
+                          : "未设置",
+                          index: 5),
+
                       renderRow(
                           Icon(Icons.play_for_work, color: _iconcolor), "版本",
                           index: 7),
@@ -269,10 +266,6 @@ String _cache="";
   }
 
   initinfo() async{
-    final model = Provider.of<GlobleProvider>(context);
-    _userinfo = model.userinfo;
-    _userAvatar = model.userinfo.avtar;
-    _sex = _userinfo.json['sex'];
     _cache=await MyCache().getlocalCache();
     setState(() { });
   }
@@ -309,7 +302,7 @@ String _cache="";
                 Row(
                   children: <Widget>[
                     Text(texti),
-                    index == 7
+                    index == 7 || index == 5
                         ? GlobalConfig.rightArrowIcon
                         :
                     SizedBox(
@@ -341,34 +334,35 @@ String _cache="";
       return;
 
     }
-    if (index==7 ) {
 
-      return await Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => UpgGradePage(),
-          ),
-        );
-    };
 
-  await  Application().checklogin(context, () {
+  await  Application().checklogin(context, () async{
       switch (index) {
         case 1:
           break;
         case 2:
-
-//        Application.router.navigateTo(context, "/order");
           break;
         case 3:
           break;
         case 4:
           break;
         case 5:
+          return await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => SetPaywsdPage(_userinfo.phone,edit: _userinfo.paypwd,),
+            ),
+          );
           break;
         case 6:
           break;
         case 7:
-
+          return await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => UpgGradePage(),
+            ),
+          );
           break;
 
         case 9:

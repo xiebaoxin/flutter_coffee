@@ -20,14 +20,12 @@ final int showtype;
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.only(top: 2, bottom: 2, right: 8, left: 8),
-      child: Card(
-//        shape: GlobalConfig.cardBorderRadius,
-        child: Container(
+      child: Container(
           padding: const EdgeInsets.all(5.0),
           child: Column(
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.all(2.0),
+                padding: const EdgeInsets.all(0),
                 child: Row(
                   children: <Widget>[
 
@@ -44,19 +42,18 @@ final int showtype;
                     )
                    ,
                     Container(
-                      margin: EdgeInsets.only(left: 8, right: 8),
+                      margin: EdgeInsets.only(left: 10, right: 8),
                       child:
                       ShowNetImage(
                         servpic(data
                             .imageUrl),
-                        height:this.readonly?50: 85,
-                        width: this.readonly?50:85,
+                        height:60,
+                        width: 60,
                         tapnull: true,
                       ),
                     ),
-                    Container(
+                    Expanded(child: Container(
                       height: 60,
-                      width: 160,
                       padding: const EdgeInsets.only(left:5.0),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -68,82 +65,59 @@ final int showtype;
                               child: Text(data.productName,
                                   maxLines: 2,
                                   softWrap:
-                                      true, //是否自动换行 false文字不考虑容器大小  单行显示   超出；屏幕部分将默认截断处理
+                                  true, //是否自动换行 false文字不考虑容器大小  单行显示   超出；屏幕部分将默认截断处理
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
-                                    fontSize: 14,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold
                                   )),
                             ),
                           ),
-
                           Padding(
                             padding: const EdgeInsets.all(0),
                             child: Container(
-                              width: 140,
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Container(
-                                    child: Text(
-                                      '￥${data.price}',
+                                children: [
+                                  Text(data.attr,
                                       style: TextStyle(
-                                          fontSize: 12,
-                                          color: KColorConstant.priceColor),
-                                    ),
-                                  ),
+                                        fontSize: 12,
+                                      )),
 
                                   !readonly?
                                   Row(
-                                     mainAxisSize: MainAxisSize.min,
-                                     children: <Widget>[
-                                       GestureDetector(
-                                         onTap: () => data.count > 1
-                                             ? downCount(index)
-                                             : false,
-                                         child: Container(
-                                           width: 25,
-                                           height: 20,
-                                           decoration: BoxDecoration(
-                                               border: _getRemoveBtBorder()),
-                                           child: Icon(Icons.remove,
-                                               size: 10,
-                                               color: _getRemovebuttonColor()),
-                                         ),
-                                       ),
-                                       Container(
-                                           alignment: Alignment.center,
-                                           width: 30,
-                                           height: 20,
-                                           decoration: BoxDecoration(
-                                               border: Border.all(
-                                                   color: KColorConstant.greybackcolor
-                                                   ,
-                                                   width: 1)),
-                                           child: Text(
-                                             data.count.toString(),
-                                             style: TextStyle(
-                                                 fontSize: 12,
-                                                 fontWeight: FontWeight.bold,
-                                                 color: KColorConstant
-                                                     .greybackcolor),
-                                           )),
-                                       GestureDetector(
-                                         onTap: () => data.count < data.buyLimit
-                                             ? addCount(index)
-                                             : false,
-                                         child: Container(
-                                           alignment: Alignment.center,
-                                           width: 25,
-                                           height: 20,
-                                           decoration: BoxDecoration(
-                                               border: _getAddBtBorder()),
-                                           child: Icon(Icons.add,
-                                               size: 10,
-                                               color: _getAddbuttonColor()),
-                                         ),
-                                       ),
-                                     ],
-                                   ) :
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      GestureDetector(
+                                        onTap: () => data.count > 1
+                                            ? downCount(index)
+                                            : false,
+                                        child: Icon(Icons.remove_circle,
+                                            size: 20,
+                                            color: _getRemovebuttonColor()),
+                                      ),
+                                      Container(
+                                          alignment: Alignment.center,
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(left:5.0,right: 5),
+                                            child: Text(
+                                              data.count.toString(),
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          )),
+                                      GestureDetector(
+                                        onTap: () => data.count < data.buyLimit
+                                            ? addCount(index)
+                                            : false,
+                                        child:  Icon(Icons.add_circle,
+                                            size: 20,
+                                            color: _getAddbuttonColor()),
+                                      ),
+                                    ],
+                                  ) :
                                   Container(
                                       alignment: Alignment.center,
                                       child: Row(
@@ -158,8 +132,8 @@ final int showtype;
                                           Text(
                                             "件",
                                             style: TextStyle(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.bold,),
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold,),
                                           ),
                                         ],
                                       )),
@@ -167,43 +141,53 @@ final int showtype;
                                 ],
                               ),
                             ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(0),
+                            child: Container(
+                              child:   Container(
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      '￥',
+                                      style: TextStyle(
+                                          fontSize: 12,
+                                          color: KColorConstant.themeColor),
+                                    ),
+                                    Text(
+                                      data.price.toStringAsFixed(2),
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          color: KColorConstant.themeColor,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
                           )
                         ],
                       ),
-                    ),
+                    )),
                   ],
                 ),
               ),
+              Divider()
             ],
           ),
         ),
-      ),
     );
   }
 
   Color _getRemovebuttonColor() {
-    return data.count > 1
+    return data.count > 0
         ? KColorConstant.cartItemChangenumBtColor
         : KColorConstant.cartDisableColor;
   }
 
-  Border _getRemoveBtBorder() {
-    return Border(
-        bottom: BorderSide(width: 1, color: _getRemovebuttonColor()),
-        top: BorderSide(width: 1, color: _getRemovebuttonColor()),
-        left: BorderSide(width: 1, color: _getRemovebuttonColor()));
-  }
-
-  Border _getAddBtBorder() {
-    return Border(
-        bottom: BorderSide(width: 1, color: _getAddbuttonColor()),
-        top: BorderSide(width: 1, color: _getAddbuttonColor()),
-        right: BorderSide(width: 1, color: _getAddbuttonColor()));
-  }
-
   _getAddbuttonColor() {
-    return data.count >= 100 //(this.readonly?1000: data.buyLimit)
-        ? KColorConstant.cartDisableColor
-        : KColorConstant.greybackcolor;
+    return data.count >= 1 //(this.readonly?1000: data.buyLimit)
+        ? KColorConstant.cartItemChangenumBtColor
+        : KColorConstant.cartDisableColor;
   }
 }

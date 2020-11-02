@@ -2,9 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:core';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../model/globle_provider.dart';
 import '../model/userinfo.dart';
 import 'package:flutter/cupertino.dart';
 import '../globleConfig.dart';
@@ -22,7 +20,7 @@ class CartHomePageState extends State<CartHomePage>
   @override
   bool get wantKeepAlive => true;
 
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldcpKey = GlobalKey<ScaffoldState>();
 
   final double statusBarHeight = MediaQueryData.fromWindow(window).padding.top;
 
@@ -44,15 +42,15 @@ class CartHomePageState extends State<CartHomePage>
                 top: false,
                 child:Scaffold (
                 backgroundColor: KColorConstant.backgroundColor,
-                key: _scaffoldKey,
+                key: _scaffoldcpKey,
                 body:
                       Stack(
                         alignment: Alignment.topCenter,
                         children: <Widget>[
-                          ComWidget().hometopbackground(context,topbgheight: 180.0,),
-                          ComWidget().topTitleWidget("购物车"),
+                          ComWidget.hometopbackground(context,topbgheight: 180.0,),
+                          ComWidget.topTitleWidget("购物车"),
                           Positioned(
-                            top: statusBarHeight+Klength.topBarHeight,
+                            top: statusBarHeight+Klength.topBarHeight-10,
                             left: 0,
                             right: 0,
                             child:  Padding(
@@ -62,16 +60,21 @@ class CartHomePageState extends State<CartHomePage>
                                 color: Colors.white,
                                 shape: KfontConstant.cardallshape,
                                 child: Container(
-                                  height:  MediaQuery.of(context).size.height-Klength.bottomBarHeight-200,
+                                  height:  MediaQuery.of(context).size.height-Klength.bottomBarHeight-120,
                                   child: Column(
                                     children: <Widget>[
                                       Padding(
-                                        padding: const EdgeInsets.all(8.0),
+                                        padding: const EdgeInsets.fromLTRB(10,8.0,10,8.0),
                                         child: Row(
                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: <Widget>[
-                                            Text("商品信息"),
-                                            Text("清空")
+                                            Text("商品信息",style: TextStyle(fontWeight: FontWeight.bold),),
+                                            Row(
+                                              children: [
+                                                Icon(Icons.delete,size: 16,color:Colors.grey,),
+                                                Text("清空",style: TextStyle(fontSize: 10),),
+                                              ],
+                                            )
                                           ],
                                         ),
                                       ),

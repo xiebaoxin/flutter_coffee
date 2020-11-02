@@ -5,21 +5,24 @@ import 'package:flutter/cupertino.dart';
 class GlobalConfig {
   static final String appName = '极网咖啡';
   static final String appCopId="7";
+  static final  String gtoken="C20AD4D76FE97759AA27A0C99BFF6710";
+
   static final  String regdoc="http://www.wangpeiaiot.com/regText.html";
   static final  String sevdoc="http://www.wangpeiaiot.com/regText.html";
 
-
-  static final  String base='http://192.168.1.208:9100/v1/';
-  static final  String facebase='http://192.168.1.208:9100/v1/';
+  static final  String base='http://wp-api.wangpeiaiot.com/v1/front/';
+  static final  String facebase='http://wp-api.wangpeiaiot.com/v1/front/';
 
   //获取阿里云OsS上传图片服务器地址
   static final String aliossserver= "http://oss-cn-beijing.aliyuncs.com";
   static final String aliossimgbase= "http://wangpei-iot.oss-cn-beijing.aliyuncs.com";
   static final String aliossfacedir=aliossimgbase+"/image/";
 
-  static final String wxAppId='wx10e64c57c456e417';
+  static final String wxAppId='wx7897159e41b39e12';
+
   static final String aMapAppId="bdd600f2668b2e07b4420b4f63077be8";
   static final String aMapIosAppId="26b329caee06b1c0a1f84cd54dac4c4f";
+
   static final Widget rightArrowIcon = Icon(Icons.chevron_right, color: Colors.black26);
 
 }

@@ -5,10 +5,11 @@ import 'package:fluro/fluro.dart';
 import '../utils/DialogUtils.dart';
 import '../model/globle_provider.dart';
 import 'package:provider/provider.dart';
+import '../views/comm/goods_detail/index.dart';
 
 class Application {
+//  static  FluroRouter router;
   static Router router;
-
   static void goto(context, appuri,
       {String url, String title, bool withToken = false}) async {
     if (appuri.startsWith('/web')) {
@@ -43,7 +44,7 @@ class Application {
       {String url, String title, bool withtoken}) async {
     if (appuri.startsWith('/web')) {
       appuri =
-          "/web?url=${Uri.encodeComponent(url)}&title=${Uri.encodeComponent(title ?? '浏览')}";
+          "/web?url=${Uri.encodeComponent(url)}&title=${Uri.encodeComponent(title ?? '信息浏览')}";
       await router.navigateTo(context, appuri,
           transition: TransitionType.fadeIn);
     } else {
@@ -65,7 +66,19 @@ class Application {
     }
   }
 
+static coffeeDetail(context,Map<String, dynamic> coffee,Map<String, dynamic> machine){
+   return showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return CoffeeDetailDialog(
+            coffee: coffee,
+mach: machine,
+          );
+        }
+    );
 
+}
 
   ///跳转到
   static goodsDetail(context, int goodsId,
@@ -84,29 +97,6 @@ class Application {
     }
   }
 
-//          onTap: () {
-//                Application.router.navigateTo(context,
-//                   '/swip?pics=${Uri.encodeComponent(_buildPicsStr())}&currentIndex=${i.toString()}');
-//              },
-////// /web?url=${Uri.encodeComponent(linkUrl)}&title=${Uri.encodeComponent('掘金沸点')}
-
-////        var bodyJson = '{"url":'+cellItem.url+',"title":'+cellItem.modName+'}';
-//            //        url = "/web/$bodyJson";
-//onPressed: () {
-//                  var bodyJson = '{"user":1281,"pass":3041}';
-//                  router.navigateTo(context, '/home/$bodyJson');
-//                  // Perform some action
-//                },
-//
-//
-//          */
-//
-//    Navigator.push(context,
-//        new MaterialPageRoute(builder: (BuildContext context) {
-//      return Detail('45');
-//    }));
-//
-//
 /*
     Navigator.of(context).push(PageRouteBuilder(
         opaque: false,

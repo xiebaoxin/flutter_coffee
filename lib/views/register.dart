@@ -22,7 +22,7 @@ class registerState extends State<register> {
   TextEditingController _PasswordCtrl = TextEditingController();
   TextEditingController _pyPasswordCtrl = TextEditingController();
   TextEditingController _varCodeCtrl = TextEditingController();
-
+  String _verifyCode0 = "";
   String _phoneNo,_uName,_userName;
   String _password = '';
   String _inviteCode;
@@ -40,53 +40,60 @@ class registerState extends State<register> {
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
+        centerTitle: true,
         title: new Text('注册'),
       ),
+      backgroundColor: Color(0xFFFFFFFF),
       body: new Center(
         child: Container(
-            margin: EdgeInsets.all(20.0),
-            color: Colors.white,
+            margin: EdgeInsets.all(10.0),
             child: Form(
               //绑定状态属性
               key: _formKey,
 //              autovalidate: true,
               child: Padding(
-                padding: new EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 0.0),
+                padding: new EdgeInsets.all(0),
                 child: ListView(
                   children: [
-//                    _buildUsernameText(),
-//                    _buildUserRealnameText(),
+                    Padding(
+                        padding: new EdgeInsets.all(40),
+                        child: Center(
+                          child: Image.asset(
+                            'images/logo.png',
+                            width: 48,
+                            height: 48,
+                            fit: BoxFit.fill,
+                          ),
+                        )),
                     _buildPhoneText(),
                     _buildVerifyCodeEdit(),
                     _buidPassword(),
-                    _buidRePassword(),
-//                    _buidPayPassword(),
-//                    _buildFromCodeText(),
                     SizedBox(
                       height: 15,
                     ),
                     _buideRegtxt(),
 
-                    GestureDetector(
+                Padding(
+                  padding: new EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 25.0),
+                  child:GestureDetector(
                       onTap:  _forSubmitted,
                       child: Container(
-                        width: 100,
-                        height: 40,
+                        width: double.infinity,
+                        height: 46,
                         decoration: new BoxDecoration(
-                          color: KColorConstant.themeColor,
-                          borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                          border: Border.all(
-                              width: 1.0, color: KColorConstant.themeColor),
+                          color: KColorConstant.mainColor,
+                          borderRadius: BorderRadius.all(Radius.circular(23.0)),
+                          border: Border.all(width: 1.0, color: KColorConstant.mainColor),
                         ),
                         child: Center(
                           child: Text(
                             '注册',
                             style: new TextStyle(
-                                color: Colors.white, fontSize: 16.0),
+                                color: Colors.white, fontSize: 18.0),
                           ),
                         ),
                       ),
-                    )
+                    ))
                   ],
 
                 ),
@@ -108,8 +115,10 @@ class registerState extends State<register> {
       DialogUtils.showToastDialog(context, '手机号不合法');
       return;
     }
+    _verifyCode0 = "";
 if(await DataUtils().captcha(context, _phoneNo))
   {
+    _verifyCode0 = "1";
         _seconds=60;
         setState(() {
           _verifyStr = '${_seconds.toString()}(s)重新发送';
@@ -179,11 +188,19 @@ if(await DataUtils().captcha(context, _phoneNo))
       DialogUtils.showToastDialog(context, '真实姓名必须填写');
       return;
     }*/
+
+
+    if (_verifyCode0.isEmpty) {
+      await DialogUtils.showToastDialog(context, '请获取短信验证码');
+      return;
+    }
+    
     _verifyCode=_varCodeCtrl.text;
     if (_verifyCode.isEmpty ) {
       DialogUtils.showToastDialog(context, '验证码必须填写');
       return;
     }
+
     if (form.validate()) {
       form.save();
 
@@ -279,200 +296,46 @@ if(await DataUtils().captcha(context, _phoneNo))
   }
 
   Widget _buidPassword() {
-    return TextFormField(
-      controller: _PasswordCtrl,
-      obscureText: _obscureText,
-      validator: (String value) {
-        if (value.isEmpty || value.length < 6) {
-          return '密码过短';
-        }
-        _password = value;
-      },
-      onFieldSubmitted: (String value) {
-        _password = value;
-      },
-      onSaved: (String value) {
-        _password = value;
-      },
-      decoration: InputDecoration(
-        contentPadding: const EdgeInsets.symmetric(vertical: 12.0),
-        filled: true,
-        hintText: "请输入至少6位密码",
-        icon: Icon(Icons.lock, color: KColorConstant.mainColor),
-        fillColor: Colors.white,
-        errorStyle: TextStyle(fontSize: 8),
-        suffixIcon: GestureDetector(
-          onTap: () {
-            setState(() {
-              _obscureText = !_obscureText;
-            });
-          },
-          child: Icon(_obscureText ? Icons.visibility : Icons.visibility_off,
-              semanticLabel: _obscureText ? 'show password' : 'hide password',
-              color: KColorConstant.mainColor),
+    return
+      Padding(
+        padding: new EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 25.0),
+        child: ComFun.buideloginInput(
+          context,
+          "至少6位密码",
+          _PasswordCtrl,
+          header: IconButton(
+            icon: new Icon(
+                _obscureText ? Icons.visibility_off : Icons.visibility,
+                color: KColorConstant.mainColor),
+            onPressed: () {
+              setState(() {
+                _obscureText = !_obscureText;
+              });
+            },
+          ),
+          obscure: _obscureText,
         ),
-      ),
-    );
+      );
+
   }
-
-  Widget _buidRePassword() {
-    return TextFormField(
-//      enabled: _password != '' && _password.isNotEmpty,
-      obscureText: true,
-      decoration: InputDecoration(
-        contentPadding: const EdgeInsets.symmetric(vertical: 12.0),
-        hintText: "请再输入一次密码",
-
-        icon: Icon(Icons.lock_outline, color: KColorConstant.mainColor),
-//        filled: true,
-        fillColor: Colors.white,
-        errorStyle: TextStyle(fontSize: 8),
-      ),
-      validator: (String value) {
-        _password = _PasswordCtrl.text.trim();
-        if (_password == '') return "请先输入密码";
-        if (_password != value) return "密码不一致";
-      },
-    );
-  }
-
-  Widget _buildFromCodeText() {
-    return TextFormField(
-      decoration: InputDecoration(
-        contentPadding: const EdgeInsets.symmetric(vertical: 12.0),
-        helperText: '必填',
-//        hintText: ComFunUtil.checkIosOpen(context)?"邀请码(邀请者手机号或ID）":"来源(手机号或ID）",
-        filled: true,
-        icon: Icon(Icons.camera_front, color: KColorConstant.mainColor),
-        fillColor: Colors.white,
-        errorStyle: TextStyle(fontSize: 8),
-      ),
-      autovalidate: true,
-      validator: (String value) {
-        if (value == '') return "请输入";
-      },
-      onSaved: (String value) {
-        _inviteCode = value;
-      },
-    );
-  }
-
-  Widget _buildUsernameText() {
-    return TextFormField(
-      controller: _userNameCtrl,
-      decoration: InputDecoration(
-        contentPadding: const EdgeInsets.symmetric(vertical: 12.0),
-        icon: Icon(
-          Icons.person,
-          color: KColorConstant.mainColor,
-        ),
-        hintText: "请输入用户名",
-        filled: true,
-        fillColor: Colors.white,
-//        errorStyle: TextStyle(fontSize: 8),
-      ),
-      onSaved: (String value) {
-        _uName = value;
-      },
-    );
-  }
-
-
-/*
-  Widget _buildUserRealnameText() {
-    return TextFormField(
-      controller: _userRealNameCtrl,
-      decoration: InputDecoration(
-        contentPadding: const EdgeInsets.symmetric(vertical: 12.0),
-        icon: Icon(
-          Icons.person_outline,
-          color: KColorConstant.mainColor,
-        ),
-        hintText: "请输入真实姓名",
-        filled: true,
-        fillColor: Colors.white,
-//        errorStyle: TextStyle(fontSize: 8),
-      ),
-      onSaved: (String value) {
-        _userName = value;
-      },
-    );
-  }
-*/
 
 
   Widget _buildPhoneText() {
     var node = new FocusNode();
-    return TextFormField(
-      controller: _phoneNoCtrl,
-//      autovalidate: true,
-      decoration: InputDecoration(
-        contentPadding: const EdgeInsets.symmetric(vertical: 12.0),
-        icon: Icon(
-          Icons.phone,
-          color: KColorConstant.mainColor,
-        ),
-        hintText: "请输入手机号码",
-//        hintStyle: TextStyle(fontSize: 10),
-        filled: true,
-        fillColor: Colors.white,
-//        errorStyle: TextStyle(fontSize: 8),
+    return   Padding(
+      padding: new EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 25.0),
+      child: ComFun.buideloginInput(
+          context, "手机号码", _phoneNoCtrl,
+          textInputType: TextInputType.phone,
+          header:
+          Icon(Icons.phone, color: KColorConstant.mainColor)
       ),
-//      style: Theme.of(context).textTheme.headline,
-      maxLines: 1,
-      maxLength: 11,
-      //键盘展示为号码
-      keyboardType: TextInputType.phone,
-      //只能输入数字
-      inputFormatters: <TextInputFormatter>[
-        WhitelistingTextInputFormatter.digitsOnly,
-      ],
-      validator: (String value) {
-        if (value.isEmpty) {
-          return '请填写手机号码';
-        } else {
-          if (!ComFun.isChinaPhoneLegal(value.trim())) return '号码有误';
-        }
-      },
-      onSaved: (String value) {
-        _phoneNo = value;
-      },
     );
+
   }
 
   Widget _buildVerifyCodeEdit() {
     var node = new FocusNode();
-    Widget verifyCodeEdit = new TextFormField(
-      controller: _varCodeCtrl,
-//      autovalidate: true,
-//      style: KfontConstant.defaultSubStyle,
-      decoration: new InputDecoration(
-        contentPadding: const EdgeInsets.symmetric(vertical: 12.0),
-        icon: Icon(Icons.assignment_late, color: KColorConstant.mainColor),
-        hintText: "请输入验证码",
-//        hintStyle: TextStyle(fontSize: 10),
-        filled: true,
-        fillColor: Colors.white,
-        errorStyle: TextStyle(fontSize: 8),
-      ),
-      maxLines: 1,
-      maxLength: 6,
-      //键盘展示为数字
-      keyboardType: TextInputType.number,
-      //只能输入数字
-      inputFormatters: <TextInputFormatter>[
-        WhitelistingTextInputFormatter.digitsOnly,
-      ],
-
-      validator: (String value) {
-        if (value.isEmpty) {
-          return '';
-        }
-      },
-      onSaved: (String value) {
-        _verifyCode = value.trim();
-      },
-    );
     Widget verifyCodeBtn = new GestureDetector(
       onTap: (_seconds == 0) ? _getsmsCode : null,
       child: new Container(
@@ -481,33 +344,32 @@ if(await DataUtils().captcha(context, _phoneNo))
         height: 26.0,
         padding: EdgeInsets.fromLTRB(5.0, 5.0, 5.0, 5.0),
         decoration: BoxDecoration(
-            border: new Border.all(
-              width: 1.0,
-              color: Colors.grey,
-            )),
+          border: Border(
+              bottom: BorderSide(
+                  width: 1.0, color:KColorConstant.mainColor)),),
         child: Text(
           _verifyStr,
-          style: new TextStyle(fontSize: 11),
+          style: new TextStyle(fontSize: 11,color: KColorConstant.mainColor),
         ),
       ),
     );
 
-    return new Padding(
-      padding: const EdgeInsets.only(
-        left: 0,
-        right: 0,
-        top: 5.0,
-      ),
-      child: new Stack(
-        children: <Widget>[
-          verifyCodeEdit,
-          new Align(
-            alignment: Alignment.topRight,
-            child: verifyCodeBtn,
-          ),
-        ],
+    return  Padding(
+      padding: new EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 25.0),
+      child: ComFun.buideloginInput(
+        context,
+        "验证码",
+        _varCodeCtrl,
+        textInputType: TextInputType.number,
+        header: Icon(
+              Icons.assignment_late,
+              color: KColorConstant.mainColor),
+        suffix: Container(
+          child: verifyCodeBtn,
+        ),
       ),
     );
+
   }
 
   @override

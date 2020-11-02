@@ -5,17 +5,15 @@ import 'package:flutter/material.dart';
 class Routes {
   static String root = '/';
   static String loginPage = '/login';
-  static String houserenzhPage = '/houserenzh';
-  static String houselistPage = '/houselist';
   static String wellcomePage = '/wellcome';
-//  static String loginPage = '/shequ';
+  static String menuPage = '/menu';
   static String webViewPage = '/web';
   static String homePage = '/home';
   static String userCenterPage = '/user';
 
   static void configureRoutes(Router router) {
     router.notFoundHandler = new Handler(
-        handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+        handlerFunc: (BuildContext context, Map<String, dynamic> params) {
       print("ROUTE WAS NOT FOUND !!!");
       return ;
     });
@@ -26,6 +24,7 @@ class Routes {
     router.define(homePage, handler: homePageHandler);
     router.define(loginPage,handler: loginPageHandler);
     router.define(userCenterPage, handler:userPageHandler);
+    router.define(menuPage, handler: cartgoryPageHandler);
 
   }
 }

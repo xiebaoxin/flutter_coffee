@@ -6,11 +6,11 @@ import 'dart:math' as math;
 import '../globleConfig.dart';
 
 String servpic(String imgname) {
-  return imgname.isEmpty ? "" : "${GlobalConfig.aliossfacedir}$imgname";
+  return imgname.isEmpty ? "" : imgname;//"${GlobalConfig.aliossfacedir}$imgname";
 }
 
 
-Map sortaz(Map<String, String> map) {
+Map sortaz(Map<String, dynamic> map) {
   List<String> keys = map.keys.toList();
   // key排序
   keys.sort((a, b) {
@@ -159,4 +159,12 @@ void CountdowntimeFunc(int difftimes, Timer timerIndex, Function callBack) {
 
     // debugPrint(_text);
   });
+}
+
+ int getTime([DateTime time]) {
+if(time == null) {
+return (DateTime.now().millisecondsSinceEpoch/1000).round();
+} else {
+return (time.millisecondsSinceEpoch/1000).round();
+}
 }

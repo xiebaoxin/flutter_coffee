@@ -15,7 +15,207 @@ Future get categoryData async {
 }
 */
 
-var categoryData = [
+
+var  categoryData = [
+  {
+    "name": "热销",
+    'icon': "",
+    'ucid': "1",
+    "data": [
+      {
+        "sname": "热销1",
+        'icon': "",
+        'goodsid': "1",
+      },
+      {
+        "sname": "热销2",
+        'icon': "",
+        'goodsid': "2",
+      },
+      {
+        "sname": "热销3",
+        'icon': "",
+        'goodsid': "3",
+      },
+      {"sname": "热销4", 'icon': "", 'goodsid': "4"},
+      {
+        "sname": "热销5",
+        'icon': "",
+        'goodsid': "5",
+      },
+      {
+        "sname": "热销6",
+        'icon': "",
+        'goodsid': "6",
+      },
+      {"sname": "热销7", 'icon': "", 'goodsid': "7"}
+    ]
+  },
+  {
+    "name": "人气",
+    'icon': "",
+    'ucid': "2",
+    "data": [
+      {
+        "sname": "人气232",
+        'icon': "",
+        'goodsid': "1",
+      },
+      {
+        "sname": "人气21",
+        'icon': "",
+        'goodsid': "2",
+      },
+      {
+        "sname": "人气32",
+        'icon': "",
+        'goodsid': "3",
+      },
+      {"sname": "人气人气", 'icon': "", 'goodsid': "4"}
+    ]
+  },
+  {
+    "name": "经典",
+    'icon': "",
+    'ucid': "3",
+    "data": [
+      {
+        "sname": "经典1",
+        'icon': "",
+        'goodsid': "1",
+      },
+      {
+        "sname": "经典2",
+        'icon': "",
+        'goodsid': "2",
+      },
+      {
+        "sname": "经典3",
+        'icon': "",
+        'goodsid': "3",
+      },
+      {"sname": "经典3", 'icon': "", 'goodsid': "4"}
+    ]
+  },
+  {
+    "name": "大师怀旧",
+    'icon': "",
+    'ucid': "4",
+    "data": [
+      {
+        "sname": "4dsfad",
+        'icon': "",
+        'goodsid': "1",
+      },
+      {
+        "sname": "4dsad",
+        'icon': "",
+        'goodsid': "2",
+      },
+      {
+        "sname": "4ds3dd",
+        'icon': "",
+        'goodsid': "3",
+      },
+      {"sname": "4dsfa3333d", 'icon': "", 'goodsid': "4"}
+    ]
+  },
+  {
+    "name": "水果",
+    'icon': "",
+    'ucid': "5",
+    "data": [
+      {
+        "sname": "4dsfad",
+        'icon': "",
+        'goodsid': "1",
+      },
+      {
+        "sname": "4dsad",
+        'icon': "",
+        'goodsid': "2",
+      },
+      {
+        "sname": "4ds3dd",
+        'icon': "",
+        'goodsid': "3",
+      },
+      {"sname": "4dsfa3333d", 'icon': "", 'goodsid': "4"}
+    ]
+  },
+  {
+    "name": "茶饮系列",
+    'icon': "",
+    'ucid': "6",
+    "data": [
+      {
+        "sname": "4dsfad",
+        'icon': "",
+        'goodsid': "1",
+      },
+      {
+        "sname": "4dsad",
+        'icon': "",
+        'goodsid': "2",
+      },
+      {
+        "sname": "4ds3dd",
+        'icon': "",
+        'goodsid': "3",
+      },
+      {"sname": "4dsfa3333d", 'icon': "", 'goodsid': "4"}
+    ]
+  },
+  {
+    "name": "茶饮系列2",
+    'icon': "",
+    'ucid': "6",
+    "data": [
+      {
+        "sname": "4dsfad",
+        'icon': "",
+        'goodsid': "1",
+      },
+      {
+        "sname": "4dsad",
+        'icon': "",
+        'goodsid': "2",
+      },
+      {
+        "sname": "4ds3dd",
+        'icon': "",
+        'goodsid': "3",
+      },
+      {"sname": "4dsfa3333d", 'icon': "", 'goodsid': "4"}
+    ]
+  },
+  {
+    "name": "茶饮系列3",
+    'icon': "",
+    'ucid': "6",
+    "data": [
+      {
+        "sname": "4dsfad",
+        'icon': "",
+        'goodsid': "1",
+      },
+      {
+        "sname": "4dsad",
+        'icon': "",
+        'goodsid': "2",
+      },
+      {
+        "sname": "4ds3dd",
+        'icon': "",
+        'goodsid': "3",
+      },
+      {"sname": "4dsfa3333d", 'icon': "", 'goodsid': "4"}
+    ]
+  },
+];
+
+
+var categoryData_old = [
   {
     "name": "推荐专区",
     "banner": "https://yanxuan.nosdn.127.net/38b49a2863971efec7ec9b6ad3c0f96a.png",
