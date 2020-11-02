@@ -14,7 +14,7 @@ description: A new Flutter application.
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
   flutter:
@@ -22,31 +22,35 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^0.1.2
+  cupertino_icons: any
   crypto: any
   encrypt: any
 
-  #  http
+  color_dart: any
+  flutter_localizations:
+    sdk: flutter
+
   dio: 3.0.9
-  #  设备路径权限
   path_provider: any
   permission_handler: any
-  #  包信息
-  device_info: 0.4.2+4
+  device_info: any
   package_info: any
-
+  install_plugin: any
+  r_upgrade: any
   qr_flutter: any
   barcode_scan: any
+
+  flutter_pagewise: any
 
   #  调用系统分享
   share_extend: any
   flutter_swiper: any
   flutter_drag_scale:
     git: https://github.com/LiuC520/flutter_drag_scale.git
-  #  flutter_cache_manager: any
-  cached_network_image: 2.0.0-rc
-  image_crop: 0.3.2
-  image_picker: 0.6.7+4
+
+  cached_network_image: any
+  image_crop: any
+  image_picker: any
 
   #  图片压缩
   flutter_luban: any
@@ -56,18 +60,17 @@ dependencies:
   flutter_picker: any
   flutter_cupertino_date_picker: 1.0.26
 
-  fluro: ^1.4.0
+  fluro: 1.6.3
   sqflite: any
 
   decorated_flutter: any
   amap_location_fluttify: any
-  amap_map_fluttify: any
+  amap_map_fluttify: 0.25.0
 
   provider: ^3.0.0
-#  scoped_model: any
   shared_preferences: any
   json_serializable: any
-  flutter_easyrefresh: 2.1.1
+  flutter_easyrefresh: any
 
   flutter_native_image:
     git:  https://github.com/btastic/flutter_native_image.git
@@ -77,8 +80,12 @@ dependencies:
   flutter_app_badger: any
   flutter_html: any
   webview_flutter: any
-  license_plate_number: ^1.0.4
+  license_plate_number: any
 
+  fluwx: any
+  tobias: 1.7.1+1
+  flutter_local_notifications: any
+  jpush_flutter: any
 
 dev_dependencies:
   flutter_test:
@@ -105,6 +112,7 @@ flutter:
   assets:
     - assets/
     - images/
+    - images/backgroud/
 
   # To add assets to your application, add an assets section, like this:
   # assets:
