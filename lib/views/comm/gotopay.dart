@@ -333,12 +333,7 @@ class GoToPayPageState extends State<GoToPayPage>
     if (widget.scean == 'RECHARGE') {
       response = await DataUtils.RechargePay(context, widget.data['id'],_objtype);
     } else if (widget.scean == "CF") {
-      Map<String, String> params = {
-        "drinkId": widget.data['drinkId'],
-        "sugarRule": widget.data['sugarRule'],
-        "deviceId": widget.data['deviceId'],
-      };
-      params.putIfAbsent("isConsumerCoupon", () => "0");
+      Map<String, String> params =  widget.data;
       params.putIfAbsent("type", () => _objtype.toString());
 
       response = await DataUtils.addCoffeeOrder(context, params);

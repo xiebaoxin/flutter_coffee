@@ -238,7 +238,68 @@ class DataUtils {
     }
   }
 
+  static Future<bool> getMyMessageReaded(
+      BuildContext context) async {
+//false=有未读消息，true=全部已读
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if(prefs.getInt("userid") ==null)
+      return true;
 
+    Map<String, String> params = {
+      "customerId": prefs.getInt("userid").toString(),
+    };
+    Map<String, dynamic> response =
+    await HttpUtils.get("/api/message/get", params, context: context,withtoken: true);
+
+    if (response['code']==200) {
+     return response['data']['status'];
+    }else
+      await DialogUtils.showToastDialog(context, response['message']);
+
+    return true;
+  }
+
+
+  static Future<List<dynamic>> getMyMessageList(
+      BuildContext context, int page, {int pagesize = 20}) async {
+    var returnList;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    Map<String, String> params = {
+      "customerId": prefs.getInt("userid").toString(),
+      "page": (page+1).toString(),
+      "number": pagesize.toString(),
+    };
+
+    var response = await HttpUtils.get("/api/message/list", params, context: context,withtoken: true);
+
+    if (response['code']==200 && response !=null && response['data'] != null) {
+      returnList= response['data'];
+//      print("------------${returnList.length}------------");
+    }
+
+
+    return returnList;
+  }
+
+  static void setMessageRead(
+      BuildContext context,int msgid) async {
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    Map<String, String> params = {
+      "customerId": prefs.getInt("userid").toString(),
+      "messageId":msgid.toString()
+    };
+
+    Map<String, dynamic> response =
+    await HttpUtils.post("/api/message/read", params, context: context,withtoken: true);
+
+    if (response['code']==200 && response['data'] != null) {
+      return response['data'] ;
+    }
+//    else
+//      await DialogUtils.showToastDialog(context, response['message']);
+
+  }
 
 
   static Future<List<Map<String, dynamic>>> getNearByDevice(
@@ -325,22 +386,6 @@ print(returnList);
 
   }
 
-  static Future addCoffeeOrderByyue(BuildContext context,Map<String, dynamic> params) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    params.putIfAbsent("customerId", () => prefs.getInt("userid").toString());
-    print(params);
-    Map<String, dynamic> response =
-    await HttpUtils.post("/api/orders/orders-payment/app", params, context: context,withtoken: true);
-
-    if (response['code']==200 && response !=null && response['data'] != null) {
-      return response['data'];
-    }else{
-      await DialogUtils.showToastDialog(context, response['message']);
-      return null;
-    }
-
-  }
 
   static Future<List<dynamic>> getOrderByUserIdPage(
       BuildContext context, String otype, int page,

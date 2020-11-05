@@ -5,7 +5,7 @@ import '../../model/cart.dart';
 import 'package:provider/provider.dart';
 import '../../model/carts_provider.dart';
 import 'cart.dart';
-//import 'buygoods_page.dart';
+import '../shop/buycoffeecart.dart';
 
 class _TotalWidget extends StatefulWidget {
   final double totalPrice;
@@ -71,7 +71,7 @@ class CartBottomWidgetState extends State<CartBottomWidget> {
       double total = 0.0;
       int sumcount = 0;
       cartlist.forEach((item) {
-        if (widget.store_id == 0 || item.storeId == widget.store_id) {
+        if (item.isSelected) {
           sumcount += item.count;
           total += item.price * item.count;
         }
@@ -81,9 +81,9 @@ class CartBottomWidgetState extends State<CartBottomWidget> {
           visible: total > 0,
           child: Container(
             height: 45,
-            decoration: BoxDecoration(
-                color: Color(0x2FFFFFFF),
-                border: Border(top: BorderSide(color: Colors.grey, width: 1))),
+//            decoration: BoxDecoration(
+//                color: Color(0x2FFFFFFF),
+//                border: Border(top: BorderSide(color: Colors.grey, width: 1))),
             padding: EdgeInsets.only(left: 8),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -169,7 +169,7 @@ class CartBottomWidgetState extends State<CartBottomWidget> {
                         style: TextStyle(color: Colors.white),
                       )),
                   onTap: () async {
-                    List<Map<String, dynamic>> coffeelist;
+                /*    List<Map<String, dynamic>> coffeelist;
                     Map<String, dynamic> itemparams;
                     cartlist.forEach((item) {
                       itemparams = {
@@ -185,12 +185,12 @@ class CartBottomWidgetState extends State<CartBottomWidget> {
                       'orderData': json.encode(coffeelist)
                     };
 
-                    print(pparams);
-                    /*        Navigator.pushReplacement(
+                    print(pparams);*/
+             Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => GoodsBuyPage(store_id: widget.store_id,),//CartsBuyPage(),
-                      ));*/
+                        builder: (context) => CoffeeCartsBuy(),//CartsBuyPage(),
+                      ));
 //
                   },
                 )

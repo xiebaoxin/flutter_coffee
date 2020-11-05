@@ -5,6 +5,12 @@ import 'dart:core';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../model/userinfo.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
+import '../model/carts_provider.dart';
+import '../model/globle_provider.dart';
+import '../model/cart.dart';
+import '../utils/comUtil.dart';
+import '../views/cart/cartItem.dart';
 import '../globleConfig.dart';
 import 'comm/comwidget.dart';
 import 'cart/cart_list.dart';
@@ -69,12 +75,24 @@ class CartHomePageState extends State<CartHomePage>
                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: <Widget>[
                                             Text("商品信息",style: TextStyle(fontWeight: FontWeight.bold),),
-                                            Row(
-                                              children: [
-                                                Icon(Icons.delete,size: 16,color:Colors.grey,),
-                                                Text("清空",style: TextStyle(fontSize: 10),),
-                                              ],
+                                            GestureDetector(
+                                              onTap: (){
+                                                final cartsmodel = Provider.of<CartsProvider>(context);
+                                                List<CartItemModel> cartlist = cartsmodel.cartitems;
+                                                cartlist.forEach((e) async {
+                                                  if(e!=null)
+                                                    await cartsmodel.removeItem(cartlist.indexOf(e));
+                                                });
+
+                                              },
+                                              child: Row(
+                                                children: [
+                                                  Icon(Icons.delete,size: 16,color:Colors.grey,),
+                                                  Text("清空",style: TextStyle(fontSize: 10),),
+                                                ],
+                                              ),
                                             )
+
                                           ],
                                         ),
                                       ),

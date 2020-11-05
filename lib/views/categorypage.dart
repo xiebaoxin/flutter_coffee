@@ -128,9 +128,7 @@ Widget errobody() {
 
     print(machine);
     _categoryData=machine['drinktypelist'] ;
-    print(_categoryData);
 
-    print("------3333--------");
     listViewData = _categoryData.map((i) {
       return SubCategoryListModel.fromJson(i);
     }).toList();

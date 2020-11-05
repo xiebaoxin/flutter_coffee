@@ -25,6 +25,7 @@ import '../utils/comUtil.dart';
 import '../components/banner.dart';
 import 'comm/gotopay.dart';
 import '../views/person/usersetting.dart';
+import '../views/person/message_list.dart';
 import '../globalutils/global.dart';
 
 class IndexPageHome extends StatefulWidget {
@@ -40,7 +41,7 @@ class HomeIndexPageState extends State<IndexPageHome>
 
   var _futureBannerBuilderFuture;
   var _futureLocationBuilderFuture;
-
+  bool _hasnoread=true;
   double statusBarHeight = MediaQueryData.fromWindow(window).padding.top;
 
   ScrollController _strollCtrl = ScrollController();
@@ -195,14 +196,20 @@ class HomeIndexPageState extends State<IndexPageHome>
                                               context,
                                               new MaterialPageRoute(
                                                   builder: (context) =>
-                                                      SetUserinfo()),
+                                                      MessageList()),
                                             ).then((v) {
                                               freshdata();
                                             });
                                           }),
                               ),
                             ),
-                            Positioned(top: 12, right: 0, child: InTextDot())
+
+                   Visibility(
+                                  visible:! _hasnoread,
+                                  child: Positioned(
+                                      top: 12, right: 0, child: InTextDot())
+                   )
+
                           ],
                         )),
                       ),
@@ -211,6 +218,7 @@ class HomeIndexPageState extends State<IndexPageHome>
             )));
   }
 
+   
   Widget mainbody() {
     return ListView(
       padding: EdgeInsets.all(0),
@@ -552,6 +560,7 @@ class HomeIndexPageState extends State<IndexPageHome>
   }
 
   Future _getbannerdata() async {
+
     BannerList banners;
 
     List<Map<String, dynamic>> imagessList = List();
@@ -578,17 +587,17 @@ class HomeIndexPageState extends State<IndexPageHome>
       banners = BannerList.fromJson(imagessList);
     }
 
+    setState(() {  });
     return banners;
   }
 
   @override
   void initState() {
+    getmsgreaed();
     fetchLocation();
     super.initState();
 
     _futureBannerBuilderFuture = _getbannerdata();
-    // TODO: implement initState
-
     _strollCtrl.addListener(() {
       if (_strollCtrl.position.pixels == _strollCtrl.position.maxScrollExtent) {
 //        print('滑动到了最底部${_strollCtrl.position.pixels}');
@@ -606,12 +615,18 @@ class HomeIndexPageState extends State<IndexPageHome>
     _futureLocationBuilderFuture = null;
   }
 
+  void getmsgreaed()async{
+    _hasnoread=await DataUtils.getMyMessageReaded(context);
+    setState(() {  });
+  }
+
   void freshdata() async {
     if (mounted) {
       var cartdemoInfo = Provider.of<CartsProvider>(context);
       await cartdemoInfo.initcartdemo();
     }
 
+    getmsgreaed();
     _futureBannerBuilderFuture = _getbannerdata();
     _getDeviceList();
 

@@ -14,6 +14,7 @@ import '../../../utils/dataUtils.dart';
 import '../../../utils/DialogUtils.dart';
 import '../../../globleConfig.dart';
 import 'select_row.dart';
+import '../../../homepage.dart';
 
 class CoffeeDetailDialog extends StatefulWidget {
   final Map<String, dynamic> coffee;
@@ -326,7 +327,7 @@ class _GoodsDetailDialogState extends State<CoffeeDetailDialog> {
                   "price": widget.coffee['money'],
                   'count': 1,
                   'goods_img': widget.coffee['image'],
-                  'attr':DataUtils.coffeesugarRule(_sgtype) //'大/热/无糖'
+                  'attr':_sgtype.toString() //'大/热/无糖'
                 };
 
                   await  model.addtocart(context,coffeeparams);
@@ -334,6 +335,10 @@ class _GoodsDetailDialogState extends State<CoffeeDetailDialog> {
               }
 
               await DialogUtils.showToastDialog(context, '加入购物车成功');
+              Navigator.pop(context);
+              Navigator.pushReplacement(Constants.navigatorKey.currentContext, MaterialPageRoute(
+                builder: (context) => HomePage(tabindex:3,),//CartsBuyPage(),
+              ));
 
             }
           )
@@ -550,11 +555,12 @@ class _GoodsDetailDialogState extends State<CoffeeDetailDialog> {
 
   String _pwd="";
   Future gotopay() async{
-    Map<String, dynamic> paydata = {
+    List<Map<String, dynamic>>  coffeedata = [{
       "drinkId":widget.coffee['id'].toString(),
       "sugarRule":_sgtype.toString(),//糖规则（0=无糖，1=少糖，2=标准，3=多糖）
       "deviceId":widget.mach['id'].toString(),//设备id
-    };
+      "count":"1"
+    }];
 
     if ( _switchValueye ) {
       if (_pwd.isEmpty)
@@ -563,11 +569,17 @@ class _GoodsDetailDialogState extends State<CoffeeDetailDialog> {
             _pwd = pwd;
           });
             DialogUtils.showLoadingDialog(context);
+            Map<String, String> paydata = {
+              "isConsumerCoupon":"0",
+              "type":"4",
+              "password":_pwd,
+              "orderData":json.encode(coffeedata)
+            };
+         /*   paydata.putIfAbsent("isConsumerCoupon", () => "0");
+            paydata.putIfAbsent("type", () => "4");
+            paydata.putIfAbsent("password", () => _pwd);*/
 
-            paydata.putIfAbsent("isConsumerCoupon", () => "0");
-            paydata.putIfAbsent("password", () => _pwd);
-
-            var response = await DataUtils.addCoffeeOrderByyue(context, paydata);
+            var response = await DataUtils.addCoffeeOrder(context, paydata);
             Navigator.of(context).pop();
             if(response!=null){
               await DataUtils().freshlogin(context);
@@ -581,7 +593,10 @@ class _GoodsDetailDialogState extends State<CoffeeDetailDialog> {
     }
     else
       {
-
+        Map<String, String> paydata = {
+          "isConsumerCoupon":"0",
+          "orderData":json.encode(coffeedata)
+        };
         Navigator.of(context).push(PageRouteBuilder(
             opaque: false,
             pageBuilder: (context, animation, secondaryAnimation) {

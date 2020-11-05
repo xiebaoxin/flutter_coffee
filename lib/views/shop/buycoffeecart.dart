@@ -1,31 +1,27 @@
+import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../utils/dataUtils.dart';
 import '../../globleConfig.dart';
 import '../../utils/DialogUtils.dart';
-import '../../utils/utils.dart';
 import 'package:provider/provider.dart';
 import '../../model/carts_provider.dart';
+import '../../model/globle_provider.dart';
 import '../../model/cart.dart';
 import '../../utils/comUtil.dart';
 import '../../views/cart/cartItem.dart';
 import '../../views/comm/gotopay.dart';
-import '../../views/person/address.dart';
 import '../../model/userinfo.dart';
-import '../../routers/application.dart';
+import 'package:color_dart/color_dart.dart';
 
-class GoodsBuyPage extends StatefulWidget {
-  final int store_id;
-  GoodsBuyPage({this.store_id = 0});
-
+class CoffeeCartsBuy extends StatefulWidget {
   @override
   GoodsBuyState createState() => new GoodsBuyState();
 }
 
-class GoodsBuyState extends State<GoodsBuyPage> {
+class GoodsBuyState extends State<CoffeeCartsBuy> {
   GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
   TextEditingController _usernoteCtrl = TextEditingController();
-
   double _point_rate = 1.0;
   int _count = 0;
   double _money = 0.0;
@@ -37,6 +33,7 @@ class GoodsBuyState extends State<GoodsBuyPage> {
   String _pwd = '';
   bool _ispayed = false;
   String _address = "";
+  Userinfo _userinfo;
 
   @override
   Widget build(BuildContext context) {
@@ -45,59 +42,61 @@ class GoodsBuyState extends State<GoodsBuyPage> {
         child: SafeArea(
             bottom: true,
             top: false,
-            child: Scaffold(
-                appBar: new AppBar(
-                  title: new Text('订单支付'),
-                  centerTitle: true,
-                ),
-                body: Container(
-                    padding: EdgeInsets.all(5),
-                    child: Form(
-                        //绑定状态属性
-                        key: _formKey,
-                        autovalidate: true,
-                        child: Container(
-                            width: MediaQuery.of(context).size.width,
-                            child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: mainbody(_cartlist))))),
-                bottomNavigationBar: buildbottomsheet(context))));
+            child: Consumer<CartsProvider>(
+                builder: (context, CartsProvider cartsmodel, _) {
+              return Scaffold(
+                  appBar: new AppBar(
+                    title: new Text('订单支付'),
+                    centerTitle: true,
+                  ),
+                  body: Container(
+                      padding: EdgeInsets.all(5),
+                      child: Form(
+                          //绑定状态属性
+                          key: _formKey,
+                          autovalidate: true,
+                          child: Container(
+                              width: MediaQuery.of(context).size.width,
+                              child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: mainbody(cartsmodel))))),
+                  bottomNavigationBar: buildbottomsheet(context, cartsmodel));
+            })));
   }
 
-  Widget mainbody(List<CartItemModel> cartlist) {
-    return Consumer<CartsProvider>(
-        builder: (context, CartsProvider model, _)
-    {
-      return ListView(
-        children: listviewchildren(model,cartlist),
-      );
-    });
-
+  Widget mainbody(CartsProvider model) {
+    return ListView(
+      children: listviewchildren(model),
+    );
   }
 
-  List<Widget> listviewchildren(CartsProvider model,List<CartItemModel> cartlist) {
+  List<Widget> listviewchildren(CartsProvider model) {
+    final usmodel = Provider.of<GlobleProvider>(context);
     List<Widget> toplist = <Widget>[
-      dizhi(),
+      dizhi(usmodel),
       Divider(height: 5),
     ];
-
+    List<CartItemModel> cartlist = model.cartitems;
     if (cartlist != null && cartlist.length > 0)
       cartlist.forEach((it) {
-        Widget itemwgt = CartItemWidget(
-          it,
-          readonly: true,
-          index: cartlist.indexOf(it),
-          switchChaned: (i) {
-            model.switchSelect(i);
-          },
-          addCount: (int i) {
-            model.addCount(i);
-          },
-          downCount: (int i) {
-            model.downCount(i);
-          },
-        );
-        toplist.add(itemwgt);
+        if (it.isSelected) {
+          Widget itemwgt = CartItemWidget(
+            it,
+            readonly: true,
+            index: cartlist.indexOf(it),
+            switchChaned: (i) {
+              model.switchSelect(i);
+            },
+            addCount: (int i) {
+              model.addCount(i);
+            },
+            downCount: (int i) {
+              model.downCount(i);
+            },
+            showtype: 0,
+          );
+          toplist.add(itemwgt);
+        }
       });
 
     toplist.addAll([
@@ -106,16 +105,16 @@ class GoodsBuyState extends State<GoodsBuyPage> {
       Container(
         height: 5,
       ),
-      payoption(),
+      payoption(usmodel),
       Divider(height: 5),
     ]);
 
     return toplist;
   }
 
-
-  Widget dizhi() {
-   return Container(
+  Widget dizhi(GlobleProvider usmodel) {
+    _userinfo = usmodel.userinfo;
+    return Container(
         color: Color(0xFFFFFFFF),
         padding: const EdgeInsets.all(0),
         child: Column(
@@ -123,7 +122,7 @@ class GoodsBuyState extends State<GoodsBuyPage> {
             ListTile(
               leading: Icon(Icons.phone_iphone),
               title: Text(
-                "${_userinfo.name}[${_userinfo.phone}]",
+                "${_userinfo.phone}",
                 maxLines: 1,
                 softWrap: true, //是否自动换行 false文字不考虑容器大小  单行显示   超出；屏幕部分将默认截断处理
                 overflow: TextOverflow.ellipsis,
@@ -194,7 +193,7 @@ class GoodsBuyState extends State<GoodsBuyPage> {
               },
             ),
           ),
-      /*    Divider(
+          /*    Divider(
             height: 1,
           ),
           Container(
@@ -229,7 +228,7 @@ class GoodsBuyState extends State<GoodsBuyPage> {
               onTap: () {},
             ),
           ),*/
-          Divider(
+     /*     Divider(
             height: 1,
           ),
           Container(
@@ -255,24 +254,23 @@ class GoodsBuyState extends State<GoodsBuyPage> {
                     )
                   ],
                 ),
-
               ],
             ),
-          ),
+          ),*/
 //                Divider(),
         ],
       ),
     );
   }
 
-  Widget payoption() {
+  Widget payoption(GlobleProvider myinfo) {
     return Padding(
       padding: EdgeInsets.all(0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Visibility(
-              visible: 1 > 0,
+              visible: myinfo.userinfo.money > 0,
               child: Semantics(
                   container: true,
                   child: Container(
@@ -282,12 +280,24 @@ class GoodsBuyState extends State<GoodsBuyPage> {
                     child: ListTile(
                         title: Row(
                           children: <Widget>[
-                            Icon(Icons.account_balance_wallet),
+                            Icon(
+                              Icons.monetization_on,
+                              color: Colors.green,
+                            ),
+//                            Image.asset(
+//                              "images/goldbi.png",
+//                              width: 20,
+//                              height: 20,
+//                              fit: BoxFit.fill,
+//                            ),
                             Padding(
                               padding: const EdgeInsets.only(left: 8.0),
                               child: Text(
-                                "余额0元",
-                                style: KfontConstant.littleStyle,
+                                "余额：${myinfo.userinfo.money}元",
+                                style: TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                    color: rgba(56, 56, 56, 1)),
                               ),
                             ),
                           ],
@@ -303,52 +313,33 @@ class GoodsBuyState extends State<GoodsBuyPage> {
                         )),
 //                    ),
                   ))),
-          Divider(
-            height: 3,
-          ),
-          Visibility(
-              visible: 1 > 0,
-              child: Semantics(
-                container: true,
-                child: Container(
-                    color: Color(0xFFFFFFFF),
-                    padding: const EdgeInsets.all(0),
-//                    child: Card(
-                    child: ListTile(
-                      title: Row(
-                        children: <Widget>[
-                          Icon(Icons.monetization_on),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 8.0),
-                            child: Text(
-                              "可用积分0",
-                              style: KfontConstant.littleStyle,
-                            ),
-                          ),
-                        ],
-                      ),
-                      trailing: Switch(
-                        value: _switchValue,
-                        activeColor: Colors.deepOrange,
-                        onChanged: (bool value) {
+
+          /*   Radio(
+                        value:1,
+                        groupValue:_optionValue,
+                        activeColor: Colors.blue,
+                        onChanged:(v){
                           setState(() {
-                            _switchValue = value;
+                            _optionValue = v;
                           });
                         },
-                      ),
-                    )
-//    ),
-                    ),
-              )),
-          Divider(
-            height: 3,
-          ),
+                      )*/
         ],
       ),
     );
   }
 
-  Widget buildbottomsheet(context) {
+  Widget buildbottomsheet(context, CartsProvider carts) {
+    List<CartItemModel> cartlist = carts.cartitems;
+    _money = 0.0;
+    _count = 0;
+    cartlist.forEach((item) {
+      if (item.isSelected) {
+        _count += item.count;
+        _money += item.price * item.count;
+      }
+    });
+
     return Container(
       padding: EdgeInsets.only(left: 5, right: 5),
       width: MediaQuery.of(context).size.width,
@@ -412,7 +403,7 @@ class GoodsBuyState extends State<GoodsBuyPage> {
             width: 100,
             child: InkWell(
               onTap: () async {
-                if (!_ispayed) await submit();
+                if (!_ispayed) await submit(carts);
               },
               child: Container(
                 padding: EdgeInsets.only(left: 10, right: 5),
@@ -441,100 +432,90 @@ class GoodsBuyState extends State<GoodsBuyPage> {
     );
   }
 
-  void submit() async {
-
+  void submit(CartsProvider carts) async {
     final form = _formKey.currentState;
-/*
-    if (form.validate()) {
-      if (_switchValue || _switchValueye) {
-        if (_pwd.isEmpty)
-          return getPassword(context, (String pwd) {
-            setState(() {
-//              print("=====vv=$pwd===========");
-              _pwd = pwd;
-              submit();
-            });
-          });
-      }
 
+    if (form.validate()) {
       form.save();
-      List<Map<String, String>> aparams = List();
-      _cartlist.forEach((it) {
-          Map<String, String> tdt = {
-            "PRODID": it.goodsId.toString(),
-            "PRICE": it.price.toString(),
-            "FNLPRICE": it.price.toString(),
-            "COUNT": it.count.toString(),
-            "VAL": (it.price * it.count).toStringAsFixed(2),
-            "REMARKS": it.productName
+      showLoadingDialog("订单提交中……");
+
+      List<dynamic> coffeedata = List();
+
+      List<CartItemModel> cartlist = carts.cartitems;
+      cartlist.forEach((item) {
+        if (item != null && item.isSelected) {
+          var terrr = {
+            "drinkId": item.goodsId,
+            'sugarRule': int.parse(item.attr),
+            'deviceId': item.cartId,
+            'count': item.count
           };
-          aparams.add(tdt);
+          coffeedata.add(terrr);
+        }
       });
 
-      Map<String, String> mparams = {
-        "TOTALVAL": _money.toStringAsFixed(2),
-        "TOTALNUM": _count.toString(),
-        "CUSTOMNAME": _userinfo.name.toString(),
-        "CUSTOMPHONE": _userinfo.phone.toString(),
-        "ADDRESS": _address,
-        "REMARKS": _usernoteCtrl.text,
-      };
-      showLoadingDialog("订单提交中……");
-      Map<String, dynamic> v= await ShopUtils.addOrder(
-              context, widget.store_id.toString(), aparams, mparams);
-
-        hideLoadingDialog();
-        if (v!= null && v['code'].toString() == '101') {
-          await DialogUtils.showToastDialog(context, '订单提交成功');
-
-          var retodr=v['data'][0];
-          if(retodr!=null){
-            //清空购物车
-            final model =  Provider.of<CartsProvider>(context);
-            List<CartItemModel> cartlist1 = model.cartitems;
-            _cartlist.forEach((e)async{
-              await  model.removeItem(cartlist1.indexOf(e));
+      if (_switchValueye) {
+        if (_pwd.isEmpty)
+          await ComFun.getPassword(context, (String pwd) async {
+            setState(() {
+              _pwd = pwd;
             });
+            DialogUtils.showLoadingDialog(context);
+            Map<String, String> paydata = {
+              "isConsumerCoupon": "0",
+              "type": "4",
+              "password": _pwd,
+              "orderData": "${json.encode(coffeedata)}"
+            };
 
-//            print(retodr['ORDERNUM']);
-            await Navigator.of(context).push(PageRouteBuilder(
+            setState(() {
+              _ispayed = true;
+              _pwd = "";
+            });
+            var response = await DataUtils.addCoffeeOrder(context, paydata);
+
+              await DataUtils().freshlogin(context);
+              //清空购物
+              _cartlist.forEach((e) async {
+                if(e.isSelected)
+                  await carts.removeItem(cartlist.indexOf(e));
+              });
+
+
+            hideLoadingDialog();
+            Navigator.of(context).pop();
+
+          });
+      } else {
+        Map<String, String> paydata = {
+          "isConsumerCoupon": "0",
+          "orderData": json.encode(coffeedata)
+        };
+        setState(() {
+          _ispayed = true;
+        });
+        hideLoadingDialog();
+        Navigator.of(context)
+            .push(PageRouteBuilder(
                 opaque: false,
                 pageBuilder: (context, animation, secondaryAnimation) {
-                  return GoToPayPage(retodr['ORDERNUM'],double.parse(retodr['TOTALVAL']),scean: "OTO",data: mparams,);
-                }));
-          }
+                  return GoToPayPage(
+                    "",
+                    data: paydata,
+                    money: _money,
+                  );
+                }))
+            .then((value) => Navigator.of(context).pop());
+      }
 
-        } else {
-          await DialogUtils.showToastDialog(context, '提交失败${v['msg']}');
-          _pwd = '';
-        }
+//
 
-    }*/
-  }
-
-  Userinfo _userinfo = Userinfo.fromJson({});
-  Future _initdata() async {
-    final model =  Provider.of<CartsProvider>(context);
-
-    _count = 0;
-    _money = 0.0;
-    List<CartItemModel> cartlist0 = model.cartitems;
-    if (cartlist0 != null && cartlist0.length > 0)
-      cartlist0.forEach((it) {
-        if (widget.store_id == it.storeId) {
-          _count += it.count;
-          _money += it.price * it.count;
-          _cartlist.add(it);
-        }
-      });
-
-    setState(() {});
+    }
   }
 
   @override
   void initState() {
     super.initState();
-    _initdata();
   }
 
   @override
@@ -561,5 +542,4 @@ class GoodsBuyState extends State<GoodsBuyPage> {
       });
     }
   }
-
 }

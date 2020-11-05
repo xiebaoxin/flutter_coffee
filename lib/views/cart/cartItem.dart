@@ -4,6 +4,7 @@ import '../../components/loading_gif.dart';
 import '../../components/showimage.dart';
 import '../../model/cart.dart';
 import '../../utils/utils.dart';
+import '../../utils/dataUtils.dart';
 import '../../globleConfig.dart';
 
 class CartItemWidget extends StatelessWidget {
@@ -79,7 +80,7 @@ final int showtype;
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(data.attr,
+                                  Text("${DataUtils.coffeesugarRule(int.parse(data.attr))}",
                                       style: TextStyle(
                                         fontSize: 12,
                                       )),

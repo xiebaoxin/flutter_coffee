@@ -24,7 +24,6 @@ class SecondryCategory extends StatelessWidget {
 
     List<Map<String, dynamic>> items = data.list;
     print("------list_view_item page --------");
-    print(data.name);
 print(items);
 
  /*   List<CartItemModel>  cartitems=List();

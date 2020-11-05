@@ -97,8 +97,20 @@ class CartsProvider with ChangeNotifier {
 
   void addtocart(context,Map<String, dynamic> params) {
     CartItemModel item=CartItemModel.fromJson((params));
+    int index=-1;
+    for (int i=0;i<_cartitems.length;i++){
+      if( _cartitems[i].goodsId==item.goodsId){
+        index= _cartitems.indexOf(_cartitems[i]);
+        break;
+      }
+    }
+    if(index<0){
       _cartitems.add(item);
       notifyListeners();
+    }
+    else
+      addCount(index);
+
   }
 
 void initcartdemo(){

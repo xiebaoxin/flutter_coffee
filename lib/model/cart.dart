@@ -10,9 +10,10 @@ class CartItemModel {
   bool isSelected;
   bool isDeleted;
   double price;
+  String extrinfo;
   CartItemModel(
       {this.productName,
-      this.count,
+      this.count=1,
       this.cartId,
       this.goodsId,
       this.storeId,
@@ -21,7 +22,8 @@ class CartItemModel {
       this.attr,
       this.price,
       this.isDeleted = false,
-      this.isSelected = true});
+      this.isSelected = true,
+      this.extrinfo=""});
   CartItemModel.fromJson(dynamic json)
       : productName = json['goods_name'],
         goodsId = json['goods_id'],
@@ -33,5 +35,6 @@ class CartItemModel {
         isSelected = true, // (json['selected'] as int) == 1 ? true : false,
         imageUrl = json['goods_img'] ?? '',
         attr = json['attr'] ?? "",
-        buyLimit = json['limit'];
+        buyLimit = json['limit']??100,
+        extrinfo="";
 }
