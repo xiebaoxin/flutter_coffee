@@ -126,6 +126,17 @@ int timetonowdays(int timestamp) {
   return diff.inDays;
 }
 
+/// 获取时间戳
+/// 不传值 代表获取当前时间戳
+ int getTime([DateTime time]) {
+if(time == null) {
+return (DateTime.now().millisecondsSinceEpoch/1000).round();
+} else {
+return (time.millisecondsSinceEpoch/1000).round();
+}
+}
+
+
 /**
  * 倒计时
  * difftimes 时间差秒
@@ -159,12 +170,4 @@ void CountdowntimeFunc(int difftimes, Timer timerIndex, Function callBack) {
 
     // debugPrint(_text);
   });
-}
-
- int getTime([DateTime time]) {
-if(time == null) {
-return (DateTime.now().millisecondsSinceEpoch/1000).round();
-} else {
-return (time.millisecondsSinceEpoch/1000).round();
-}
 }

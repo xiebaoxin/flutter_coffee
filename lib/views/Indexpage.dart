@@ -9,7 +9,7 @@ import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:amap_core_fluttify/amap_core_fluttify.dart';
-import 'package:amap_location_fluttify/amap_location_fluttify.dart';
+// import 'package:amap_location_fluttify/amap_location_fluttify.dart';
 import '../routers/application.dart';
 import '../model/banner.dart';
 import 'comm/comwidget.dart';
@@ -24,9 +24,8 @@ import '../utils/DialogUtils.dart';
 import '../utils/comUtil.dart';
 import '../components/banner.dart';
 import 'comm/gotopay.dart';
-import '../views/person/usersetting.dart';
 import '../views/person/message_list.dart';
-import '../globalutils/global.dart';
+import '../utils/shopDataUtils.dart';
 
 class IndexPageHome extends StatefulWidget {
   @override
@@ -237,8 +236,13 @@ class HomeIndexPageState extends State<IndexPageHome>
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              buildIconitem("无人售卖机", "特价爆款", "", () {
-                ;
+              buildIconitem("无人售卖机", "特价爆款", "", ()async {
+             /*   print("---------=-=-=----------");
+                Map<String, dynamic> param={
+                  "stores_id":"10",
+                  "barcode_id":'13'
+                };
+                print(await ShopDataUtils.goodsDetails(param));*/
               }),
               buildIconitem("优惠劵", "先领劵更划算", "", () {
                 ;
@@ -295,13 +299,6 @@ class HomeIndexPageState extends State<IndexPageHome>
       itemlist.add(FutureBuilder<List<Map<String, dynamic>>>(
           future: _futureLocationBuilderFuture,
           builder: _buildMachineListBody));
-      /* if (_shopsList != null && _shopsList.length > 0){
-        _shopsList.forEach((it) {
-          itemlist.add(ComWidget.machineitem(it),);
-        });
-      }else
-        itemlist.add(ComWidget.machineitem({}),);
-*/
     }
 
     itemlist.add(Padding(
@@ -480,10 +477,7 @@ class HomeIndexPageState extends State<IndexPageHome>
         width: itemWidth,
         margin: EdgeInsets.all(0),
         child: InkWell(
-          onTap: () {
-//            Application.coffeeDetail(context, 1);
-//            Application.goodsDetail(context, item['goods_id'].toString());
-          },
+          onTap: callback,
           child: Card(
             color: bgColor,
             // This ensures that the Card's children are clipped correctly.
@@ -617,6 +611,7 @@ class HomeIndexPageState extends State<IndexPageHome>
 
   void getmsgreaed()async{
     _hasnoread=await DataUtils.getMyMessageReaded(context);
+
     setState(() {  });
   }
 

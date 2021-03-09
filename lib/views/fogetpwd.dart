@@ -171,7 +171,7 @@ _password=_PasswordCtrl.text;
 
       };
 
-      await HttpUtils.post( "owner/resetPassword", params, context: context).then((response) async{
+      await HttpUtils.post( "owner/resetPassword", params).then((response) async{
         await  DialogUtils.showToastDialog(context, response['message']);
         if (response['code'] == '101')
           {

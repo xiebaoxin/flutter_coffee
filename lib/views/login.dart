@@ -263,7 +263,7 @@ class LoginPageState extends State<LoginPage> {
       "code": code,
     };
     showLoadingDialog();
-    await HttpUtils.get("WxAppAuth/userWxInfo", params, context: context)
+    await HttpUtils.get("WxAppAuth/userWxInfo", params)
         .then((response) async {
       if (response['data']['unionid'].isNotEmpty) {
         _wxuserInfo = response['data'];
@@ -289,7 +289,7 @@ class LoginPageState extends State<LoginPage> {
       };
 
       var response =
-          await HttpUtils.post("PublicContr/checkWx", pdata, context: context);
+          await HttpUtils.post("PublicContr/checkWx", pdata);
       if (response["code"] == 200) {
 //        返回登录后的用户信息 response["userinfo"]
         if (await DataUtils().loginserv(context, response["userinfo"])) {

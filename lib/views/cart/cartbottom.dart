@@ -5,7 +5,7 @@ import '../../model/cart.dart';
 import 'package:provider/provider.dart';
 import '../../model/carts_provider.dart';
 import 'cart.dart';
-import '../shop/buycoffeecart.dart';
+import '../comm/buycoffeecart.dart';
 
 class _TotalWidget extends StatefulWidget {
   final double totalPrice;

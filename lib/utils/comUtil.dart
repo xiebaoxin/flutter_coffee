@@ -175,6 +175,7 @@ class ComFun {
       AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
       return "${androidInfo.brand},${androidInfo.model},${androidInfo.version.release}";
     }
+    return "";
   }
 
   Future setdefaultunitindex(int uindex) async {
@@ -417,7 +418,6 @@ class ComFun {
                                 });
                               },
                             );
-                            ;
                           },
                         ),
                       ),
@@ -526,7 +526,7 @@ class ComFun {
                                 });
                               },
                             );
-                            ;
+
                           },
                         ),
                       ),
@@ -765,7 +765,7 @@ class AndroidBackTop {
       final bool out = await platform.invokeMethod('backDesktop');
       if (out) debugPrint('返回到桌面');
     } on PlatformException catch (e) {
-      debugPrint("通信失败(设置回退到安卓手机桌面:设置失败)");
+      debugPrint("通信失败(设置回退到安卓手机桌面:设置失败)${e.toString()}");
 //      print(e.toString());
     }
     return Future.value(false);

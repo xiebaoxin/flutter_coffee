@@ -29,8 +29,8 @@ int _userid=0;
   Future setlogin(Map<String, dynamic> userinfojson) async {
     SharedPreferences prefs = await _prefs;
     _loginStatus = true;
-    _token =  await prefs.getString("token");
-    _userid=await prefs.getInt("userid");
+    _token =   prefs.getString("token");
+    _userid= prefs.getInt("userid");
 
     print("token :$_token-- userid: $_userid----");
 

@@ -6,10 +6,10 @@ import '../../globleConfig.dart';
 
 class AliOssAPI {
   //获取OSS Token
-  static final String URL_TOKEN= "${GlobalConfig.aliossserver}/getAliyunOssToken";
+  static final String urlToken= "${GlobalConfig.aliossserver}/getAliyunOssToken";
 
   //获取OS上传图片服务器地址
-  static final String URL_UPLOAD_IMAGE_OSS= GlobalConfig.aliossimgbase;
+  static final String urlUploadImageOss= GlobalConfig.aliossimgbase;
 
 }
 
@@ -26,7 +26,7 @@ class AliOssApiService {
       {cancelToken}) async {
     Dio dio = Dio();
     dio.options.responseType = ResponseType.plain;
-    return await dio.get(AliOssAPI.URL_TOKEN);
+    return await dio.get(AliOssAPI.urlToken);
   }
 
   static Future<dynamic> uploadImage(BuildContext context, String uploadName,
@@ -54,7 +54,7 @@ class AliOssApiService {
       //必须放在参数最后
     });
     Dio dio = Dio(options);
-    Response response = await dio.post(AliOssAPI.URL_UPLOAD_IMAGE_OSS, data: data,onSendProgress: (received, total) {
+    Response response = await dio.post(AliOssAPI.urlUploadImageOss, data: data,onSendProgress: (received, total) {
       onSendProgressCallBack(received, total);
     });
 

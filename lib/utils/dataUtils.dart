@@ -26,7 +26,7 @@ class DataUtils {
       "phone": phone
     };
 
-    var response= await HttpUtils.post("/api/captcha/", params, context: context,withtoken: false);
+    var response= await HttpUtils.post("/api/captcha/", params, withtoken: false);
     print(response);
     if(response!=null){
       await DialogUtils.showToastDialog(context, response['message']);
@@ -51,7 +51,7 @@ class DataUtils {
     };
 
     print(params);
-   var response= await HttpUtils.post("/api/customer/register", params, context: context,withtoken: false);
+   var response= await HttpUtils.post("/api/customer/register", params, withtoken: false);
           print(response);
       if(response!=null){
         await DialogUtils.showToastDialog(context, response['message']);
@@ -80,7 +80,7 @@ class DataUtils {
     }
 
 
-    await HttpUtils.post(loginurl, params, context: context,withtoken: false)
+    await HttpUtils.post(loginurl, params, withtoken: false)
         .then((response) async {
 //          print(response);
       if(response!=null){
@@ -127,7 +127,7 @@ class DataUtils {
       "customerId": prefs.getInt("userid").toString()
     };
 
-    await HttpUtils.post("/api/customer/logout", params, context: context)
+    await HttpUtils.post("/api/customer/logout", params)
         .then((response) async {
       if(response!=null){
         if (response['code']==200)
@@ -147,7 +147,7 @@ class DataUtils {
     };
     Map<String, dynamic> userinfo;
 
-    await HttpUtils.get("/api/customer/info", params, context: context,withtoken: true)
+    await HttpUtils.get("/api/customer/info", params, withtoken: true)
         .then((response) async {
       if(response!=null){
 
@@ -173,7 +173,7 @@ class DataUtils {
 
     Map<String, dynamic> userinfo;
 
-    await HttpUtils.post("/api/customer/payment-password/set", params, context: context,withtoken: true)
+    await HttpUtils.post("/api/customer/payment-password/set", params, withtoken: true)
         .then((response) async {
       if(response!=null){
         if (response['code']==200)
@@ -193,7 +193,7 @@ class DataUtils {
     Map<String, String> params = {};
 
     Map<String, dynamic> response =
-    await HttpUtils.get("/back/startup-page/list", params, context: context);
+    await HttpUtils.get("/back/startup-page/list", params);
     if (response['data'] != null) {
       response['data'].forEach((ele) {
         if (ele.isNotEmpty) {
@@ -209,7 +209,7 @@ class DataUtils {
       BuildContext context) async {
     List<Map<String, dynamic>> AdsList = List();
 
-    await HttpUtils.get("/api/advertise/list", {}, context: context,withtoken: false)
+    await HttpUtils.get("/api/advertise/list", {}, withtoken: false)
         .then((response) async {
       if(response!=null){
 
@@ -249,7 +249,7 @@ class DataUtils {
       "customerId": prefs.getInt("userid").toString(),
     };
     Map<String, dynamic> response =
-    await HttpUtils.get("/api/message/get", params, context: context,withtoken: true);
+    await HttpUtils.get("/api/message/get", params, withtoken: true);
 
     if (response['code']==200) {
      return response['data']['status'];
@@ -270,7 +270,7 @@ class DataUtils {
       "number": pagesize.toString(),
     };
 
-    var response = await HttpUtils.get("/api/message/list", params, context: context,withtoken: true);
+    var response = await HttpUtils.get("/api/message/list", params, withtoken: true);
 
     if (response['code']==200 && response !=null && response['data'] != null) {
       returnList= response['data'];
@@ -291,7 +291,7 @@ class DataUtils {
     };
 
     Map<String, dynamic> response =
-    await HttpUtils.post("/api/message/read", params, context: context,withtoken: true);
+    await HttpUtils.post("/api/message/read", params, withtoken: true);
 
     if (response['code']==200 && response['data'] != null) {
       return response['data'] ;
@@ -307,7 +307,7 @@ class DataUtils {
     List<Map<String, dynamic>> returnList = List();
 
     Map<String, dynamic> response =
-    await HttpUtils.get("/api/device/nearby", params, context: context,withtoken: false);
+    await HttpUtils.get("/api/device/nearby", params, withtoken: false);
 
     if (response['code']==200 && response !=null && response['data'] != null) {
       response['data'].forEach((ele) {
@@ -329,7 +329,7 @@ class DataUtils {
       "deviceId": deviceId.toString()
     };
     Map<String, dynamic> response =
-    await HttpUtils.get("/api/drink-type/list", params, context: context,withtoken: false);
+    await HttpUtils.get("/api/drink-type/list", params, withtoken: false);
 
     if (response['code']==200 && response !=null && response['data'] != null) {
       response['data'].forEach((ele) {
@@ -353,7 +353,7 @@ class DataUtils {
       "drinkTypeId":drinkTypeId.toString()
     };
     Map<String, dynamic> response =
-    await HttpUtils.get("/api/drink/list", params, context: context,withtoken: false);
+    await HttpUtils.get("/api/drink/list", params, withtoken: false);
 
     if (response['code']==200 && response !=null && response['data'] != null) {
       response['data'].forEach((ele) {
@@ -375,7 +375,7 @@ print(returnList);
     params.putIfAbsent("customerId", () => prefs.getInt("userid").toString());
     print(params);
     Map<String, dynamic> response =
-    await HttpUtils.post("/api/orders/orders-payment", params, context: context,withtoken: true);
+    await HttpUtils.post("/api/orders/orders-payment", params, withtoken: true);
 
     if (response['code']==200 && response !=null && response['data'] != null) {
       return response['data'];
@@ -401,7 +401,7 @@ print(returnList);
       "ordersType":otype
     };
 
-    var response = await HttpUtils.get("/api/orders/my", params, context: context,withtoken: true);
+    var response = await HttpUtils.get("/api/orders/my", params, withtoken: true);
 
     if (response['code']==200 && response !=null && response['data'] != null) {
       returnList= response['data'];
@@ -414,7 +414,7 @@ print(returnList);
     List<Map<String, dynamic>> returnList = List();
     Map<String, String> params = { };
     Map<String, dynamic> response =
-    await HttpUtils.get("/api/customer/recharge-config", params, context: context,withtoken: false);
+    await HttpUtils.get("/api/customer/recharge-config", params, withtoken: false);
 
     if (response['code']==200 && response !=null && response['data'] != null) {
       response['data'].forEach((ele) {
@@ -438,7 +438,7 @@ print(returnList);
     };
 
     Map<String, dynamic> response =
-    await HttpUtils.post("/api/customer/recharge", params, context: context,withtoken: true);
+    await HttpUtils.post("/api/customer/recharge", params, withtoken: true);
 
     if (response['code']==200 && response !=null && response['data'] != null) {
       return response['data'];
@@ -550,7 +550,7 @@ print(returnList);
     };
 
     Map<String, dynamic> response =
-    await HttpUtils.get("appcity/getUpgrade", params, context: context);
+    await HttpUtils.get("appcity/getUpgrade", params);
 
     if (response != null)
       return response['data'];

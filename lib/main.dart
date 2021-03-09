@@ -56,9 +56,9 @@ void main() {
 
 class InitApp extends StatelessWidget {
 
-  AppLifecycleState appLifecycleState;
-  JPush jpush = new JPush();
-  String debugLable = 'Unknown';
+//   AppLifecycleState appLifecycleState;
+  final JPush  jpush = new JPush();
+   String debugLable = 'Unknown';
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +72,7 @@ class InitApp extends StatelessWidget {
 
     return MaterialApp(
         title: GlobalConfig.appName,
-        navigatorKey: Constants.navigatorKey,
+        navigatorKey: G.navigatorKey,
         debugShowCheckedModeBanner: false,
         onGenerateRoute: Application.router.generator,
         initialRoute: "/",
@@ -108,7 +108,7 @@ class InitApp extends StatelessWidget {
             brightness: Brightness.dark,
             iconTheme: IconThemeData(color: Colors.white),
             textTheme: TextTheme(
-              title: TextStyle(
+              headline6: TextStyle(
                 color: Colors.white,
                 fontSize: 18.0,
               ),

@@ -13,7 +13,7 @@ class MapUtil {
     bool canLaunchUrl = await canLaunch(url);
 
     if (!canLaunchUrl) {
-      DialogUtils.showToastDialog(Constants.navigatorKey.currentContext, '未检测到高德地图~');
+      DialogUtils.showToastDialog(G.navigatorKey.currentContext, '未检测到高德地图~');
       return false;
     }
 
@@ -28,7 +28,7 @@ class MapUtil {
     bool canLaunchUrl = await canLaunch(url);
 
     if (!canLaunchUrl) {
-      DialogUtils.showToastDialog(Constants.navigatorKey.currentContext, '未检测到腾讯地图~');
+      DialogUtils.showToastDialog(G.navigatorKey.currentContext, '未检测到腾讯地图~');
       return false;
     }
 
@@ -44,7 +44,7 @@ class MapUtil {
     bool canLaunchUrl = await canLaunch(url);
 
     if (!canLaunchUrl) {
-      DialogUtils.showToastDialog(Constants.navigatorKey.currentContext, '未检测到百度地图~');
+      DialogUtils.showToastDialog(G.navigatorKey.currentContext, '未检测到百度地图~');
       return false;
     }
 
@@ -60,7 +60,7 @@ class MapUtil {
     bool canLaunchUrl = await canLaunch(url);
 
     if (!canLaunchUrl) {
-      DialogUtils.showToastDialog(Constants.navigatorKey.currentContext, '打开失败~');
+      DialogUtils.showToastDialog(G.navigatorKey.currentContext, '打开失败~');
       return false;
     }
 

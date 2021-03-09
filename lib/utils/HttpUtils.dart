@@ -60,20 +60,17 @@ class HttpUtils {
   }
 
   static Future get(String url, Map<String, dynamic> params,
-      {BuildContext context, bool withtoken = true}) async {
-    return await _request(url, params,
-        context: context, method: GET, withToken: withtoken);
+      {bool withtoken = true}) async {
+    return await _request(url, params, method: GET, withToken: withtoken);
   }
 
   static Future post(String url, Map<String, dynamic> params,
-      {BuildContext context, bool withtoken = true}) async {
-    return await _request(url, params,
-        context: context, method: POST, withToken: withtoken);
+      {bool withtoken = true}) async {
+    return await _request(url, params, method: POST, withToken: withtoken);
   }
 
   static Future _request(String url, Map<String, dynamic> params,
-      {BuildContext context,
-      String method = POST,
+      {String method = POST,
       bool withToken = true}) async {
     print("-----<net---> url :<" + method + ">" + url);
     if (params != null && params.isNotEmpty) {
@@ -125,7 +122,7 @@ class HttpUtils {
       int statusCode = response.statusCode;
       if (statusCode < 0) {
         errorMsg = "网络请求错误,状态码:" + statusCode.toString();
-        _handError(context, errorMsg);
+        _handError(errorMsg);
       }
       return response.data;
     } on DioError catch (error) {
@@ -138,21 +135,19 @@ class HttpUtils {
         errorResponse = new Response(statusCode: 666);
       }
 //      print("dio erro:----${errorResponse.statusCode}:${errorResponse.statusMessage}");
-      if (context != null) {
+
         if (errorResponse.statusCode == 666)
-          await _handError(context, "网络请求异常,请稍后再试");
+          await _handError("网络请求异常,请稍后再试");
         else
-          await _handError(
-              context, "网络请求异常:${errorResponse.statusCode}${error.message}");
-      }
+          await _handError("网络请求异常:${errorResponse.statusCode}${error.message}");
 
       return null;
     }
   }
 
   //处理异常
-  static Future _handError(BuildContext context, String errorMsg) async {
+  static Future _handError(String errorMsg) async {
 //    print("<net> errorMsg :" + errorMsg);
-    await DialogUtils.showToastDialog(context, errorMsg);
+    await DialogUtils.showToastDialog(G.getCurrentContext(), errorMsg);
   }
 }

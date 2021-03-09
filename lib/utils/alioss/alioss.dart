@@ -18,12 +18,12 @@ class OssUtil {
       '{"expiration": "2069-05-22T03:15:00.000Z","conditions": [["content-length-range", 0, 1048576000]]}';//UTC时间+8=北京时间
 
   //进行utf8编码
-  static List<int> _policyText_utf8 = utf8.encode(_policyText);
+  static List<int> _policyTextUtf8 = utf8.encode(_policyText);
   //进行base64编码
-  static String policy= base64.encode(_policyText_utf8);
+  static String policy= base64.encode(_policyTextUtf8);
 
   //再次进行utf8编码
-  static List<int> _policy_utf8 = utf8.encode(policy);
+  static List<int> _policyUtf8 = utf8.encode(policy);
 
   // 工厂模式
   factory OssUtil() => _getInstance();
@@ -45,13 +45,13 @@ class OssUtil {
   */
   String getSignature(String _accessKeySecret){
     //进行utf8 编码
-    List<int> _accessKeySecret_utf8 = utf8.encode(_accessKeySecret);
+    List<int> _accessKeySecretUtf8 = utf8.encode(_accessKeySecret);
 
     //通过hmac,使用sha1进行加密
-    List<int> signature_pre = new Hmac(sha1, _accessKeySecret_utf8).convert(_policy_utf8).bytes;
+    List<int> signaturePre = new Hmac(sha1, _accessKeySecretUtf8).convert(_policyUtf8).bytes;
 
     //最后一步，将上述所得进行base64 编码
-    String signature = base64.encode(signature_pre);
+    String signature = base64.encode(signaturePre);
     return signature;
   }
 

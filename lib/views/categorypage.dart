@@ -54,7 +54,7 @@ var _categoryData=categoryData;
   Map<String, dynamic> _machine;
 
    double dheight = MediaQuery
-      .of(Constants.navigatorKey.currentContext)
+      .of(G.navigatorKey.currentContext)
       .size
       .height;
 

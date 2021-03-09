@@ -27,6 +27,41 @@
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
 
+    <key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>aic.wangpeiaiot.com</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>wx7d737ec3ee7d7e8d</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>alipay</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>ali2019102560030381</string>
+			</array>
+		</dict>
+	</array>
+    <key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>weixin</string>
+		<string>weixinULAPI</string>
+	</array>
+
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+
 	<key>io.flutter.embedded_views_preview</key>
     <string>YES</string>
     <key>NSLocationWhenInUseUsageDescription</key>

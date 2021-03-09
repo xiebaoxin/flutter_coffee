@@ -30,10 +30,6 @@ class KfontConstant {
     color: Colors.white,
   );
 
-
-  /**
-   * 白色字
-   */
   static TextStyle defaultAppbarTitleStyle = TextStyle(
   color: Color(0xFFFFFFFF),
   fontSize: appbat18Title,

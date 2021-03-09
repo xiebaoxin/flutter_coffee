@@ -118,7 +118,9 @@ class HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin{
     });
   }
 
+  @override
   Widget build(BuildContext context) {
+super.build(context);
     return
       WillPopScope(
         onWillPop: () async{

@@ -383,7 +383,7 @@ String _cache="";
       };
 
       Application().checklogin(context, () async {
-        await HttpUtils.post('User/upsetuserinfo', params, context: context)
+        await HttpUtils.post('User/upsetuserinfo', params)
             .then((response) async {
           await DialogUtils.showToastDialog(
               context, response['msg'].toString());

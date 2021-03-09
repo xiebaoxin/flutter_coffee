@@ -33,16 +33,16 @@ class UserKeyDatabaseHelper {
   }
 
 //插入
-  Future<int> saveItem(int user_id,List<Map<String, dynamic>> keylist) async {
+  Future<int> saveItem(int userId,List<Map<String, dynamic>> keyList) async {
     var dbClient = await db;
     int res = 0;
 
      await dbClient
-        .delete(tableName, where: "user_id = ?", whereArgs: [user_id]).then((v){
-       keylist.forEach((v) async{
+        .delete(tableName, where: "user_id = ?", whereArgs: [userId]).then((v){
+       keyList.forEach((v) async{
          Map<String, dynamic> iv = {
            "key_id": v['RID'],
-           "user_id": user_id,
+           "user_id": userId,
            "key_mac": "${v['LOCKMAC_0']}",
            "key_name": "${v['LOCKNAME']}",
            "key_key":v['OPENWORD']??"888888"
@@ -75,28 +75,28 @@ class UserKeyDatabaseHelper {
   }
 
   //查询
-  Future<List> getKeyList(String user_id) async {
+  Future<List> getKeyList(String userId) async {
     var dbClient = await db;
     var result = await dbClient
-        .rawQuery("SELECT key_id as RID,key_mac as LOCKMAC_0, key_name as LOCKNAME,key_key as OPENWORD FROM $tableName WHERE user_id = $user_id");//
+        .rawQuery("SELECT key_id as RID,key_mac as LOCKMAC_0, key_name as LOCKNAME,key_key as OPENWORD FROM $tableName WHERE user_id = $userId");//
     return result.toList();
   }
 
   //查询总数
-  Future<int> getCount({int key_id}) async {
+  Future<int> getCount({int keyId=0}) async {
     var dbClient = await db;
-    if(key_id>0)
+    if(keyId>0)
       return Sqflite.firstIntValue(
-          await dbClient.rawQuery("SELECT COUNT(*) FROM $tableName where key_id = $key_id"));
+          await dbClient.rawQuery("SELECT COUNT(*) FROM $tableName where key_id = $keyId"));
     return Sqflite.firstIntValue(
         await dbClient.rawQuery("SELECT COUNT(*) FROM $tableName"));
   }
 
 //按照id查询
-  Future<Map<String, dynamic>> getItem(int key_id) async {
+  Future<Map<String, dynamic>> getItem(int keyId) async {
     var dbClient = await db;
     var result = await dbClient
-        .rawQuery("SELECT * FROM $tableName WHERE key_id = $key_id");
+        .rawQuery("SELECT * FROM $tableName WHERE key_id = $keyId");
 
     if (result.length == 0) return null;
     return result.first;
@@ -109,17 +109,17 @@ class UserKeyDatabaseHelper {
   }
 
   //根据id删除
-  Future<int> deleteItem(int key_id) async {
+  Future<int> deleteItem(int keyId) async {
     var dbClient = await db;
     return await dbClient
-        .delete(tableName, where: "key_id = ?", whereArgs: [key_id]);
+        .delete(tableName, where: "key_id = ?", whereArgs: [keyId]);
   }
 
   //修改
-  Future<int> updateItem(Map<String, dynamic> key_item) async {
+  Future<int> updateItem(Map<String, dynamic> keyItem) async {
     var dbClient = await db;
-    int res= await dbClient.update("$tableName", key_item,
-        where: "key_id = ?", whereArgs: [key_item['key_id']]);
+    int res= await dbClient.update("$tableName", keyItem,
+        where: "key_id = ?", whereArgs: [keyItem['key_id']]);
 
     return res;
   }

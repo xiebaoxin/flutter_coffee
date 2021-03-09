@@ -1,6 +1,8 @@
 export './constants/config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:color_dart/color_dart.dart';
+import 'components/loading.dart';
 
 class GlobalConfig {
   static final String appName = '极网咖啡';
@@ -25,14 +27,77 @@ class GlobalConfig {
 
   static final Widget rightArrowIcon = Icon(Icons.chevron_right, color: Colors.black26);
 
+  static final String shopBaseServer="http://cashier.wangpeiaiot.com:8088/";
+  static final String shopAppId="PSSHOP";
+  static final String shopAppsecret="POWIEU8823A0AS879SA27";
+
 }
 
-class Constants {
-  static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+class G {
+  static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
- /* NavigatorState get navigatorState => Constants.navigatorKey.currentState;
-  BuildContext get currentContext => navigatorState.context;
-  ThemeData get currentTheme => Theme.of(currentContext);*/
+  /// 初始化loading
+  static final Loading loading = Loading();
 
+  /// 手动延时
+  static sleep({ int milliseconds = 1000 }) async => await Future.delayed(Duration(milliseconds: milliseconds));
+
+  /// 获取当前的state
+  static NavigatorState getCurrentState() => navigatorKey.currentState;
+
+  /// 获取当前的context
+  static BuildContext getCurrentContext() => navigatorKey.currentContext;
+
+  /// 获取屏幕上下边距
+  /// 用于兼容全面屏，刘海屏
+  static EdgeInsets screenPadding() => MediaQuery.of(getCurrentContext()).padding;
+
+  /// 获取屏幕宽度
+  static double screenWidth() => MediaQuery.of(getCurrentContext()).size.width;
+
+  /// 获取屏幕高度
+  static double screenHeight() => MediaQuery.of(getCurrentContext()).size.height;
+
+  /// 返回页面
+  static void pop() => getCurrentState().pop();
+
+  /// 底部border
+  /// ```
+  /// @param {Color} color
+  /// @param {bool} show  是否显示底部border
+  /// ```
+  static Border borderBottom({Color color, bool show = true}){
+    return Border(
+        bottom: BorderSide(
+            color: (color == null || !show)  ? (show ? rgba(242, 242, 242, 1) : Colors.transparent) : color,
+            width: 1
+        )
+    );
+  }
+
+  static gotowin(Widget objwin ){
+ /*   Navigator.push(navigatorKey.currentContext, CupertinoPageRoute(
+        builder: (BuildContext context) {
+          return objwin;
+        }));*/
+    Navigator.of(navigatorKey.currentContext).push(
+        PageRouteBuilder(
+        opaque: false,
+        pageBuilder: (BuildContext context, _, __) {
+          return objwin;
+        },
+        transitionsBuilder:
+            (___, Animation<double> animation, ____, Widget child) {
+          return FadeTransition(
+            opacity: animation,
+            child: RotationTransition(
+              turns: Tween<double>(begin: 0.5, end: 1.0).animate(animation),
+              child: child,
+            ),
+          );
+        })
+    );
+
+  }
 
 }

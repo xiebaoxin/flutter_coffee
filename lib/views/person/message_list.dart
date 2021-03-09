@@ -217,7 +217,7 @@ class NewsListPageState extends State<MessageList> {
 
   final _pageLoadController = PagewiseLoadController(
       pageSize: PAGE_SIZE,
-      pageFuture: (pageIndex) =>DataUtils.getMyMessageList(Constants.navigatorKey.currentContext,pageIndex,pagesize: PAGE_SIZE)//getPosts(context,this.type,pageIndex, PAGE_SIZE)
+      pageFuture: (pageIndex) =>DataUtils.getMyMessageList(G.navigatorKey.currentContext,pageIndex,pagesize: PAGE_SIZE)//getPosts(context,this.type,pageIndex, PAGE_SIZE)
   );
 
    Widget _getBody(context) {

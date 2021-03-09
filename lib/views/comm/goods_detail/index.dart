@@ -8,7 +8,6 @@ import 'package:provider/provider.dart';
 import '../../../model/carts_provider.dart';
 import '../../../model/globle_provider.dart';
 import '../../../components/a_button/index.dart';
-import '../../../globalutils/global.dart';
 import '../../comm/gotopay.dart';
 import '../../../utils/dataUtils.dart';
 import '../../../utils/DialogUtils.dart';
@@ -336,7 +335,7 @@ class _GoodsDetailDialogState extends State<CoffeeDetailDialog> {
 
               await DialogUtils.showToastDialog(context, '加入购物车成功');
               Navigator.pop(context);
-              Navigator.pushReplacement(Constants.navigatorKey.currentContext, MaterialPageRoute(
+              Navigator.pushReplacement(G.navigatorKey.currentContext, MaterialPageRoute(
                 builder: (context) => HomePage(tabindex:3,),//CartsBuyPage(),
               ));
 
