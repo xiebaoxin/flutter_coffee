@@ -10,8 +10,8 @@ class OssUtil {
 
 //  static String accesskeyId = '******';//Bucket 拥有者的accesskeyId 。
 //  static String accessKeySecret = '******';//Bucket 拥有者的accessKeySecret。
-  static String accesskeyId = 'LTAI4FyaLq1QXuXkfsZExVpk';//临时用户的AccessKeyId，通过后台接口动态获取
-  static String accessKeySecret = 'JPhyWfBvCTkaDpPgd7jLLTuApDz8tO';//临时用户的accessKeySecret，通过后台接口动态获取
+  static String accesskeyId = '';//临时用户的AccessKeyId，通过后台接口动态获取
+  static String accessKeySecret = '';//临时用户的accessKeySecret，通过后台接口动态获取
   static String stsToken="";//临时用户鉴权Token,临时用户认证时必传，通过后台接口动态获取
   //验证文本域
   static String _policyText =
