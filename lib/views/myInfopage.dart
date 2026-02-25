@@ -10,7 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:flutter_luban/flutter_luban.dart';
+// flutter_luban removed - image compression handled differently
 import 'comm/comwidget.dart';
 import '../utils/DialogUtils.dart';
 import '../utils/dataUtils.dart';
@@ -53,11 +53,7 @@ class MyInfoPageState extends State<MyInfoPage>
                 backgroundColor: KColorConstant.backgroundColor,
                 key: _scaffoldKey,
                 body:EasyRefresh(
-        header: ClassicalHeader(
-        refreshedText: "松开刷新",
-        refreshReadyText: "下拉刷新",
-        bgColor: KColorConstant.mainColor,
-        textColor: Color(0xFFFFFFFF)),
+        header: ClassicHeader()),
     onRefresh: () async {
           await DataUtils().freshlogin(context);
     },
@@ -518,34 +514,17 @@ Widget mainbody(){
 //      var name = path.substring(path.lastIndexOf("/") + 1, path.length);
 //      var suffix = name.substring(name.lastIndexOf(".") + 1, name.length);
 //
-      CompressObject compressObject = CompressObject(
-        imageFile: f, //image
-        path: tempDir.path, //compress to path
-        quality: 85, //first compress quality, default 80
-        step: 9, //The bigger the fast, Smaller is more accurate, default 6
-        mode: CompressMode.LARGE2SMALL, //default AUTO
-      );
-
-      await Luban.compressImage(compressObject).then((path) async {
-//            var name = path.substring(path.lastIndexOf("/") + 1, path.length);
-//             await _upimglist.add(MultipartFile.fromFile(path));
-
-        var name = path.substring(path.lastIndexOf("/") + 1, path.length);
-        var newDate = DateTime.now(); //app-
-        String limgname = "COFFEE-";
-        String alipic = limgname +
-            newDate.millisecondsSinceEpoch.toString() +
-            name.substring(name.indexOf("."));
-        await AliOssApiService.uploadImage(context, alipic, path,
-                onSendProgressCallBack: showProgress)
-            .then((data) async {
-          retimgsstr += alipic + ",";
-          if (data != null) {
-//
-//              savetodb(retimgsstr);
-//              hideLoadingDialog();
-          }
-        });
+      String imgPath = f.path;
+      var name = imgPath.substring(imgPath.lastIndexOf("/") + 1, imgPath.length);
+      var newDate = DateTime.now();
+      String limgname = "COFFEE-";
+      String alipic = limgname +
+          newDate.millisecondsSinceEpoch.toString() +
+          name.substring(name.indexOf("."));
+      await AliOssApiService.uploadImage(context, alipic, imgPath,
+              onSendProgressCallBack: showProgress)
+          .then((data) async {
+        retimgsstr += alipic + ",";
       });
     } catch (e) {
       DialogUtils.showToastDialog(context, '提交出现异常，请稍后再试');

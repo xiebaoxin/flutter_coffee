@@ -47,11 +47,7 @@ class IndexPageHomeState extends State<IndexPageHome>
             key: _scaffoldKey,
             backgroundColor: Color(0xFFFFFFFF),
             body: EasyRefresh(
-                header: ClassicalHeader(
-                    refreshedText: "松开刷新",
-                    refreshReadyText: "下拉刷新",
-                    bgColor: KColorConstant.themeColor,
-                    textColor: Color(0xFFFFFFFF)
+                header: ClassicHeader()
                 ),
                 onRefresh: () async {
                   _getalldata();

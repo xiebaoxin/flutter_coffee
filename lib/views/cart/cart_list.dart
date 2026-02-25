@@ -54,7 +54,7 @@ CartListWidget({this.isedit=false});
                confirmDismiss: (direction) async{
                 if( await DialogUtils().showMyDialog(context, '是否确定要移除?')){
                 await  model.removeItem(index);
-                  Scaffold.of(context).showSnackBar(SnackBar(
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     content: Text("${item.productName}   成功移除"),
                     backgroundColor: KColorConstant.themeColor,
                     duration: Duration(seconds: 1),
@@ -88,7 +88,7 @@ CartListWidget({this.isedit=false});
                           if( await DialogUtils().showMyDialog(context, '是否确定要移除?')){
                             final model = GlobleModel().of(context);
                             await  model.removeItem(index);
-                            Scaffold.of(context).showSnackBar(SnackBar(
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               content: Text(" 成功移除"),
                               backgroundColor: KColorConstant.themeColor,
                               duration: Duration(seconds: 1),

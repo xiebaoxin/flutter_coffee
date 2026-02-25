@@ -72,11 +72,7 @@ var _categoryData=categoryData;
             backgroundColor: KColorConstant.backgroundColor,
             key: _scaffoldcgKey,
             body: EasyRefresh(
-                header: ClassicalHeader(
-                    refreshedText: "松开刷新",
-                    refreshReadyText: "下拉刷新",
-                    bgColor: KColorConstant.mainColor,
-                    textColor: Color(0xFFFFFFFF)),
+                header: ClassicHeader()),
                 onRefresh: () async {
                     _futureBuilderFuture = getmachinedata();
                     setState(() {  });
