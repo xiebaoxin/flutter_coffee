@@ -11,7 +11,7 @@ import '../globleConfig.dart';
 
 class HttpUtils {
   /// global dio object
-  static Dio dio;
+  static Dio? dio;
 
   /// default options
   static const int CONNECT_TIMEOUT = 50000;
@@ -34,25 +34,27 @@ class HttpUtils {
     if (dio == null) {
       dio = Dio(BaseOptions(
         baseUrl: baseUrl,
-        connectTimeout: CONNECT_TIMEOUT,
-        receiveTimeout: RECEIVE_TIMEOUT,
+        connectTimeout: Duration(milliseconds: CONNECT_TIMEOUT),
+        receiveTimeout: Duration(milliseconds: RECEIVE_TIMEOUT),
 //          contentType: Headers.formUrlEncodedContentType
       ));
 
-      dio.interceptors
-          .add(InterceptorsWrapper(onRequest: (RequestOptions options) {
+      dio!.interceptors
+          .add(InterceptorsWrapper(onRequest: (RequestOptions options, RequestInterceptorHandler handler) {
         print("\n================== 请求数据 ==========================");
         print("url [${options.method}] = ${options.uri.toString()}");
         print("headers = ${options.headers}");
         print("params = ${options.data}");
-      }, onError: (DioError e) {
+        handler.next(options);
+      }, onError: (DioException e, ErrorInterceptorHandler handler) {
         print("\n================== 错误响应数据 ======================");
         print("type = ${e.type}");
         print("message = ${e.message}");
         print("\n");
+        handler.next(e);
       }));
     }
-    return dio;
+    return dio!;
   }
 
   static clear() {
@@ -73,7 +75,7 @@ class HttpUtils {
       {String method = POST,
       bool withToken = true}) async {
     print("-----<net---> url :<" + method + ">" + url);
-    if (params != null && params.isNotEmpty) {
+    if (params.isNotEmpty) {
       print("<net> params :" + params.toString());
     }
 
@@ -82,12 +84,12 @@ class HttpUtils {
     dio = createInstance();
     if (withToken == true) {
       SharedPreferences prefs = await _prefs;
-      dio.options.headers = {
+      dio!.options.headers = {
         'Accept': 'application/json, text/plain, */*',
         'token': prefs.getString("token"),
       };
     } else {
-      dio.options.headers = {
+      dio!.options.headers = {
         'Accept': 'application/json, text/plain, */*',
         'token': GlobalConfig.gtoken,
       };
@@ -100,46 +102,45 @@ class HttpUtils {
       headerapi = urlapi[len - 2];
     }
 
-    if (params == null || params.isEmpty) {
+    if (params.isEmpty) {
       params = {};
     }
 
     try {
       Response response;
       if (method == GET) {
-         response = await dio.get(url, queryParameters: ComFun.aesen(headerapi, params));
+         response = await dio!.get(url, queryParameters: ComFun.aesen(headerapi, params));
       }else
         {
 
           FormData paramformdata =
           FormData.fromMap(ComFun.aesen(headerapi, params));
 
-           response = await dio.request(url,
+           response = await dio!.request(url,
               data: paramformdata, options: Options(method: method));
         }
 
       print(response);
-      int statusCode = response.statusCode;
-      if (statusCode < 0) {
+      int? statusCode = response.statusCode;
+      if (statusCode != null && statusCode < 0) {
         errorMsg = "网络请求错误,状态码:" + statusCode.toString();
         _handError(errorMsg);
       }
       return response.data;
-    } on DioError catch (error) {
-      // 请求错误处理
-      Response errorResponse;
+    } on DioException catch (error) {
+      Response? errorResponse;
 
       if (error.response != null) {
         errorResponse = error.response;
       } else {
-        errorResponse = new Response(statusCode: 666);
+        errorResponse = Response(requestOptions: RequestOptions(), statusCode: 666);
       }
 //      print("dio erro:----${errorResponse.statusCode}:${errorResponse.statusMessage}");
 
-        if (errorResponse.statusCode == 666)
+        if (errorResponse?.statusCode == 666)
           await _handError("网络请求异常,请稍后再试");
         else
-          await _handError("网络请求异常:${errorResponse.statusCode}${error.message}");
+          await _handError("网络请求异常:${errorResponse?.statusCode}${error.message}");
 
       return null;
     }

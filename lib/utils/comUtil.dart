@@ -6,16 +6,16 @@ import 'package:flutter/material.dart';
 import 'package:convert/convert.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-import 'package:device_info/device_info.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:crypto/crypto.dart';
-import 'package:encrypt/encrypt.dart' as encry;
+import 'package:flutter_coffee/stubs/encrypt_stub.dart' as encry;
 import 'package:date_format/date_format.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_cupertino_date_picker/flutter_cupertino_date_picker.dart';
+import 'package:flutter_coffee/stubs/flutter_cupertino_date_picker_stub.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:barcode_scan/barcode_scan.dart';
+import 'package:flutter_coffee/stubs/barcode_scan_stub.dart';
 import 'package:flutter_coffee/constants/color.dart';
 import '../components/keyboard/keyboard_main.dart';
 import 'utils.dart';
@@ -103,43 +103,42 @@ class ComFun {
 
   // 获取安装地址
   Future<String> get apkLocalPath async {
+    if (kIsWeb) return '';
     final directory = await getExternalStorageDirectory();
-    return directory.path;
+    return directory?.path ?? '';
   }
 
   static TargetPlatform get defaultTargetPlatform {
-    TargetPlatform result;
-    //这里根据平台来赋值，但是只有iOS、Android、Fuchsia，没有PC
-    if (Platform.isIOS) {
-      result = TargetPlatform.iOS;
-    } else if (Platform.isAndroid) {
-      result = TargetPlatform.android;
-    } else if (Platform.isFuchsia) {
-      result = TargetPlatform.fuchsia;
-    }
-    assert(() {
-      if (Platform.environment.containsKey('FLUTTER_TEST'))
+    TargetPlatform? result;
+    if (!kIsWeb) {
+      if (Platform.isIOS) {
+        result = TargetPlatform.iOS;
+      } else if (Platform.isAndroid) {
         result = TargetPlatform.android;
-      return true;
-    }());
-    //这里判断debugDefaultTargetPlatformOverride有没有值，有值的话，就赋值给result
+      } else if (Platform.isFuchsia) {
+        result = TargetPlatform.fuchsia;
+      }
+      assert(() {
+        if (Platform.environment.containsKey('FLUTTER_TEST'))
+          result = TargetPlatform.android;
+        return true;
+      }());
+    }
 //    'package:flutter/foundation.dart';
     if (debugDefaultTargetPlatformOverride != null)
       result = debugDefaultTargetPlatformOverride;
 
-    //如果到这一步，还没有取到 TargetPlatform 的值，就会抛异常
     if (result == null) {
       throw FlutterError('Unknown platform.\n'
-          '${Platform.operatingSystem} was not recognized as a target platform. '
           'Consider updating the list of TargetPlatforms to include this platform.');
     }
-    return result;
+    return result!;
   }
 
   Future<bool> checkPermission() async {
     bool rtstats = true;
 //    rtstats =await openAppSettings();
-    if (Platform.isAndroid) {
+    if (!kIsWeb && Platform.isAndroid) {
       Map<Permission, PermissionStatus> statuses = await [
         Permission.storage,
         Permission.speech,
@@ -165,12 +164,12 @@ class ComFun {
 
 
   Future<String>  getDeviceInfoName() async{
-    DeviceInfoPlugin deviceInfo = new DeviceInfoPlugin();
-    if(Platform.isIOS){
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    if(!kIsWeb && Platform.isIOS){
 //      print('IOS设备：');
       IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
       return "${iosInfo.name},${iosInfo.systemVersion}";
-    }else if(Platform.isAndroid){
+    }else if(!kIsWeb && Platform.isAndroid){
 //      print('Android设备');
       AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
       return "${androidInfo.brand},${androidInfo.model},${androidInfo.version.release}";
@@ -346,28 +345,16 @@ class ComFun {
   /// Display date picker.
   static void showXTimePicker(context, Function callback) async {
     await showTimePicker(context: context, initialTime: TimeOfDay.now())
-        .then((TimeOfDay val) {
-//      print("选择的时间是:${val.hour}时${val.minute}分");
-      callback("${val.hour}:${val.minute}:00");
+        .then((TimeOfDay? val) {
+      if (val != null) {
+        callback("${val.hour}:${val.minute}:00");
+      }
     }).catchError((error) {
       print("error:${error}");
     }); // initialTim
   }
 
   void xbxselector(context,String title, List<Map<String, String>> inithlist, Function callback) {
-    /*List<Map<String, dynamic>> inithlist = [
-      {'name': "1小时", "value": 1},
-      {'name': "2小时", "value": 2},
-      {'name': "6小时", "value": 6},
-      {'name': "12小时", "value": 12},
-      {'name': "1天", "value": 24},
-      {'name': "2天", "value": 48},
-      {'name': "3天", "value": 72},
-      {'name': "1周", "value": 24 * 7},
-      {'name': "半月", "value": 24 * 15},
-      {'name': "1月", "value": 24 * 30},
-    ];*/
-
     String retalue = "";
     showModalBottomSheet(
         context: context,
@@ -405,7 +392,7 @@ class ComFun {
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text(
-                                  inithlist[index]['name'],
+                                  inithlist[index]['name'] ?? '',
                                   style: TextStyle(
                                       color: retalue == inithlist[index]['value']
                                           ? KColorConstant.themeColor
@@ -414,7 +401,7 @@ class ComFun {
                               ),
                               onTap: () {
                                 mystate(() {
-                                  retalue = inithlist[index]['value'];
+                                  retalue = inithlist[index]['value'] ?? '';
                                 });
                               },
                             );
@@ -422,7 +409,7 @@ class ComFun {
                         ),
                       ),
                       Divider(),
-                      FlatButton(
+                      TextButton(
                           onPressed: () {
                             callback(retalue);
                           },
@@ -531,7 +518,7 @@ class ComFun {
                         ),
                       ),
                       Divider(),
-                      FlatButton(
+                      TextButton(
                           onPressed: () {
                             callback(_hours);
                           },
@@ -543,16 +530,15 @@ class ComFun {
         });
   }
 
-  void showSnackDialog<T>({BuildContext context, Widget child}) {
+  void showSnackDialog<T>({required BuildContext context, required Widget child}) {
     final GlobalKey<ScaffoldState> _scaffoldKey1 = GlobalKey<ScaffoldState>();
     showDialog<T>(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) => child,
-    ).then<void>((T value) {
-      // The value passed to Navigator.pop() or null.
+    ).then<void>((T? value) {
       if (value != null) {
-        _scaffoldKey1.currentState.showSnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('您选择了: $value'),
           ),
@@ -609,26 +595,26 @@ class ComFun {
 
   static Future<void> exitApp(BuildContext context) async {
     AndroidBackTop.backDeskTop(); //设置为返回不退出app
-    return false; //一定要return false
+    return; //一定要return
 
-    await SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+    // await SystemChannels.platform.invokeMethod('SystemNavigator.pop');
   }
 
   Future<bool> onWillPop(context) {
-    return showDialog(
+    return showDialog<bool>(
       context: context,
       builder: (context) => new AlertDialog(
         title: new Text('退出提示'),
         content: new Text('确定将退出app吗？确定后系统将返回桌面。'),
         actions: <Widget>[
-          new FlatButton(
+          TextButton(
             onPressed: () => Navigator.of(context).pop(false),
             child: new Text('取消',
                 style: TextStyle(
                   color: Colors.black26,
                 )),
           ),
-          new FlatButton(
+          TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             child: new Text(
               '确定',
@@ -636,8 +622,7 @@ class ComFun {
           ),
         ],
       ),
-    ) ??
-        false;
+    ).then((value) => value ?? false);
   }
 
 
@@ -660,7 +645,7 @@ class ComFun {
   }
 
 
-  Widget buildMyButton(BuildContext context, String text, Function pressfun,
+  Widget buildMyButton(BuildContext context, String text, Function? pressfun,
       {double width = 100,
         double height = 45,
         Color bgcolor = KColorConstant.themeColor,
@@ -670,43 +655,37 @@ class ComFun {
             fontFamily: 'FZLanTing',
             fontSize: 14,
             color: Colors.white)}) {
-    return RaisedButton(
-        color: bgcolor,
-        elevation: 4,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular((height / 2) - 4.0)),
+    return ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: bgcolor,
+          elevation: 4,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular((height / 2) - 4.0)),
+          ),
         ),
         child: Container(
             alignment: Alignment.center,
             width: width,
             height: height,
-          /*  decoration: new BoxDecoration(
-              color: bgcolor, //背景
-              //设置四周圆角 角度 这里的角度应该为 父Container height 的一半
-              borderRadius: BorderRadius.all(Radius.circular(height / 2 - 4)),
-//                BorderRadius.all(Radius.circular(25.0)),
-              //设置四周边框
-              border: null, //new Border.all(width: 1, color: Colors.green),
-            ),*/
             child: Text(
               text,
               style: textstyle,
               maxLines: 1,
             )),
 
-        onPressed: disabled ? null : pressfun);
+        onPressed: disabled ? null : () { if (pressfun != null) pressfun(); });
   }
 
 
  static Widget buideloginInput(BuildContext context, String Labtext,
       TextEditingController textControllor,
-      { Widget header,
-        Widget suffix,
-        TextStyle textstyle,
-        TextInputType textInputType,
+      { Widget? header,
+        Widget? suffix,
+        TextStyle? textstyle,
+        TextInputType? textInputType,
         bool enable = true,
         bool obscure=false,
-        Function changfun}) {
+        Function? changfun}) {
 
     Widget textInputRow = Container(
         alignment: Alignment.center,

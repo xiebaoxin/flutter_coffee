@@ -22,7 +22,7 @@ class DialogUtils extends Dialog {
         builder: (BuildContext context) {
           return LoadingDialog(
             // 调用对话框
-            text: text ?? '加载中...',
+            text: text.isEmpty ? '加载中...' : text,
           );
         });
   }
@@ -33,53 +33,51 @@ class DialogUtils extends Dialog {
   }
 
   Future<bool> showMyDialog(context, String text) {
-    return showDialog(
+    return showDialog<bool>(
             context: context,
             barrierDismissible: false,
-            builder: (context) => new AlertDialog(
-                    title: new Text("温馨提示"),
-                    content: new Text(text),
+            builder: (context) => AlertDialog(
+                    title: Text("温馨提示"),
+                    content: Text(text),
                     actions: <Widget>[
-                      new FlatButton(
-                        child: new Text("取消"),
+                      TextButton(
+                        child: Text("取消"),
                         onPressed: () {
                           Navigator.of(context).pop(false);
                         },
                       ),
-                      new FlatButton(
-                        child: new Text("确定"),
+                      TextButton(
+                        child: Text("确定"),
                         onPressed: () {
                           Navigator.of(context).pop(true);
                         },
                       )
-                    ])) ??
-        false;
+                    ])).then((value) => value ?? false);
   }
 
   Future<bool> showSelectImageType(context) {
-    return showDialog(
+    return showDialog<bool>(
             context: context,
             barrierDismissible: false,
-            builder: (context) => new AlertDialog(
-                    title: new Text("选择相片方式"),
-                    content: new SizedBox(
+            builder: (context) => AlertDialog(
+                    title: Text("选择相片方式"),
+                    content: SizedBox(
                       height: 10,
                     ),
                     actions: <Widget>[
-                      new FlatButton(
-                        child: new Text("相册"),
+                      TextButton(
+                        child: Text("相册"),
                         onPressed: () {
                           Navigator.of(context).pop(false);
                         },
                       ),
-                      new FlatButton(
-                        child: new Text("拍照"),
+                      TextButton(
+                        child: Text("拍照"),
                         onPressed: () {
                           Navigator.of(context).pop(true);
                         },
                       )
-                    ])) ??
-        false;
+                    ])).then((value) => value ?? false);
   }
 
   Future showToast(context, text, {duration}) async {
@@ -123,29 +121,29 @@ class DialogUtils extends Dialog {
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        title: new Text(
+        title: Text(
           '登录验证',
-          style: new TextStyle(
+          style: TextStyle(
             color: Colors.black54,
             fontSize: 18.0,
           ),
         ),
-        content: new Text('请重新登录！'),
+        content: Text('请重新登录！'),
         actions: <Widget>[
-          new FlatButton(
+          TextButton(
             child: Text(cancel ? "取消" : ''),
             onPressed: () {
               Navigator.of(context).pop();
             },
           ),
-          new FlatButton(
+          TextButton(
               onPressed: () async {
                 print('正在退出……');
                 Navigator.of(context).pop();
                 await model.setlogout();
                 Navigator.pushNamed(context, '/login');
               },
-              child: new Text('确定')),
+              child: Text('确定')),
         ],
       ),
     );

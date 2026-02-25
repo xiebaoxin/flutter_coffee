@@ -6,9 +6,10 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:async' show Future;
-import 'package:package_info/package_info.dart';
-import 'package:device_info/device_info.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import '../components/upgradeApp.dart';
 import '../utils/HttpUtils.dart';
 import '../utils/comUtil.dart';
@@ -45,7 +46,7 @@ class DataUtils {
     Map<String, String> params = {
       "phone": phone,
       "password": pwd,
-      "type":Platform.isIOS?"2":"1",
+      "type": (!kIsWeb && Platform.isIOS) ? "2" : "1",
       "regType": "1",
       "verificationCode":smscode
     };
@@ -64,11 +65,11 @@ class DataUtils {
     return loginstat;
   }
 
-  Future<bool> login(BuildContext context,String phone,String pwd,{Map<String, dynamic> wxinfo}) async {
+  Future<bool> login(BuildContext context,String phone,String pwd,{Map<String, dynamic>? wxinfo}) async {
     SharedPreferences prefs = await _prefs;
     bool loginstat=false;
     String loginurl="/api/customer/login";
-    Map<String, String> params;
+    Map<String, dynamic> params;
     if(wxinfo!=null){
       params = wxinfo;
       loginurl="/api/customer/wxlogin";
@@ -101,7 +102,7 @@ class DataUtils {
     return loginstat;
   }
 
- Future<bool> loginserv(context,Map<String, dynamic> logininfo) async{
+ Future<bool> loginserv(context,Map<String, dynamic>? logininfo) async{
    SharedPreferences prefs = await _prefs;
   bool loginstat=false;
   if(logininfo!=null && logininfo['id']>0){
@@ -110,7 +111,7 @@ class DataUtils {
     await prefs.setString("token", logininfo['token']??"");
     await prefs.setInt("userid",int.parse(userid));
 
-    Map<String, dynamic> userinfo= await  DataUtils().getuserinfo(context,customerId: userid);
+    Map<String, dynamic>? userinfo= await  DataUtils().getuserinfo(context,customerId: userid);
     print(userinfo);
     final model =  Provider.of<GlobleProvider>(context);
     await model.setlogin(userinfo);
@@ -140,12 +141,12 @@ class DataUtils {
     return loginstat;
   }
 
-  Future<Map<String, dynamic>> getuserinfo(BuildContext context,{String customerId=''}) async {
+  Future<Map<String, dynamic>?> getuserinfo(BuildContext context,{String customerId=''}) async {
     SharedPreferences prefs = await _prefs;
     Map<String, String> params = {
       "customerId":customerId.isEmpty? prefs.getInt("userid").toString():customerId
     };
-    Map<String, dynamic> userinfo;
+    Map<String, dynamic>? userinfo;
 
     await HttpUtils.get("/api/customer/info", params, withtoken: true)
         .then((response) async {
@@ -171,7 +172,7 @@ class DataUtils {
       "verificationCode": verificationCode
     };
 
-    Map<String, dynamic> userinfo;
+    Map<String, dynamic>? userinfo;
 
     await HttpUtils.post("/api/customer/payment-password/set", params, withtoken: true)
         .then((response) async {
@@ -189,7 +190,7 @@ class DataUtils {
 
   static Future<List<Map<String, dynamic>>> startuppage(
       BuildContext context) async {
-     List<Map<String, dynamic>> returnList = List();
+     List<Map<String, dynamic>> returnList = [];
     Map<String, String> params = {};
 
     Map<String, dynamic> response =
@@ -207,7 +208,7 @@ class DataUtils {
 
   static Future<List<Map<String, dynamic>>> getIndexTopSwipperBanners(
       BuildContext context) async {
-    List<Map<String, dynamic>> AdsList = List();
+    List<Map<String, dynamic>> AdsList = [];
 
     await HttpUtils.get("/api/advertise/list", {}, withtoken: false)
         .then((response) async {
@@ -233,7 +234,7 @@ class DataUtils {
 
     var phone = prefs.getString("MOBILE") ?? "";
     var pwd = prefs.getString("PASSWORD") ?? "";
-    if (phone != null && phone.isNotEmpty && pwd.isNotEmpty) {
+    if (phone.isNotEmpty && pwd.isNotEmpty) {
       await login(context, phone, pwd);
     }
   }
@@ -260,7 +261,7 @@ class DataUtils {
   }
 
 
-  static Future<List<dynamic>> getMyMessageList(
+  static Future<List<dynamic>?> getMyMessageList(
       BuildContext context, int page, {int pagesize = 20}) async {
     var returnList;
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -304,7 +305,7 @@ class DataUtils {
 
   static Future<List<Map<String, dynamic>>> getNearByDevice(
       BuildContext context,Map<String, String> params) async {
-    List<Map<String, dynamic>> returnList = List();
+    List<Map<String, dynamic>> returnList = [];
 
     Map<String, dynamic> response =
     await HttpUtils.get("/api/device/nearby", params, withtoken: false);
@@ -324,7 +325,7 @@ class DataUtils {
 
   static Future<List<Map<String, dynamic>>> getDrinkTypeList(
       BuildContext context,int deviceId) async {
-    List<Map<String, dynamic>> returnList = List();
+    List<Map<String, dynamic>> returnList = [];
     Map<String, String> params = {
       "deviceId": deviceId.toString()
     };
@@ -347,7 +348,7 @@ class DataUtils {
 
   static Future<List<Map<String, dynamic>>> getDrinkList(
       BuildContext context,int deviceId,int drinkTypeId) async {
-    List<Map<String, dynamic>> returnList = List();
+    List<Map<String, dynamic>> returnList = [];
     Map<String, String> params = {
       "deviceId": deviceId.toString(),
       "drinkTypeId":drinkTypeId.toString()
@@ -387,7 +388,7 @@ print(returnList);
   }
 
 
-  static Future<List<dynamic>> getOrderByUserIdPage(
+  static Future<List<dynamic>?> getOrderByUserIdPage(
       BuildContext context, String otype, int page,
       {int pagesize = 20}) async {
 
@@ -411,7 +412,7 @@ print(returnList);
 
   static Future<List<Map<String, dynamic>>> getRechargeConfig(
       BuildContext context) async {
-    List<Map<String, dynamic>> returnList = List();
+    List<Map<String, dynamic>> returnList = [];
     Map<String, String> params = { };
     Map<String, dynamic> response =
     await HttpUtils.get("/api/customer/recharge-config", params, withtoken: false);
@@ -485,11 +486,9 @@ print(returnList);
         bool  _isupdate = await DialogUtils().showMyDialog(context, '有更新版本，是否马上更新?');
         if (!_isupdate) {
           prefs.setString("update", 'yes');
-          _prefs=null;
 
         } else {
           prefs.remove('update');
-          _prefs=null;
 
           await Navigator.push(
             context,
@@ -508,22 +507,14 @@ print(returnList);
     print("<net---> checkDownloadApp :");
     bool isupdate = false;
 
-    Map<String, dynamic> response = await getUpgradeinfo(context);
+    Map<String, dynamic>? response = await getUpgradeinfo(context);
 //    print(response);
     if (response != null) {
-      int newVersion = int.tryParse(response["VERSIONNUMBER"]);
+      int? newVersion = int.tryParse(response["VERSIONNUMBER"]);
       // 获取此时版本
       final packageInfo = await PackageInfo.fromPlatform();
-      /*    print(packageInfo.version); //1.0.0
-          print(packageInfo.packageName);
-          print(packageInfo.buildNumber); //1
-          print(packageInfo.appName);*/
-      /*      print(defaultTargetPlatform);*/
-//          await SimplePermissions.requestPermission(  Permission.WriteExternalStorage);
-
-//          if (await SimplePermissions.checkPermission(Permission.WriteExternalStorage)) {
       if (await ComFun().checkPermission()) {
-        if (newVersion.compareTo(int.tryParse(packageInfo.buildNumber)) > 0) {
+        if (newVersion != null && newVersion.compareTo(int.tryParse(packageInfo.buildNumber) ?? 0) > 0) {
           isupdate = true;
         }
       } else {
@@ -535,7 +526,7 @@ print(returnList);
     return isupdate;
   }
 
-  static Future<Map<String, dynamic>> getUpgradeinfo(
+  static Future<Map<String, dynamic>?> getUpgradeinfo(
       BuildContext context) async {
     TargetPlatform result = ComFun.defaultTargetPlatform;
     int type = 0;

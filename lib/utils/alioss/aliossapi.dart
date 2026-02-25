@@ -23,22 +23,22 @@ class AliOssApiService {
   * 获取OSS Token
   */
   static Future<dynamic> getOssToken(BuildContext context,
-      {cancelToken}) async {
+      {CancelToken? cancelToken}) async {
     Dio dio = Dio();
     dio.options.responseType = ResponseType.plain;
     return await dio.get(AliOssAPI.urlToken);
   }
 
   static Future<dynamic> uploadImage(BuildContext context, String uploadName,
-      String filePath,{cancelToken,Function onSendProgressCallBack}) async {
-    BaseOptions options = new BaseOptions();
+      String filePath,{CancelToken? cancelToken,Function? onSendProgressCallBack}) async {
+    BaseOptions options = BaseOptions();
 
     options.contentType="image/jpg";//"application/octet-stream";
     options.responseType =
         ResponseType.plain; //必须,否则上传失败后aliyun返回的提示信息(非JSON格式)看不到
     //创建一个formdata，作为dio的参数
-    File file = new File(filePath);
-    FormData data = new FormData.fromMap({
+    File file = File(filePath);
+    FormData data = FormData.fromMap({
       'Filename': uploadName, //文件名，随意
       'key': "image/"+uploadName, //"可以填写文件夹名（对应于oss服务中的文件夹）/" + fileName
       'policy': OssUtil.policy,
@@ -55,7 +55,7 @@ class AliOssApiService {
     });
     Dio dio = Dio(options);
     Response response = await dio.post(AliOssAPI.urlUploadImageOss, data: data,onSendProgress: (received, total) {
-      onSendProgressCallBack(received, total);
+      if (onSendProgressCallBack != null) onSendProgressCallBack(received, total);
     });
 
       return response.data;

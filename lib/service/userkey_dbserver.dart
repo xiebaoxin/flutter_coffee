@@ -6,14 +6,14 @@ class UserKeyDatabaseHelper {
       UserKeyDatabaseHelper.internal();
   factory UserKeyDatabaseHelper() => _instance;
   final String tableName = "user_openkey";
-  static Database _db;
+  static Database? _db;
 
   Future<Database> get db async {
     if (_db != null) {
-      return _db;
+      return _db!;
     }
     _db = await initDb();
-    return _db;
+    return _db!;
   }
 
   UserKeyDatabaseHelper.internal();
@@ -83,7 +83,7 @@ class UserKeyDatabaseHelper {
   }
 
   //查询总数
-  Future<int> getCount({int keyId=0}) async {
+  Future<int?> getCount({int keyId=0}) async {
     var dbClient = await db;
     if(keyId>0)
       return Sqflite.firstIntValue(
@@ -93,7 +93,7 @@ class UserKeyDatabaseHelper {
   }
 
 //按照id查询
-  Future<Map<String, dynamic>> getItem(int keyId) async {
+  Future<Map<String, dynamic>?> getItem(int keyId) async {
     var dbClient = await db;
     var result = await dbClient
         .rawQuery("SELECT * FROM $tableName WHERE key_id = $keyId");
@@ -127,8 +127,7 @@ class UserKeyDatabaseHelper {
   //关闭
   Future close() async {
     var dbClient = await db;
-    if(dbClient!=null)
-      return dbClient.close();
+    return dbClient.close();
   }
 }
 

@@ -29,15 +29,15 @@ class OssUtil {
   factory OssUtil() => _getInstance();
 
   static OssUtil get instance => _getInstance();
-  static OssUtil _instance;
+  static OssUtil? _instance;
 
   OssUtil._internal() {print("OssUtil._internal()"); }
 
   static OssUtil _getInstance() {
     if (_instance == null) {
-      _instance = new OssUtil._internal();
+      _instance = OssUtil._internal();
     }
-    return _instance;
+    return _instance!;
   }
 
   /*
@@ -48,7 +48,7 @@ class OssUtil {
     List<int> _accessKeySecretUtf8 = utf8.encode(_accessKeySecret);
 
     //通过hmac,使用sha1进行加密
-    List<int> signaturePre = new Hmac(sha1, _accessKeySecretUtf8).convert(_policyUtf8).bytes;
+    List<int> signaturePre = Hmac(sha1, _accessKeySecretUtf8).convert(_policyUtf8).bytes;
 
     //最后一步，将上述所得进行base64 编码
     String signature = base64.encode(signaturePre);
@@ -57,12 +57,12 @@ class OssUtil {
 
   String getImageUploadName(String uploadPath,String filePath) {
     String imageMame = "";
-    var timestamp = new DateTime.now().millisecondsSinceEpoch;
+    var timestamp = DateTime.now().millisecondsSinceEpoch;
     imageMame =timestamp.toString()+"_"+getRandom(6);
-    if(uploadPath!=null&&uploadPath.isNotEmpty){
+    if(uploadPath.isNotEmpty){
       imageMame=uploadPath+"/"+imageMame;
     }
-    String imageType=filePath?.substring(filePath?.lastIndexOf("."),filePath?.length);
+    String imageType=filePath.substring(filePath.lastIndexOf("."),filePath.length);
     return imageMame+imageType;
   }
 
@@ -83,6 +83,6 @@ class OssUtil {
   * 根据图片本地路径获取图片名称
   * */
   String getImageNameByPath(String filePath) {
-    return filePath?.substring(filePath?.lastIndexOf("/")+1,filePath?.length);
+    return filePath.substring(filePath.lastIndexOf("/")+1,filePath.length);
   }
 }

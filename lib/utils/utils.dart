@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:quiver/strings.dart';
 import '../components/keyboard/keyboard_main.dart';
 import 'dart:math' as math;
 import '../globleConfig.dart';
@@ -63,15 +62,13 @@ void getPassword(context, Function callback) {
 Color string2Color(String colorString) {
   int value = 0x00000000;
 
-  if (isNotEmpty(colorString)) {
+  if (colorString.isNotEmpty) {
     if (colorString[0] == '#') {
       colorString = colorString.substring(1);
     }
-    value = int.tryParse(colorString, radix: 16);
-    if (value != null) {
-      if (value < 0xFF000000) {
-        value += 0xFF000000;
-      }
+    value = int.tryParse(colorString, radix: 16) ?? 0;
+    if (value < 0xFF000000) {
+      value += 0xFF000000;
     }
   }
   return Color(value);
@@ -89,7 +86,7 @@ Map url2query(String url) {
 
   // Go through all the matches and build the result map.
   for (Match match in search.allMatches(url)) {
-    result[decode(match.group(1))] = decode(match.group(2));
+    result[decode(match.group(1)!)] = decode(match.group(2)!);
   }
 
   return result;
@@ -128,7 +125,7 @@ int timetonowdays(int timestamp) {
 
 /// 获取时间戳
 /// 不传值 代表获取当前时间戳
- int getTime([DateTime time]) {
+ int getTime([DateTime? time]) {
 if(time == null) {
 return (DateTime.now().millisecondsSinceEpoch/1000).round();
 } else {
@@ -141,7 +138,7 @@ return (time.millisecondsSinceEpoch/1000).round();
  * 倒计时
  * difftimes 时间差秒
  */
-void CountdowntimeFunc(int difftimes, Timer timerIndex, Function callBack) {
+void CountdowntimeFunc(int difftimes, Timer? timerIndex, Function callBack) {
   var newDate = DateTime.now();
   const period = const Duration(seconds: 1);
 //    print(time);
@@ -155,7 +152,7 @@ void CountdowntimeFunc(int difftimes, Timer timerIndex, Function callBack) {
     if (diffDate.difference(newDate).inSeconds <= 0) {
       //取消定时器，避免无限回调
       timer.cancel();
-      timer = null;
+      timerIndex = null;
     }
     // print();
     var _surplus = diffDate.difference(newDate);

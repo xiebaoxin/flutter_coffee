@@ -6,14 +6,14 @@ class UserDatabaseHelper {
   static final UserDatabaseHelper _instance = UserDatabaseHelper.internal();
   factory UserDatabaseHelper() => _instance;
   final String tableName = "table_user";
-  static Database _db;
+  static Database? _db;
 
   Future<Database> get db async {
     if (_db != null) {
-      return _db;
+      return _db!;
     }
     _db = await initDb();
-    return _db;
+    return _db!;
   }
 
   UserDatabaseHelper.internal();
@@ -48,7 +48,7 @@ class UserDatabaseHelper {
   }
 
   //查询总数
-  Future<int> getCount() async {
+  Future<int?> getCount() async {
     var dbClient = await db;
     return Sqflite.firstIntValue(await dbClient.rawQuery(
         "SELECT COUNT(*) FROM $tableName"
@@ -56,7 +56,7 @@ class UserDatabaseHelper {
   }
 
 //按照id查询
-  Future<Map<String, dynamic>> getItem(int id) async {
+  Future<Map<String, dynamic>?> getItem(int id) async {
     var dbClient = await db;
     var result = await dbClient.rawQuery("SELECT * FROM $tableName WHERE user_id = $id");
     if (result.length == 0) return null;

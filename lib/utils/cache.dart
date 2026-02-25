@@ -30,9 +30,8 @@ class MyCache{
       if (file is Directory) {
         final List<FileSystemEntity> children = file.listSync();
         double total = 0;
-        if (children != null)
-          for (final FileSystemEntity child in children)
-            total += await _getTotalSizeOfFilesInDir(child);
+        for (final FileSystemEntity child in children)
+          total += await _getTotalSizeOfFilesInDir(child);
         return total;
       }
       return 0;
@@ -59,7 +58,7 @@ class MyCache{
     return true;
   }
   ///递归方式删除目录
-  Future<Null> delDir(FileSystemEntity file) async {
+  Future<void> delDir(FileSystemEntity file) async {
     try {
       if (file is Directory) {
         final List<FileSystemEntity> children = file.listSync();
@@ -74,15 +73,8 @@ class MyCache{
   }
 
   ///格式化文件大小
-  _renderSize(double value) {
-    if (null == value) {
-      return 0;
-    }
-    List<String> unitArr = List()
-      ..add('B')
-      ..add('K')
-      ..add('M')
-      ..add('G');
+  String _renderSize(double value) {
+    List<String> unitArr = ['B', 'K', 'M', 'G'];
     int index = 0;
     while (value > 1024) {
       index++;
