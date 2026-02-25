@@ -33,7 +33,7 @@ class GoodsBuyState extends State<CoffeeCartsBuy> {
   String _pwd = '';
   bool _ispayed = false;
   String _address = "";
-  Userinfo _userinfo;
+  late Userinfo _userinfo;
 
   @override
   Widget build(BuildContext context) {
@@ -432,7 +432,7 @@ class GoodsBuyState extends State<CoffeeCartsBuy> {
     );
   }
 
-  void submit(CartsProvider carts) async {
+  Future<void> submit(CartsProvider carts) async {
     final form = _formKey.currentState;
 
     if (form?.validate() ?? false) {
@@ -446,7 +446,7 @@ class GoodsBuyState extends State<CoffeeCartsBuy> {
         if (item != null && item.isSelected) {
           var terrr = {
             "drinkId": item.goodsId,
-            'sugarRule': int.parse(item.attr),
+            'sugarRule': int.parse(item.attr ?? '0'),
             'deviceId': item.cartId,
             'count': item.count
           };
@@ -456,7 +456,7 @@ class GoodsBuyState extends State<CoffeeCartsBuy> {
 
       if (_switchValueye) {
         if (_pwd.isEmpty)
-          await ComFun.getPassword(context, (String pwd) async {
+          ComFun.getPassword(context, (String pwd) async {
             setState(() {
               _pwd = pwd;
             });

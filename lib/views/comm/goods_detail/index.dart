@@ -19,9 +19,9 @@ class CoffeeDetailDialog extends StatefulWidget {
   final Map<String, dynamic> coffee;
   final Map<String, dynamic> mach;
   CoffeeDetailDialog({
-    Key key,
-    this.coffee,
-    this.mach
+    Key? key,
+    required this.coffee,
+    required this.mach
   }) : super(key: key);
 
   _GoodsDetailDialogState createState() => _GoodsDetailDialogState();
@@ -317,7 +317,7 @@ class _GoodsDetailDialogState extends State<CoffeeDetailDialog> {
             onPressed: () async {
 
               if(mounted) {
-                final model =  Provider.of<CartsProvider>(context);
+                final model =  Provider.of<CartsProvider>(context, listen: false);
 
                 Map<String, dynamic> coffeeparams={
                   "goods_name": widget.coffee['coffeeName'],
@@ -329,13 +329,13 @@ class _GoodsDetailDialogState extends State<CoffeeDetailDialog> {
                   'attr':_sgtype.toString() //'大/热/无糖'
                 };
 
-                  await  model.addtocart(context,coffeeparams);
+                  model.addtocart(context,coffeeparams);
 
               }
 
               await DialogUtils.showToastDialog(context, '加入购物车成功');
               Navigator.pop(context);
-              Navigator.pushReplacement(G.navigatorKey.currentContext, MaterialPageRoute(
+              Navigator.pushReplacement(G.navigatorKey.currentContext!, MaterialPageRoute(
                 builder: (context) => HomePage(tabindex:3,),//CartsBuyPage(),
               ));
 
@@ -347,7 +347,7 @@ class _GoodsDetailDialogState extends State<CoffeeDetailDialog> {
   }
 
   /// 收藏
-  Widget _circelIcon({Icon icon, Function onPress, Color bgColor}) {
+  Widget _circelIcon({Icon? icon, Function? onPress, Color? bgColor}) {
     return InkWell(
       child: Container(
         padding: EdgeInsets.all(5),
@@ -359,9 +359,7 @@ class _GoodsDetailDialogState extends State<CoffeeDetailDialog> {
         child: icon
       ),
       onTap: () {
-        if(onPress!=null) {
-          onPress();
-        }
+        onPress?.call();
       },
     );
   }
@@ -563,7 +561,7 @@ class _GoodsDetailDialogState extends State<CoffeeDetailDialog> {
 
     if ( _switchValueye ) {
       if (_pwd.isEmpty)
-        await ComFun.getPassword(context, (String pwd) async{
+        ComFun.getPassword(context, (String pwd) async{
           setState(() {
             _pwd = pwd;
           });

@@ -32,3 +32,15 @@ class WeChatPayModel {
 }
 
 Future<bool> payWithWeChat(WeChatPayModel model) async => false;
+
+class WeChatPaymentResponse {
+  final int errCode;
+  WeChatPaymentResponse({this.errCode = -1});
+}
+
+class WeChatAuthResponse {
+  final int errCode;
+  final String? code;
+  final String? state;
+  WeChatAuthResponse({this.errCode = -1, this.code, this.state});
+}

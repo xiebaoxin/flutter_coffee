@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 
-class SearchBar extends StatefulWidget {
+class MySearchBar extends StatefulWidget {
 @override
-State<StatefulWidget> createState() => SearchBarState();
+State<StatefulWidget> createState() => MySearchBarState();
 }
 
-class SearchBarState extends State<SearchBar> {
+class MySearchBarState extends State<MySearchBar> {
   TextEditingController controller = new TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -65,7 +65,7 @@ class SearchBarState extends State<SearchBar> {
     if (keyWord.isNotEmpty) {
       Navigator.push(context,
           CupertinoPageRoute(builder: (BuildContext context) {
-            return ;//SearchResultListPage(keyWord);
+            return SizedBox.shrink(); //SearchResultListPage(keyWord);
           }));
     }
   }

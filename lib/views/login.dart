@@ -19,20 +19,20 @@ import 'register.dart';
 class LoginPage extends StatefulWidget {
   LoginPage({Key? key, this.title}) : super(key: key);
 
-  final String title;
+  final String? title;
   @override
   LoginPageState createState() => new LoginPageState();
 }
 
 class LoginPageState extends State<LoginPage> {
-  bool _phoneState, _pwdState = false;
+  bool _phoneState = false, _pwdState = false;
   String _checkStr = '';
   TextEditingController _phonecontroller = new TextEditingController();
   TextEditingController _pwdcontroller = new TextEditingController();
   GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
   final FocusNode _focusNode = FocusNode();
   bool _loginbywx = false;
-  Map<String, dynamic> _wxuserInfo;
+  Map<String, dynamic>? _wxuserInfo;
   bool _obscure = true;
   @override
   Widget build(BuildContext context) {
@@ -248,19 +248,17 @@ class LoginPageState extends State<LoginPage> {
 
   @override
   void dispose() {
+    _phonecontroller.dispose();
+    _pwdcontroller.dispose();
     super.dispose();
-    _phoneState = null;
-    _pwdState = null;
-    _phonecontroller = null;
-    _pwdcontroller = null;
   }
 
 /*
 通过code传给服务器获取用户信息
  */
-  Future _getUserWxInfo(String code) async {
+  Future _getUserWxInfo(String? code) async {
     Map<String, String> params = {
-      "code": code,
+      "code": code ?? '',
     };
     showLoadingDialog();
     await HttpUtils.get("WxAppAuth/userWxInfo", params)
@@ -282,10 +280,10 @@ class LoginPageState extends State<LoginPage> {
    * 如已认证则登录返回登录信息
    */
   Future _checkWxlogin() async {
-    if (_wxuserInfo.isNotEmpty) {
+    if (_wxuserInfo != null && _wxuserInfo!.isNotEmpty) {
       var pdata = {
         "unionid": "_unionId",
-        "wxinfo": jsonEncode(_wxuserInfo),
+        "wxinfo": jsonEncode(_wxuserInfo!),
       };
 
       var response =
@@ -298,7 +296,7 @@ class LoginPageState extends State<LoginPage> {
         } else
           _alertmag("登录失败");
       } else
-        await _alertmag("微信登录失败:${response["message"]}");
+        _alertmag("微信登录失败:${response["message"]}");
 
       hideLoadingDialog();
     }
@@ -336,8 +334,7 @@ class LoginPageState extends State<LoginPage> {
   }
 
   void _checkPhone() {
-    if (_phonecontroller.text != null &&
-        _phonecontroller.text.length == 11 &&
+    if (_phonecontroller.text.length == 11 &&
         ComFun.isChinaPhoneLegal(_phonecontroller.text)) {
       _phoneState = true;
     } else {
@@ -346,8 +343,7 @@ class LoginPageState extends State<LoginPage> {
   }
 
   void _checkPwd() {
-    if (_pwdcontroller.text != null &&
-        _pwdcontroller.text.length >= 6 &&
+    if (_pwdcontroller.text.length >= 6 &&
         _pwdcontroller.text.length <= 10) {
       _pwdState = true;
     } else {
@@ -405,7 +401,7 @@ class LoginPageState extends State<LoginPage> {
             ),
             controlAffinity: ListTileControlAffinity.leading,
             value: _termsChecked,
-            onChanged: (bool value) => setState(() => _termsChecked = value),
+            onChanged: (bool? value) => setState(() => _termsChecked = value ?? false),
           ),
         ),
       ),

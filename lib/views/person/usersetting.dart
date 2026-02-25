@@ -26,7 +26,7 @@ class SetUserinfoState extends State<SetUserinfo> {
 
   final Color _iconcolor = Colors.black26;
   Userinfo _userinfo = Userinfo.fromJson({});
-  String _userAvatar;
+  String _userAvatar = '';
   int _sex = 0;
   bool _isedit = false;
 String _cache="";
@@ -35,7 +35,7 @@ String _cache="";
     final model =  Provider.of<GlobleProvider>(context);
     _userinfo = model.userinfo;
     _userAvatar = model.userinfo.avtar;
-    _sex = _userinfo.json['sex'];
+    _sex = _userinfo.json?['sex'];
 
     return new Scaffold(
       appBar: new AppBar(
@@ -78,8 +78,8 @@ String _cache="";
                                       shape: BoxShape.circle,
                                       color: Colors.white,
                                       image: new DecorationImage(
-                                          image:  _userAvatar==null || _userAvatar.isEmpty
-                                              ? AssetImage("images/logo.png")
+                                          image:  _userAvatar.isEmpty
+                                              ? AssetImage("images/logo.png") as ImageProvider
                                               : NetworkImage(servpic(_userAvatar)),
                                           fit: BoxFit.cover),
                                       border: null,

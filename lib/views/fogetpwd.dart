@@ -18,14 +18,14 @@ class FogetpwdPageState extends State<FogetpwdPage> {
   TextEditingController _verifyCodeCtrl = TextEditingController();
 
 
-  String _phoneNo;
+  String _phoneNo = '';
   String _password = '';
   bool _obscureText = true;
 
   int _seconds = 0;
   String _verifyStr = '获取验证码';
 //  String _verifyCode;
-  Timer _timer;
+  Timer? _timer;
 
   @override
   Widget build(BuildContext context) {
@@ -205,19 +205,19 @@ _password=_PasswordCtrl.text;
     );
      TextFormField(
       obscureText: _obscureText,
-      validator: (String value) {
-        if (value.isEmpty || value.trim().length <= 6) {
+      validator: (String? value) {
+        if (value == null || value.isEmpty || value.trim().length <= 6) {
           return '密码过短';
         }
       },
-      onFieldSubmitted: (String value) {
+      onFieldSubmitted: (String? value) {
         setState(() {
-          _password = value;
+          _password = value ?? '';
         });
       },
-      onSaved: (String value) {
+      onSaved: (String? value) {
         setState(() {
-          _password = value;
+          _password = value ?? '';
         });
       },
 

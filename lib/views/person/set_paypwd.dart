@@ -29,8 +29,8 @@ class SetPaywsdPageState extends State<SetPaywsdPage> {
 
   int _seconds = 0;
   String _verifyStr = '获取验证码';
-  String _verifyCode;
-  Timer _timer;
+  String _verifyCode = '';
+  Timer? _timer;
 
   void _initdata() async {
 

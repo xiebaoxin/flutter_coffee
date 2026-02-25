@@ -23,9 +23,9 @@ class registerState extends State<register> {
   TextEditingController _pyPasswordCtrl = TextEditingController();
   TextEditingController _varCodeCtrl = TextEditingController();
   String _verifyCode0 = "";
-  String _phoneNo,_uName,_userName;
+  String _phoneNo = '', _uName = '', _userName = '';
   String _password = '';
-  String _inviteCode;
+  String? _inviteCode;
   bool _termsChecked = true;
 
   bool _obscureText = true;
@@ -33,8 +33,8 @@ class registerState extends State<register> {
 
   int _seconds = 0;
   String _verifyStr = '获取验证码';
-  String _verifyCode;
-  Timer _timer;
+  String _verifyCode = '';
+  Timer? _timer;
 
   @override
   Widget build(BuildContext context) {
@@ -109,8 +109,7 @@ class registerState extends State<register> {
       _verifyStr = '正在请求…';
     });
     _phoneNo = _phoneNoCtrl.text;
-    if (_phoneNo == null ||
-        _phoneNo == '' ||
+    if (_phoneNo == '' ||
         !ComFun.isChinaPhoneLegal(_phoneNo)) {
       DialogUtils.showToastDialog(context, '手机号不合法');
       return;
@@ -262,15 +261,15 @@ if(await DataUtils().captcha(context, _phoneNo))
         ),
         controlAffinity: ListTileControlAffinity.leading,
         value: _termsChecked,
-        onChanged: (bool value) => setState(() => _termsChecked = value));
+        onChanged: (bool? value) => setState(() => _termsChecked = value ?? false));
   }
 
   Widget _buidPayPassword() {
     return TextFormField(
       controller: _pyPasswordCtrl,
       obscureText: _pobscureText,
-      validator: (String value) {
-        if (value.isEmpty || value.length < 6) {
+      validator: (String? value) {
+        if (value == null || value.isEmpty || value.length < 6) {
           return '请输入6位支付密码';
         }
       },

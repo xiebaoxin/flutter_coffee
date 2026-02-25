@@ -13,8 +13,8 @@ import '../../views/cart/cartItem.dart';
 
 class SecondryCategory extends StatelessWidget {
   final SubCategoryListModel data;
-  final Map<String, dynamic> info;
-  SecondryCategory({Key? key, this.data,this.info}) : super(key: key);
+  final Map<String, dynamic>? info;
+  SecondryCategory({Key? key, required this.data, this.info}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     double deviceWidth = MediaQuery.of(context).size.width;
@@ -114,7 +114,7 @@ print(items);
   Widget coffeeItemBuild(BuildContext context,Map<String, dynamic> it){
     return  GestureDetector(
       onTap: () {
-        Application.coffeeDetail(context, it,info);
+        Application.coffeeDetail(context, it, info ?? {});
       },
       child: Container(
           margin: EdgeInsets.only(top: 3),
@@ -150,11 +150,11 @@ print(items);
 }
 
 class SubCategoryList extends StatefulWidget {
-  final double height;
-  final Map<String, dynamic> info;
-  final SubCategoryListModel data;
-  final void Function(String) goPage;
-  SubCategoryList({Key? key, this.height, this.goPage, this.data,this.info})
+  final double? height;
+  final Map<String, dynamic>? info;
+  final SubCategoryListModel? data;
+  final void Function(String)? goPage;
+  SubCategoryList({Key? key, this.height, this.goPage, this.data, this.info})
       : super(key: key);
   @override
   State<StatefulWidget> createState() => SubCategoryListState();
@@ -177,13 +177,13 @@ class SubCategoryListState extends State<SubCategoryList> {
             child: Container(
               child: widget.data != null
                   ? SecondryCategory(
-                      data: widget.data,
+                      data: widget.data!,
                       info: widget.info,
                     )
                   : Center(
                       child: CircularProgressIndicator(),
                     ),
-              constraints: BoxConstraints(minHeight: widget.height + 5),
+              constraints: BoxConstraints(minHeight: (widget.height ?? 0) + 5),
             )),
       ),
     );
@@ -198,10 +198,10 @@ class SubCategoryListState extends State<SubCategoryList> {
     //     maxExtentLenght.toString());
     // print(widget.goPage);
     if (offset < -50) {
-      widget.goPage('pre');
+      widget.goPage?.call('pre');
     }
     if (offset - maxExtentLenght > 50) {
-      widget.goPage('next');
+      widget.goPage?.call('next');
     }
   }
 

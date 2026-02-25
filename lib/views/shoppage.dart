@@ -83,6 +83,6 @@ class MyInfoPageState extends State<ShopHomePage>
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-    _strollCtrl = null;
+    _strollCtrl.dispose();
   }
 }

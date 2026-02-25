@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import '../../../constants/index.dart';
+import '../../../constants/config.dart';
 import '../../../utils/utils.dart';
 
 class HotSugWidget extends StatelessWidget {
   final List hotWords;
-  final ValueChanged<String> goSearchList;
-  HotSugWidget( {Key? key,this.hotWords,this.goSearchList}):super(key:key);
+  final ValueChanged<String>? goSearchList;
+  HotSugWidget( {Key? key,this.hotWords = const [],this.goSearchList}):super(key:key);
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -23,7 +23,7 @@ class HotSugWidget extends StatelessWidget {
           runSpacing: 10,
           children: hotWords
               .map((i) => GestureDetector(
-                onTap: ()=>goSearchList(i),
+                onTap: ()=> goSearchList?.call(i),
                     child: Container(
                         decoration: BoxDecoration(
                             color: randomColor(),

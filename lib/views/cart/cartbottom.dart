@@ -9,15 +9,15 @@ import '../comm/buycoffeecart.dart';
 
 class _TotalWidget extends StatefulWidget {
   final double totalPrice;
-  _TotalWidget({Key? key, this.totalPrice}) : super(key: key);
+  _TotalWidget({Key? key, required this.totalPrice}) : super(key: key);
   @override
   State<StatefulWidget> createState() => _TotalWidgetState();
 }
 
 class _TotalWidgetState extends State<_TotalWidget>
     with TickerProviderStateMixin {
-  AnimationController _controller;
-  Animation animation;
+  late AnimationController _controller;
+  late Animation animation;
   @override
   void initState() {
     _controller = new AnimationController(

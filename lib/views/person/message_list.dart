@@ -177,7 +177,7 @@ class NewsListPageState extends State<MessageList> {
       GestureDetector(
         onTap: ()async{
           if(!stat){
-            await DataUtils.setMessageRead(context, item['id']);
+            DataUtils.setMessageRead(context, item['id']);
             _refresh();
           }
           MessageDetail.show(context,item);

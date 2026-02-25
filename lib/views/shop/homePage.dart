@@ -32,11 +32,9 @@ class homePageState extends State<homePage> with AutomaticKeepAliveClientMixin {
   );
 
   // 底部菜单栏图标数组
- var tabImages = [
+ var tabImages = <List<Icon>>[
     [ Icon(Icons.home),Icon(Icons.home,color: KColorConstant.mainColor) ],
-    [
-      [ Icon(Icons.category),Icon(Icons.category,color: KColorConstant.mainColor) ],
-    ],
+    [ Icon(Icons.category),Icon(Icons.category,color: KColorConstant.mainColor) ],
     [
       Icon(Icons.shopping_cart),Icon(Icons.shopping_cart,color: KColorConstant.mainColor,)
     ],
@@ -93,10 +91,10 @@ class homePageState extends State<homePage> with AutomaticKeepAliveClientMixin {
 
   // 获取BottomNavigationBarItem
   List<BottomNavigationBarItem> getBottomNavigationBarItem() {
-    List<BottomNavigationBarItem> list = new [];
+    List<BottomNavigationBarItem> list = [];
     for (int i = 0; i < _pages.length; i++) {
       list.add(new BottomNavigationBarItem(
-          icon: getTabIcon(i), title: getTabTitle(i)));
+          icon: getTabIcon(i), label: tabTitles[i]));
     }
     return list;
   }

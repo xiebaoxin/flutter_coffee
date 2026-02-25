@@ -50,7 +50,7 @@ CartListWidget({this.isedit=false});
             return
                Dismissible(
               resizeDuration: Duration(milliseconds: 100),
-              key: Key(item.productName),
+              key: Key(item.productName ?? ''),
                confirmDismiss: (direction) async{
                 if( await DialogUtils().showMyDialog(context, '是否确定要移除?')){
                 await  model.removeItem(index);

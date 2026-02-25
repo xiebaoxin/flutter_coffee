@@ -4,18 +4,32 @@ import 'package:flutter/cupertino.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../components/loading_gif.dart';
 import '../../globleConfig.dart';
-import '../goodsList.dart';
+// import '../goodsList.dart'; // file does not exist
 import '../shop/goods_list_item.dart';
+import 'listtopbar.dart';
 
-class SearchResultListPage extends StatefulWidget {
+// Placeholder for IndexHotListFloor (was from non-existent import)
+Widget _IndexHotListFloorPlaceholder(List<Map<String, dynamic>> data) {
+  return Column(
+    children: data.map((item) => ListTile(
+      title: Text(item['goods_name'] ?? ''),
+      subtitle: Text('￥${item['shop_price'] ?? ''}'),
+    )).toList(),
+  );
+}
+
+// Placeholder for CategryGoodsPage (was from non-existent import)
+// class CategryGoodsPage - commented out since file doesn't exist
+
+class SearchResultListPageBk extends StatefulWidget {
   final String keyword;
   final String catname;
   final int catid;
   final int brand_id;
-  final Map<String, dynamic> catitem;
+  final Map<String, dynamic>? catitem;
   final bool showlist;
   final bool is_end;
-  SearchResultListPage(this.keyword,
+  SearchResultListPageBk(this.keyword,
       {this.catid = 0,
       this.catname = '',
       this.brand_id = 0,
@@ -24,11 +38,11 @@ class SearchResultListPage extends StatefulWidget {
       this.is_end = false});
 
   @override
-  State<StatefulWidget> createState() => SearchResultListState();
+  State<StatefulWidget> createState() => SearchResultListBkState();
 }
 
-class SearchResultListState extends State<SearchResultListPage> {
-  ScrollController scrollController = ScrollController(); //listview的控制器
+class SearchResultListBkState extends State<SearchResultListPageBk> {
+  ScrollController scrollController = ScrollController();
 
   List itm = [];
   bool _price_sort = false, _selnum_sort = false;
@@ -51,7 +65,7 @@ class SearchResultListState extends State<SearchResultListPage> {
                 children: <Widget>[
                   Padding(
                     padding: const EdgeInsets.only(left: 8.0),
-                    child: DropdownButton(
+                    child: DropdownButton<String>(
                       value: _dropdownValue1,
                       items: <String>['新品', '推荐']
                           .map<DropdownMenuItem<String>>((String value) {
@@ -60,10 +74,10 @@ class SearchResultListState extends State<SearchResultListPage> {
                           child: Text(value),
                         );
                       }).toList(),
-                      onChanged: (String v) {
+                      onChanged: (String? v) {
                         setState(() {
 
-                          _dropdownValue1 = v;
+                          _dropdownValue1 = v ?? '新品';
                           if (v == '新品')
                             _is_new = '1';
                           else
@@ -129,8 +143,8 @@ class SearchResultListState extends State<SearchResultListPage> {
                       )),
                 ],
               ),
-              listData != null
-                  ? IndexHotListFloor(listData)
+              listData.isNotEmpty
+                  ? _IndexHotListFloorPlaceholder(listData)
                   : Container(
                       padding: EdgeInsets.all(10),
                       child: Text("什么都没有发现"),
@@ -153,8 +167,8 @@ class SearchResultListState extends State<SearchResultListPage> {
           body: ListView(
             controller: scrollController,
             children: <Widget>[
-              listData != null
-                  ? IndexHotListFloor(listData)
+              listData.isNotEmpty
+                  ? _IndexHotListFloorPlaceholder(listData)
                   : Container(
                       padding: EdgeInsets.all(10),
                       child: Text("什么都没有发现"),
@@ -170,7 +184,7 @@ class SearchResultListState extends State<SearchResultListPage> {
             children: <Widget>[
               Visibility(visible: widget.showlist, child: catlist()),
               listData.isNotEmpty
-                  ? IndexHotListFloor(listData)
+                  ? _IndexHotListFloorPlaceholder(listData)
                   : Container(
                       padding: EdgeInsets.all(10),
                       child: Center(
@@ -188,7 +202,7 @@ class SearchResultListState extends State<SearchResultListPage> {
   bool _isadd0 = true;
   int _rcount = 5;
   Widget catlist() {
-    if (_showmore) itm.removeAt(2 * _rcount - 1);
+    if (_showmore && itm.length > 2 * _rcount - 1) itm.removeAt(2 * _rcount - 1);
     int clen = itm.length;
     return Container(
       color: Color(0xFFFFFFFF),
@@ -213,12 +227,7 @@ class SearchResultListState extends State<SearchResultListPage> {
                           setState(() {
                             _showmore = true;
                           });
-                        else
-                          Navigator.push(context, CupertinoPageRoute(
-                              builder: (BuildContext context) {
-                            return CategryGoodsPage(
-                                catid: it['ucid'], catname: it['name']);
-                          }));
+                        // else navigate to CategryGoodsPage (commented out - file doesn't exist)
                       },
                       child: Container(
                         height: 68,
@@ -282,7 +291,6 @@ class SearchResultListState extends State<SearchResultListPage> {
                                     )
                                   ],
                                 ))
-//
                       ));
             }).toList(),
           )),
@@ -293,8 +301,8 @@ class SearchResultListState extends State<SearchResultListPage> {
 
   int page = 1;
   List<Map<String, dynamic>> listData = [];
-  String keyword;
-  int catid;
+  String keyword = '';
+  int catid = 0;
 
   void redoseach() async {
     page = 1;
@@ -304,7 +312,6 @@ class SearchResultListState extends State<SearchResultListPage> {
 
   Future getSearchList() async {
     Map<String, String> params = {};
-//    listData=
   }
 
   @override
@@ -315,7 +322,7 @@ class SearchResultListState extends State<SearchResultListPage> {
       if (widget.catitem != null) {
         _isadd0 = true;
         int i = 0;
-        (widget.catitem['lists'] as List).forEach((iit) {
+        (widget.catitem!['lists'] as List).forEach((iit) {
           if (i == (2 * _rcount - 1) && _isadd0) {
             if (!widget.is_end) itm.add({'ucid': 0, 'name': "更多", 'icon': ""});
             _isadd0 = false;
@@ -329,7 +336,6 @@ class SearchResultListState extends State<SearchResultListPage> {
 
     super.initState();
     getSearchList();
-//    if(widget.catitem!=null)
     scrollController.addListener(() {
       if (scrollController.position.pixels ==
           scrollController.position.maxScrollExtent) {
@@ -341,7 +347,6 @@ class SearchResultListState extends State<SearchResultListPage> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     scrollController.dispose();
     super.dispose();
   }

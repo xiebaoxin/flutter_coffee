@@ -11,7 +11,7 @@ class OrderListPage extends StatefulWidget {
   @override
   OrderListPageState createState() => OrderListPageState();
 }
-TabController _tabController;
+late TabController _tabController;
 
 class OrderListPageState extends State<OrderListPage>
     with SingleTickerProviderStateMixin {

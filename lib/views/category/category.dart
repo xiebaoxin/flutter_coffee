@@ -11,7 +11,7 @@ import '../../globleConfig.dart';
 
 class Category extends StatefulWidget {
   final double rightListViewHeight;
-  Category({Key? key, this.rightListViewHeight}) : super(key: key);
+  Category({Key? key, this.rightListViewHeight = 0}) : super(key: key);
   @override
   State<StatefulWidget> createState() => CategoryState();
 }
@@ -26,9 +26,9 @@ class CategoryState extends State<Category> {
   List<SubCategoryListModel> listViewData = [];
   bool isAnimating = false;
   int itemCount = 0;
-  double menueWidth;
-  double itemHeight;
-  double height;
+  double menueWidth = 0;
+  double itemHeight = 0;
+  double height = 0;
   @override
   Widget build(BuildContext context) {
 
@@ -49,7 +49,7 @@ class CategoryState extends State<Category> {
         color: Color(0xFFFFFFFF),
         child: Column(
           children: <Widget>[
-            SearchBar(),
+            MySearchBar(),
             Expanded(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -82,12 +82,12 @@ class CategoryState extends State<Category> {
   }
 
   menueItemTap(int i) {
-    rightListviewKey.currentState.jumpTopage(i);
+    rightListviewKey.currentState?.jumpTopage(i);
   }
 
 
   listViewChanged(i) {
-    this.categoryMenueKey.currentState.moveToTap(i);
+    this.categoryMenueKey.currentState?.moveToTap(i);
   }
   @override
   void reassemble() {

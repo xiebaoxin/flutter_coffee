@@ -217,7 +217,7 @@ class GoodsListItem extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.only(right: 8.0),
                         child: Text(
-                          '${(double.tryParse(item['sale_num'].toString())).toStringAsFixed(0)}人付款',
+                          '${(double.tryParse(item['sale_num'].toString()) ?? 0).toStringAsFixed(0)}人付款',
                           style: TextStyle(
                             fontSize: 10,
                             color: Colors.black45,
@@ -233,7 +233,7 @@ class GoodsListItem extends StatelessWidget {
                   child:
                   Text(
                       item['plan_getask'].toString().isEmpty?
-                    '获得：${(double.tryParse(item['shop_price']) * (double.tryParse(item['jtrate']))).toStringAsFixed(4)}TML':
+                    '获得：${((double.tryParse(item['shop_price'].toString()) ?? 0) * (double.tryParse(item['jtrate'].toString()) ?? 0)).toStringAsFixed(4)}TML':
                     '获得：${item['plan_getask'].toString() }',
 
                     style: TextStyle(

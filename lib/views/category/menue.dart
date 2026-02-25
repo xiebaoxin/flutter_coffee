@@ -7,9 +7,9 @@ class CategoryMenue extends StatefulWidget {
   final List<String> items;
   final double itemHeight;
   final double itemWidth;
-  final ValueChanged<int> menueTaped;
+  final ValueChanged<int>? menueTaped;
   CategoryMenue(
-      {Key? key, this.items, this.itemHeight, this.itemWidth, this.menueTaped})
+      {Key? key, this.items = const [], this.itemHeight = 40, this.itemWidth = 75, this.menueTaped})
       : super(key: key);
   @override
   State<StatefulWidget> createState() => CategoryMenueState();
@@ -17,8 +17,8 @@ class CategoryMenue extends StatefulWidget {
 
 class CategoryMenueState extends State<CategoryMenue>
     with SingleTickerProviderStateMixin {
-  Animation<double> animation;
-  AnimationController controller;
+  late Animation<double> animation;
+  late AnimationController controller;
   int currentItemIndex = 0;
   @override
   Widget build(BuildContext context) {
@@ -73,7 +73,7 @@ class CategoryMenueState extends State<CategoryMenue>
   }
 
   _menueTaped(int i) {
-    widget.menueTaped(i);
+    widget.menueTaped?.call(i);
     moveToTap(i);
   }
 

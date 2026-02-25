@@ -6,7 +6,7 @@ import 'edit_address.dart';
 class AddressPage extends StatefulWidget {
   AddressPage({Key? key, this.title}) : super(key: key);
 
-  final String title;
+  final String? title;
 
   @override
   AddressPageState createState() => AddressPageState();
@@ -191,14 +191,14 @@ deletefun(String addressid) async{
   }
 
   Widget addressList() {
-    num length = _addressList.length;
+    int length = _addressList.length;
     return
       ListView.builder(
         itemCount: length,
 //        separatorBuilder: (BuildContext context, int index) => new Divider(),  // 添加分割线
         itemBuilder: (BuildContext context, int index) {
           if (index >= length) {
-            return null;
+            return SizedBox.shrink();
           }else{
             return _addressItemCard(_addressList[index]);
           }

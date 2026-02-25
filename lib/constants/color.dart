@@ -39,4 +39,8 @@ class KColorConstant {
   const LinearGradient(colors: [topbackgroundColor1, topbackgroundColor2]),
   );
 
+  static const Color divideLineColor = Color(0xFFDDDDDD);
+  static const Color searchAppBarBgColor = Color(0xFFF5F5F5);
+  static const Color searchRecomendDividerColor = Color(0xFFEEEEEE);
+  static const Color goPayBtBgColor = Color(0xFFFD8513);
 }

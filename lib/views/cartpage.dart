@@ -30,7 +30,7 @@ class CartHomePageState extends State<CartHomePage>
 
   final double statusBarHeight = MediaQueryData.fromView(PlatformDispatcher.instance.implicitView!).padding.top;
 
-  ScrollController _strollCtrl = ScrollController();
+  ScrollController? _strollCtrl = ScrollController();
   Userinfo _userinfo = Userinfo.fromJson({});
 
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
@@ -77,7 +77,7 @@ class CartHomePageState extends State<CartHomePage>
                                             Text("商品信息",style: TextStyle(fontWeight: FontWeight.bold),),
                                             GestureDetector(
                                               onTap: (){
-                                                final cartsmodel = Provider.of<CartsProvider>(context);
+                                                final cartsmodel = Provider.of<CartsProvider>(context, listen: false);
                                                 List<CartItemModel> cartlist = cartsmodel.cartitems;
                                                 cartlist.forEach((e) async {
                                                   if(e!=null)

@@ -16,7 +16,7 @@ class CartItemWidget extends StatelessWidget {
 final bool readonly;
 final int showtype;
   CartItemWidget(this.data,
-      {this.switchChaned, this.index, this.addCount, this.downCount,this.readonly=false,this.showtype=0});
+      {required this.switchChaned, required this.index, required this.addCount, required this.downCount,this.readonly=false,this.showtype=0});
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -47,7 +47,7 @@ final int showtype;
                       child:
                       ShowNetImage(
                         servpic(data
-                            .imageUrl),
+                            .imageUrl ?? ''),
                         height:60,
                         width: 60,
                         tapnull: true,
@@ -63,7 +63,7 @@ final int showtype;
                           Padding(
                             padding: const EdgeInsets.all(0),
                             child: Container(
-                              child: Text(data.productName,
+                              child: Text(data.productName ?? '',
                                   maxLines: 2,
                                   softWrap:
                                   true, //是否自动换行 false文字不考虑容器大小  单行显示   超出；屏幕部分将默认截断处理
@@ -80,7 +80,7 @@ final int showtype;
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text("${DataUtils.coffeesugarRule(int.parse(data.attr))}",
+                                  Text("${DataUtils.coffeesugarRule(int.parse(data.attr ?? '0'))}",
                                       style: TextStyle(
                                         fontSize: 12,
                                       )),

@@ -1,4 +1,3 @@
-// Stub for flutter_cupertino_date_picker
 import 'package:flutter/material.dart';
 
 enum DateTimePickerLocale { zh_cn, en_us }
@@ -40,11 +39,41 @@ class DatePicker {
     required DateTime firstDate,
     required DateTime lastDate,
   }) {
-    return showDatePicker(
+    return showDatePickerDialog(
       context: context,
       initialDate: initialDate,
       firstDate: firstDate,
       lastDate: lastDate,
+    );
+  }
+
+  static Future<DateTime?> showDatePickerDialog({
+    required BuildContext context,
+    required DateTime initialDate,
+    required DateTime firstDate,
+    required DateTime lastDate,
+  }) async {
+    return await showDialog<DateTime>(
+      context: context,
+      builder: (BuildContext ctx) {
+        DateTime selected = initialDate;
+        return AlertDialog(
+          title: const Text('选择日期'),
+          content: SizedBox(
+            height: 200,
+            child: CalendarDatePicker(
+              initialDate: initialDate,
+              firstDate: firstDate,
+              lastDate: lastDate,
+              onDateChanged: (date) => selected = date,
+            ),
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('取消')),
+            TextButton(onPressed: () => Navigator.pop(ctx, selected), child: const Text('确定')),
+          ],
+        );
+      },
     );
   }
 }

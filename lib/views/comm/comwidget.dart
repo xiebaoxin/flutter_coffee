@@ -158,11 +158,11 @@ class ComWidget {
             ),*/
                 onTap: ()async{
                   if(machine['status']==0){
-                  await await DialogUtils.showToastDialog(G.navigatorKey.currentContext, '打烊补货，稍后再试！');
+                  await DialogUtils.showToastDialog(G.navigatorKey.currentContext!, '打烊补货，稍后再试！');
                   }else{
                     SharedPreferences prefs =await SharedPreferences.getInstance();
                     await prefs.setString("machine", jsonEncode(machine));
-                    Navigator.pushReplacement(G.navigatorKey.currentContext, MaterialPageRoute(
+                    Navigator.pushReplacement(G.navigatorKey.currentContext!, MaterialPageRoute(
                       builder: (context) => HomePage(tabindex:1,),//CartsBuyPage(),
                     ));
                   }

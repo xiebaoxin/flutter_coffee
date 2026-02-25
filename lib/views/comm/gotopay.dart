@@ -13,7 +13,7 @@ class GoToPayPage extends StatefulWidget {
   final String order_sn;
   final double money;
   final String scean;
-  final Map<String, dynamic> data;
+  final Map<String, dynamic>? data;
   GoToPayPage(this.order_sn, {this.scean = "CF", this.money = 0.0, this.data});
   @override
   GoToPayPageState createState() => GoToPayPageState();
@@ -173,13 +173,13 @@ class GoToPayPageState extends State<GoToPayPage>
                                 ),
                               ],
                             ),
-                            trailing: Radio(
+                            trailing: Radio<int>(
                               value: 2,
                               groupValue: _objtype,
                               activeColor: Colors.blue,
                               onChanged: (v) {
                                 setState(() {
-                                  _objtype = v;
+                                  _objtype = v ?? 2;
                                 });
                               },
                             ),
@@ -210,13 +210,13 @@ class GoToPayPageState extends State<GoToPayPage>
                                 ),
                               ],
                             ),
-                            trailing: Radio(
+                            trailing: Radio<int>(
                               value: 1,
                               groupValue: _objtype,
                               activeColor: Colors.blue,
                               onChanged: (v) {
                                 setState(() {
-                                  _objtype = v;
+                                  _objtype = v ?? 1;
                                 });
                               },
                             ),
@@ -247,13 +247,13 @@ class GoToPayPageState extends State<GoToPayPage>
                                 ),
                               ],
                             ),
-                            trailing: Radio(
+                            trailing: Radio<int>(
                               value: 3,
                               groupValue: _objtype,
                               activeColor: Colors.blue,
                               onChanged: (v) {
                                 setState(() {
-                                  _objtype = v;
+                                  _objtype = v ?? 3;
                                 });
                               },
                             ),
@@ -331,12 +331,12 @@ class GoToPayPageState extends State<GoToPayPage>
   Future getcomparams() async {
     var response;
     if (widget.scean == 'RECHARGE') {
-      response = await DataUtils.RechargePay(context, widget.data['id'],_objtype);
+      response = await DataUtils.RechargePay(context, widget.data?['id'],_objtype);
     } else if (widget.scean == "CF") {
-      Map<String, String> params =  widget.data;
+      Map<String, dynamic> params = Map<String, dynamic>.from(widget.data ?? {});
       params.putIfAbsent("type", () => _objtype.toString());
 
-      response = await DataUtils.addCoffeeOrder(context, params);
+      response = await DataUtils.addCoffeeOrder(context, params.map((k, v) => MapEntry(k, v.toString())));
     } else
       return widget.data;
 
@@ -365,15 +365,14 @@ class GoToPayPageState extends State<GoToPayPage>
     
       if (paydata == null) return;
       await fluwx
-          .payWithWeChat(
+          .payWithWeChat(fluwx.WeChatPayModel(
               appId: paydata['appid'].toString(),
               partnerId: paydata['partnerid'].toString(),
               prepayId: paydata['prepayid'].toString(),
               packageValue: paydata['package'].toString(),
               nonceStr: paydata['noncestr'].toString(),
-              timeStamp: int.tryParse(paydata['timestamp'].toString()),
-              sign: paydata['sign'].toString(),
-              extData: "咖啡app商品消费")
+              timeStamp: paydata['timestamp'].toString(),
+              sign: paydata['sign'].toString()))
           .then((data) async {
         print("--payWithWeChat--return：》$data");
         return data;
@@ -387,7 +386,7 @@ class GoToPayPageState extends State<GoToPayPage>
     print("----------alipayto--------");
     if (paydata == null) return;
     _payInfo = paydata;
-    Map payResult;
+    Map? payResult;
     try {
       if (_payInfo.isNotEmpty) {
         payResult = await aliPay(_payInfo);

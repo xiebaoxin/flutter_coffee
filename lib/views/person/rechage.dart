@@ -22,7 +22,7 @@ class _MobileRechargeState extends State<Recharge> {
   double _money = 0.0;
   int _nowTime = 0;
   Map<String, String> _params = {};
-  int _mindex;
+  int? _mindex;
   Map<String, dynamic> _oilitem = {};
   List<Map<String, dynamic>> _CardItems = [
     {'id': 1, 'money': 10.0, 'giveMoney': 0.0}, {'id': 2, 'money': 20.0, 'giveMoney': 0.0},

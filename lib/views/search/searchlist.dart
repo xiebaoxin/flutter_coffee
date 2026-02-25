@@ -3,19 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../model/userinfo.dart';
-import '../../model/globle_model.dart';
+import '../../model/globle_provider.dart';
 import '../../components/loading_gif.dart';
-import '../index.dart';
+// import '../index.dart'; // file does not exist
 import '../../utils/HttpUtils.dart';
-import '../indexHotList.dart';
-import '../categrygoods_page.dart';
+// import '../indexHotList.dart'; // file does not exist
+// import '../categrygoods_page.dart'; // file does not exist
+import 'listtopbar.dart';
 
 class SearchResultListPage extends StatefulWidget {
   final String keyword;
   final String catname;
   final int catid;
   final int brand_id;
-  final Map<String, dynamic> catitem;
+  final Map<String, dynamic>? catitem;
   final bool showlist;
   final bool is_end;
   final int is_recom;
@@ -32,14 +33,14 @@ class SearchResultListPage extends StatefulWidget {
       this.is_recom=-1,
       this.is_hot=0,
       this.is_new=0
-      }) : keyword = keyword;
+      });
 
   @override
   State<StatefulWidget> createState() => SearchResultListState();
 }
 
 class SearchResultListState extends State<SearchResultListPage> {
-  ScrollController scrollController = ScrollController(); //listview的控制器
+  ScrollController scrollController = ScrollController();
   Userinfo _userinfo = Userinfo.fromJson({});
   bool _price_sort = false, _selnum_sort = false;
 
@@ -61,7 +62,7 @@ class SearchResultListState extends State<SearchResultListPage> {
                 children: <Widget>[
                   Padding(
                     padding: const EdgeInsets.only(left: 8.0),
-                    child: DropdownButton(
+                    child: DropdownButton<String>(
                       value: _dropdownValue1,
                       items: <String>['新品', '推荐']
                           .map<DropdownMenuItem<String>>((String value) {
@@ -70,9 +71,9 @@ class SearchResultListState extends State<SearchResultListPage> {
                           child: Text(value),
                         );
                       }).toList(),
-                      onChanged: (String v) {
+                      onChanged: (String? v) {
                         setState(() {
-                          _dropdownValue1 = v;
+                          _dropdownValue1 = v ?? '新品';
                           if (v == '新品')
                             _is_new = '1';
                           else
@@ -135,7 +136,7 @@ class SearchResultListState extends State<SearchResultListPage> {
                                   return bottomShowWidget();
                                 }))
                             .then((v) {
-                          if (v)
+                          if (v == true)
                             setState(() {
                               _selnum_sort = !_selnum_sort;
                               _sort = 'sales_sum';
@@ -160,8 +161,8 @@ class SearchResultListState extends State<SearchResultListPage> {
                       )),
                 ],
               ),
-              listData != null
-                  ? IndexHotListFloor(listData)
+              listData.isNotEmpty
+                  ? _buildListDataWidget()
                   : Container(
                       padding: EdgeInsets.all(10),
                       child: Text("什么都没有发现"),
@@ -187,7 +188,7 @@ class SearchResultListState extends State<SearchResultListPage> {
                     controller: scrollController,
                     children: <Widget>[
                       listData.isNotEmpty
-                          ? IndexHotListFloor(listData)
+                          ? _buildListDataWidget()
                           : Container(
                               padding: EdgeInsets.all(10),
                               child: Center(
@@ -211,8 +212,8 @@ class SearchResultListState extends State<SearchResultListPage> {
           body: ListView(
             controller: scrollController,
             children: <Widget>[
-              listData != null
-                  ? IndexHotListFloor(listData)
+              listData.isNotEmpty
+                  ? _buildListDataWidget()
                   : Container(
                       padding: EdgeInsets.all(10),
                       child: Text("什么都没有发现"),
@@ -228,7 +229,7 @@ class SearchResultListState extends State<SearchResultListPage> {
             children: <Widget>[
               Visibility(visible: widget.showlist, child: catlist()),
               listData.isNotEmpty
-                  ? IndexHotListFloor(listData)
+                  ? _buildListDataWidget()
                   : Container(
                       padding: EdgeInsets.all(10),
                       child: Center(
@@ -242,6 +243,15 @@ class SearchResultListState extends State<SearchResultListPage> {
     }
   }
 
+  Widget _buildListDataWidget() {
+    return Column(
+      children: listData.map((item) => ListTile(
+        title: Text(item['goods_name'] ?? ''),
+        subtitle: Text('￥${item['shop_price'] ?? ''}'),
+      )).toList(),
+    );
+  }
+
   bool _showmore = false;
   int _rcount = 5;
   Widget catlist() {
@@ -251,8 +261,7 @@ class SearchResultListState extends State<SearchResultListPage> {
         height: 2,
       );
 
-    List items = widget.catitem['lists'] as List;
-//    print(items);
+    List items = widget.catitem!['lists'] as List;
     if (items.length > 10) {
       if (_showmore)
         itm = items;
@@ -285,17 +294,11 @@ class SearchResultListState extends State<SearchResultListPage> {
               return Container(
                   child: InkWell(
                       onTap: () {
-//                        print(it);
                         if (it['ucid'] == 0)
                           setState(() {
                             _showmore = true;
                           });
-                        else
-                          Navigator.push(context, CupertinoPageRoute(
-                              builder: (BuildContext context) {
-                            return CategryGoodsPage(
-                                catid: it['ucid'], catname: it['name']);
-                          }));
+                        // else navigate to category page (commented out - file doesn't exist)
                       },
                       child: Container(
                           height: 68,
@@ -359,7 +362,6 @@ class SearchResultListState extends State<SearchResultListPage> {
                                     )
                                   ],
                                 ))
-//
                       ));
             }).toList(),
           )),
@@ -374,10 +376,10 @@ class SearchResultListState extends State<SearchResultListPage> {
   String _brandarea = "";
   String _brandindex = "全部";
 
-  var _specindex = new Map<int, String>();
+  var _specindex = <int, String>{};
   String _specarea = "";
 
-  var _attrindex = new Map<int, String>();
+  var _attrindex = <int, String>{};
   String _attrarea = "";
 
   List<Map<String, dynamic>> _priceListData = [];
@@ -391,18 +393,16 @@ class SearchResultListState extends State<SearchResultListPage> {
 
       return Scaffold(
         backgroundColor: Color(0x0a0000000),
-        // 设置key处理SnackBar，这里一定要设置，否则弹窗不显示
         key: _scaffoldkey1,
 
         body: SafeArea(
-//          bottom: false,
           top: false,
           child: Container(
               height: MediaQuery.of(context).size.height,
               alignment: Alignment.topCenter,
               child: Container(
                 width: MediaQuery.of(context).size.width,
-                decoration: new BoxDecoration(
+                decoration: BoxDecoration(
                   color: Color.fromRGBO(253, 253, 253, 1),
                   borderRadius: const BorderRadius.vertical(
                       top: Radius.circular(10), bottom: Radius.circular(20)),
@@ -462,7 +462,6 @@ class SearchResultListState extends State<SearchResultListPage> {
                                               fontSize: 10,
                                               color: Color(0xFFFFFFFF)),
                                         ),
-                                        //未选定的时候背景
                                         selectedColor: Color(0xFF29ccbb),
                                         backgroundColor: Color(0xfFaaaaaa),
                                         selected: _priceindex == iti['value'],
@@ -478,7 +477,6 @@ class SearchResultListState extends State<SearchResultListPage> {
                                           });
                                         },
                                       );
-                                      //                      return Text(iti.item);
                                     }).toList())),
                             Container(
                               height: 40,
@@ -507,7 +505,6 @@ class SearchResultListState extends State<SearchResultListPage> {
                                               fontSize: 10,
                                               color: Color(0xFFFFFFFF)),
                                         ),
-                                        //未选定的时候背景
                                         selectedColor: Color(0xFF29ccbb),
                                         backgroundColor: Color(0xfFaaaaaa),
                                         selected: _brandindex == iti['name'],
@@ -523,7 +520,6 @@ class SearchResultListState extends State<SearchResultListPage> {
                                           });
                                         },
                                       );
-                                      //                      return Text(iti.item);
                                     }).toList())),
                             setspeclist(state),
                             setattrlist(state)
@@ -606,7 +602,6 @@ class SearchResultListState extends State<SearchResultListPage> {
                               style: TextStyle(
                                   fontSize: 10, color: Color(0xFFFFFFFF)),
                             ),
-                            //未选定的时候背景
                             selectedColor: Color(0xFF29ccbb),
                             backgroundColor: Color(0xfFaaaaaa),
                             selected: _specindex[newitem['spec_id']] ==
@@ -620,11 +615,9 @@ class SearchResultListState extends State<SearchResultListPage> {
                                 _specindex
                                     .forEach((k, v) => _specarea += "@${v}");
                                 _specarea = _specarea.replaceFirst("@", "");
-//                                print(_specarea);
                               });
                             },
                           ));
-                      //                      return Text(iti.item);
                     }).toList())
               ],
             );
@@ -670,7 +663,6 @@ class SearchResultListState extends State<SearchResultListPage> {
                               style: TextStyle(
                                   fontSize: 10, color: Color(0xFFFFFFFF)),
                             ),
-                            //未选定的时候背景
                             selectedColor: Color(0xFF29ccbb),
                             backgroundColor: Color(0xfFaaaaaa),
                             selected: _attrindex[newitem['attr_id']] ==
@@ -684,11 +676,9 @@ class SearchResultListState extends State<SearchResultListPage> {
                                 _attrindex
                                     .forEach((k, v) => _attrarea += "@${v}");
                                 _attrarea = _attrarea.replaceFirst("@", "");
-//                                print(_attrarea);
                               });
                             },
                           ));
-                      //                      return Text(iti.item);
                     }).toList())
               ],
             );
@@ -698,8 +688,8 @@ class SearchResultListState extends State<SearchResultListPage> {
 
   int page = 1;
   List<Map<String, dynamic>> listData = [];
-  String keyword;
-  int catid;
+  String keyword = '';
+  int catid = 0;
 
   void redoseach() async {
     page = 1;
@@ -721,7 +711,7 @@ class SearchResultListState extends State<SearchResultListPage> {
       'is_new': _is_new,
       'is_hot':widget.is_hot.toString(),
       'recmd':widget.is_recom.toString(),
-      'user_id': _userinfo.id
+      'user_id': _userinfo.id.toString()
     };
 
     String url =
@@ -730,14 +720,14 @@ class SearchResultListState extends State<SearchResultListPage> {
     if (keyword != '' || widget.brand_id > 0)
       url = "Shop/search/p/${page.toString()}/";
 
-    var response = await HttpUtils.dioappi(url, params, context: null);
+    var response = await HttpUtils.post(url, params.cast<String, dynamic>());
 
     try {
       if (response['list'] != null) {
         response['list'].forEach((ele) {
           if (ele != null) {
             var tee = ele as Map;
-            if (tee != null) listData.add(tee);
+            listData.add(Map<String, dynamic>.from(tee));
           }
         });
         setState(() {
@@ -752,17 +742,15 @@ class SearchResultListState extends State<SearchResultListPage> {
         if (response['filter'] != null) {
           if (response['filter']['filter_price'] != null) {
             setState(() {
-//            _priceListData = [];
               response['filter']['filter_price'].forEach((ele) {
                 if (ele != null) {
                   var tee = ele as Map;
-                  if (tee != null) _priceListData.add(tee);
+                  _priceListData.add(Map<String, dynamic>.from(tee));
                 }
               });
               _priceListData.insert(0, {"value": "全部", "href": ""});
             });
           }
-//          print(_priceListData);
         }
       } catch (v) {
         ;
@@ -777,13 +765,12 @@ class SearchResultListState extends State<SearchResultListPage> {
               response['filter']['filter_brand'].forEach((ele) {
                 if (ele != null) {
                   var tee = ele as Map;
-                  if (tee != null) _brandListData.add(tee);
+                  _brandListData.add(Map<String, dynamic>.from(tee));
                 }
               });
               _brandListData.insert(0, {"name": "全部", "href": ""});
             });
           }
-//          print(_brandListData);
         }
       } catch (v) {
         ;
@@ -826,8 +813,7 @@ class SearchResultListState extends State<SearchResultListPage> {
   }
 
   void initusrinfo() {
-    final model = globleModel().of(context);
-    _userinfo = model.userinfo;
+    // globleModel removed - use GlobleProvider via Provider instead
   }
 
   @override

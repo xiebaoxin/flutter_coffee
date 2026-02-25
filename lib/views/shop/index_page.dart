@@ -76,7 +76,7 @@ class IndexPageHomeState extends State<IndexPageHome>
     );
   }
 
-  late TabController _tabController;
+  TabController? _tabController;
 
   Widget mainbody() {
 
@@ -466,7 +466,7 @@ class IndexPageHomeState extends State<IndexPageHome>
   }
 
   void shownoopenmsg({String strt = '即将开放，敬请期待'}) {
-    _scaffoldKey.currentState?.showSnackBar(SnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(strt),
     ));
   }
@@ -518,7 +518,7 @@ class IndexPageHomeState extends State<IndexPageHome>
 
   @override
   void dispose() {
-    _tabController.dispose();
+    _tabController?.dispose();
     _futureAllBuilderFuture = null;
     super.dispose();
   }

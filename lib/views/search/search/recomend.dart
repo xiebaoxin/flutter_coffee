@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../../../constants/index.dart';
+import '../../../constants/config.dart';
 
 class RecomendListWidget extends StatelessWidget {
   final List<String> items;
-  final ValueChanged<String> onItemTap;
+  final ValueChanged<String>? onItemTap;
   RecomendListWidget(this.items, {this.onItemTap});
   @override
   Widget build(BuildContext context) {
@@ -12,13 +12,11 @@ class RecomendListWidget extends StatelessWidget {
       itemCount: items.length,
       itemBuilder: (BuildContext context, int i) {
         return InkWell(
-          onTap: () => onItemTap(items[i]),
+          onTap: () => onItemTap?.call(items[i]),
           child: Container(
             height: 42,
             width: double.infinity,
-           // color: Colors.red,
             alignment: Alignment.centerLeft,
-           // constraints: BoxConstraints(minWidth: double.infinity),
             child: Text(
               items[i],
               style: TextStyle(fontSize: 15),

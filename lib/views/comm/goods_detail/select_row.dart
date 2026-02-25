@@ -14,7 +14,7 @@ class SelectRow extends StatelessWidget {
   });
 
   Container _createRadio({
-    Map<String, dynamic> item
+    required Map<String, dynamic> item
   }) {
     bool isActive = initv == item['value'];
     return Container(

@@ -397,12 +397,12 @@ class HomeIndexPageState extends State<IndexPageHome>
               );
             else {
               if (snapshot.hasData) {
-                BannerList banners = snapshot.data;
+                BannerList? banners = snapshot.data;
                 return Container(
                     height: topimgheight,
                     child: ClipRRect(
                         borderRadius: BorderRadius.circular(Klength.circular),
-                        child: banners != null && banners.items.length > 0
+                        child: banners != null && (banners.items?.length ?? 0) > 0
                             ? SwipperBanner(
                                 bannerlist: banners,
                                 nheight: topimgheight,
@@ -575,10 +575,10 @@ class HomeIndexPageState extends State<IndexPageHome>
     setState(() {  });
   }
 
-  void freshdata() async {
+  Future<void> freshdata() async {
     if (mounted) {
       var cartdemoInfo = Provider.of<CartsProvider>(context, listen: false);
-      await cartdemoInfo.initcartdemo();
+      cartdemoInfo.initcartdemo();
     }
 
     getmsgreaed();

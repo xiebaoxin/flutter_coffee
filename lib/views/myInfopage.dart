@@ -175,7 +175,7 @@ Widget mainbody(){
                         radius: 30.0,
                         backgroundImage: provider.userinfo.avtar.isNotEmpty
                             ? NetworkImage(provider.userinfo.avtar)
-                            : AssetImage('images/logo-no.png'),
+                            : AssetImage('images/logo-no.png') as ImageProvider,
                       ),
                     ),
                   ),
@@ -540,7 +540,7 @@ Widget mainbody(){
     if (total != -1) {
       setState(() {
         _persent =
-            double.tryParse((received / total * 100).toStringAsFixed(0)) / 100;
+            (double.tryParse((received / total * 100).toStringAsFixed(0)) ?? 0) / 100;
       });
 //      print((received / total * 100).toStringAsFixed(0) + "%");
     }

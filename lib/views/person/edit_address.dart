@@ -9,7 +9,7 @@ class EditAddressPage extends StatefulWidget {
       : super(key: key);
 
   final int addressId;
-  final Map<String, dynamic> address;
+  final Map<String, dynamic>? address;
 
   @override
   EditAddressPageState createState() => EditAddressPageState();
@@ -31,7 +31,7 @@ class EditAddressPageState extends State<EditAddressPage> {
   String _cityName = '';
   String _areaName = '';
   String _townName = '';
-  String _provinceId, _cityId, _areaId, _townId;
+  String _provinceId = '', _cityId = '', _areaId = '', _townId = '';
   bool _switchValue = true;
 
   @override
@@ -60,7 +60,7 @@ class EditAddressPageState extends State<EditAddressPage> {
                             contentPadding: EdgeInsets.all(10.0),
                             hintText: widget.addressId == 0
                                 ? '请输入收货人名称'
-                                : widget.address['consignee'],
+                                : widget.address?['consignee'],
 //                            icon: Icon(Icons.person)
                         ),
                       ),
@@ -74,7 +74,7 @@ class EditAddressPageState extends State<EditAddressPage> {
                             contentPadding: EdgeInsets.all(10.0),
                             hintText: widget.addressId == 0
                                 ? '请输入收货人联系方式'
-                                : widget.address['mobile'],
+                                : widget.address?['mobile'],
 //                            icon: Icon(Icons.phone)
                         ),
                       ),
@@ -176,7 +176,7 @@ class EditAddressPageState extends State<EditAddressPage> {
                               contentPadding: EdgeInsets.all(10.0),
                               hintText: widget.addressId == 0
                                   ? '详细地址'
-                                  : widget.address['address'],
+                                  : widget.address?['address'],
 //                              icon: Icon(Icons.home)
                           ),
                         )),
@@ -280,18 +280,18 @@ class EditAddressPageState extends State<EditAddressPage> {
     // TODO: implement initState
     super.initState();
     if (widget.addressId != 0) {
-      _cscontroller.text = widget.address['consignee'];
-      _mbcountCtrl.text = widget.address['mobile'];
-      _adrCtroller.text = widget.address['address'];
+      _cscontroller.text = widget.address?['consignee'] ?? '';
+      _mbcountCtrl.text = widget.address?['mobile'] ?? '';
+      _adrCtroller.text = widget.address?['address'] ?? '';
 
-      _provinceId= widget.address['province'].toString();
-      _cityId= widget.address['city'].toString();
-      _areaId= widget.address['district'].toString();
-      _townId= widget.address['twon'].toString();
-      _provinceName = widget.address['provinceName'];
-      _cityName = widget.address['cityName'];
-      _areaName =  widget.address['districtName'];
-      _townName =  widget.address['twonName'];
+      _provinceId= widget.address?['province'].toString() ?? '';
+      _cityId= widget.address?['city'].toString() ?? '';
+      _areaId= widget.address?['district'].toString() ?? '';
+      _townId= widget.address?['twon'].toString() ?? '';
+      _provinceName = widget.address?['provinceName'] ?? '';
+      _cityName = widget.address?['cityName'] ?? '';
+      _areaName =  widget.address?['districtName'] ?? '';
+      _townName =  widget.address?['twonName'] ?? '';
     }
 
   }
@@ -312,7 +312,7 @@ class Cell extends StatelessWidget {
 
   const Cell(
     this.title, {
-    Key key,
+    Key? key,
     this.content,
     this.isJump,
     this.jumpPageName,

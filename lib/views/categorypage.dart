@@ -51,10 +51,10 @@ class CategoryHomePageState extends State<CategoryHome>
 var _categoryData=categoryData;
   List<SubCategoryListModel> listViewData = [];
 
-  Map<String, dynamic> _machine;
+  Map<String, dynamic>? _machine;
 
    double dheight = MediaQuery
-      .of(G.navigatorKey.currentContext)
+      .of(G.navigatorKey.currentContext!)
       .size
       .height;
 
@@ -96,7 +96,7 @@ var _categoryData=categoryData;
           return Center(child: Padding(padding: const EdgeInsets.all(16.0), child: Text('获取咖啡机信息异常')));
         }
         if (snapshot.hasData && snapshot.data!=null)
-            return mainbody(snapshot.data);
+            return mainbody(snapshot.data!);
         }
         return errobody();
 
@@ -175,24 +175,24 @@ Widget errobody() {
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: ListTile(
-                                        title: Text("${_machine['name']}(NO.${_machine['serialNumber']})",
+                                        title: Text("${_machine?['name']}(NO.${_machine?['serialNumber']})",
                                           style: TextStyle(fontWeight: FontWeight.bold,fontSize: 12),),
                                         subtitle: Text.rich(
                                           TextSpan(
-                                            text: '[${_machine['distance']*0.001}km]',
+                                            text: '[${(_machine?['distance'] ?? 0)*0.001}km]',
                                             style: TextStyle(
                                               fontSize: KfontConstant.title12,
                                               color: Colors.black,
                                             ),
                                             children: <TextSpan>[
                                               TextSpan(
-                                                  text: '${_machine['address']}',
+                                                  text: '${_machine?['address']}',
                                                   style: TextStyle(fontSize: KfontConstant.title12)),
                                                ],
                                           ),
                                         ),
                                         onTap: ()=>Navigator.of(context).push(MaterialPageRoute(builder: (_) {
-                                          return MapLocationScreen(_machine
+                                          return MapLocationScreen(_machine!
                                           );
                                         })),
                                       ),
@@ -306,15 +306,15 @@ Widget errobody() {
   }
 
   menueItemTap(int i) {
-    rightListviewKey.currentState.jumpTopage(i);
+    rightListviewKey.currentState?.jumpTopage(i);
   }
 
   listViewChanged(i) {
-    this.categoryMenueKey.currentState.moveToTap(i);
+    this.categoryMenueKey.currentState?.moveToTap(i);
   }
 
   void shownoopenmsg({String strt = '即将开放，敬请期待'}) {
-    _scaffoldcgKey.currentState?.showSnackBar(SnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(strt),
     ));
   }
@@ -343,7 +343,7 @@ Widget errobody() {
 
   Future<Map<String, dynamic>> getmachinedata() async {
     final SharedPreferences prefs = await _prefs;
-    _machine=jsonDecode(prefs.getString("machine"))??null ;
+    _machine=jsonDecode(prefs.getString("machine") ?? '{}');
 
     print(_machine);
   /*  _categoryData.map((i) {
@@ -355,10 +355,10 @@ Widget errobody() {
       return SubCategoryListModel.fromJson(i);
     }).toList();*/
 
-    List<Map<String, dynamic>> drtypelist= await DataUtils.getDrinkTypeList(context, _machine['id']);
+    List<Map<String, dynamic>> drtypelist= await DataUtils.getDrinkTypeList(context, _machine!['id']);
 
 
-     _machine.putIfAbsent("drinktypelist", (){
+     _machine!.putIfAbsent("drinktypelist", (){
 
       return drtypelist;});
 
@@ -367,12 +367,12 @@ Widget errobody() {
       return json.encode(await DataUtils.getDrinkList(context, _machine['id'],drtypelist[0]['id']));});
 */
 
-    return _machine;
+    return _machine!;
 
 
   }
 
-  Future<void> setdrinklist(List<Map<String, dynamic>> typelist){
+  Future<void> setdrinklist(List<Map<String, dynamic>> typelist) async {
   var tre=  typelist.map((it)async{
     Map<String, dynamic> drinkitem;
     /*{id: 15, name: 人气Top, deviceId: 16}, {id: 16, name: 经典拿铁, deviceId: 16}*/
@@ -381,7 +381,7 @@ Widget errobody() {
       'icon': "",
       'ucid': "1",
     };
-    List<Map<String, dynamic>> drinklist=await DataUtils.getDrinkList(context, _machine['id'],it['id']);
+    List<Map<String, dynamic>> drinklist=await DataUtils.getDrinkList(context, _machine!['id'],it['id']);
 
     /*{idSugar: true, image: http://wangpei-iot.oss-cn-beijing.aliyuncs.com/images/8ce3e597-9f9a-4511-b9f7-2550391f56cf.jpg?Expires=1915848218&OSSAccessKeyId=LTAI4FyaLq1QXuXkfsZExVpk&Signature=4KGZL5huy1Scx7ZRVxMbH%2BIK%2B9k%3D,
      coffeeName: 刘桂香, money: 0.01, id: 70, type: 1},

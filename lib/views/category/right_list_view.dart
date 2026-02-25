@@ -4,10 +4,10 @@ import 'list_view_item.dart';
 
 class RightListView extends StatefulWidget {
   final double height;
-  final Map<String, dynamic> info;
+  final Map<String, dynamic>? info;
   final List<SubCategoryListModel> dataItems;
-  final ValueChanged<int> listViewChanged;
-  RightListView({Key? key, this.height, this.dataItems, this.listViewChanged,this.info})
+  final ValueChanged<int>? listViewChanged;
+  RightListView({Key? key, this.height = 0, this.dataItems = const [], this.listViewChanged, this.info})
       : super(key: key);
   @override
   State<StatefulWidget> createState() => RightListViewState();
@@ -69,7 +69,7 @@ class RightListViewState extends State<RightListView> {
         currentPage++;
       }
     }
-    widget.listViewChanged(currentPage);
+    widget.listViewChanged?.call(currentPage);
     animateTopage(currentPage);
   }
 

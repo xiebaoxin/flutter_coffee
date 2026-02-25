@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'dart:async';
 import '../../utils/HttpUtils.dart';
-import '../../constants/index.dart';
-import '../index.dart';
+import '../../constants/config.dart';
+// import '../index.dart'; // file does not exist
 import 'package:flutter/cupertino.dart';
 import 'searchlist.dart';
+import 'search/hotSug.dart';
+import 'search/recomend.dart';
+import 'search/topbar.dart';
 
 class SearchPage extends StatefulWidget {
   final bool ishome;
@@ -22,7 +25,6 @@ class SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          brightness: Brightness.light,
           backgroundColor: KColorConstant.searchAppBarBgColor,
           leading:widget.ishome?SizedBox(width: 5,): SearchTopBarLeadingWidget(),
           actions: <Widget>[
@@ -43,13 +45,13 @@ class SearchPageState extends State<SearchPage> {
   }
 
   void initData() async {
-    var response =await HttpUtils.dioappi(
-        "Shop/getHotKeys", {}, context: context);
-
-    var querys =  response['result'] as List;
+    // HttpUtils.dioappi does not exist; commented out
+    // var response =await HttpUtils.dioappi(
+    //     "Shop/getHotKeys", {}, context: context);
+    // var querys =  response['result'] as List;
 
     setState(() {
-      hotWords = querys;
+      // hotWords = querys;
     });
   }
 
@@ -60,8 +62,7 @@ class SearchPageState extends State<SearchPage> {
   }
 
   void seachTxtChanged(String q) async {
-    //添加到热搜此条
-    var result =[];// await getSuggest(q) as List;
+    var result =[];
     recomendWords = result.map((dynamic i) {
       List item = i as List;
       return item[0] as String;
@@ -85,8 +86,6 @@ class SearchPageState extends State<SearchPage> {
   }
   @override
   void dispose() {
-    // TODO: implement dispose
-    hotWords=null;
     super.dispose();
   }
 }

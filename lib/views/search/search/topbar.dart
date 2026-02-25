@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../constants/index.dart';
+import '../../../constants/config.dart';
 
 class SearchTopBarLeadingWidget extends StatelessWidget {
   @override
@@ -13,7 +13,7 @@ class SearchTopBarLeadingWidget extends StatelessWidget {
 }
 
 class SearchTopBarActionWidget extends StatelessWidget {
- final VoidCallback onActionTap;
+ final VoidCallback? onActionTap;
   SearchTopBarActionWidget({this.onActionTap});
 
   @override
@@ -35,9 +35,9 @@ class SearchTopBarActionWidget extends StatelessWidget {
 }
 
 class SearchTopBarTitleWidget extends StatelessWidget {
-  final ValueChanged<String> seachTxtChanged;
-  final TextEditingController controller;
-  SearchTopBarTitleWidget({Key? key, this.seachTxtChanged,this.controller}) : super(key: key);
+  final ValueChanged<String>? seachTxtChanged;
+  final TextEditingController? controller;
+  SearchTopBarTitleWidget({Key? key, this.seachTxtChanged, this.controller}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -57,10 +57,9 @@ class SearchTopBarTitleWidget extends StatelessWidget {
               controller: controller ,
               onSubmitted: (s) {
                 print(s);
-              }, // 键盘回车键
+              },
               onChanged: seachTxtChanged,
               cursorWidth: 1.5,
-//              autofocus: true,
               cursorColor: KColorConstant.floorTitleColor,
               decoration: InputDecoration(
                   contentPadding: EdgeInsets.all(0),
