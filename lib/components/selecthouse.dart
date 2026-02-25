@@ -21,7 +21,7 @@ class _HouseListState extends State<SelectHouse> {
 
   @override
   Widget build(BuildContext context) {
-    num length = widget.itemList.length;
+    int length = widget.itemList.length;
     return Scaffold(
         backgroundColor: Color(0x0a0000000),
         key: _scaffoldkey,

@@ -5,7 +5,7 @@ import '../globleConfig.dart';
 class Addplus extends StatefulWidget {
   final int count;
   final int max;
-  final Function callback;
+  final Function? callback;
   Addplus({this.count = 1, this.max = 1000, this.callback});
 
   @override
@@ -23,7 +23,7 @@ class AddPlusState extends State<Addplus> {
   );
   FocusNode _focusNode = FocusNode();
 
-  int _count;
+  late int _count;
   @override
   Widget build(BuildContext context) {
     _countCtrl.text = _count.toString();
@@ -36,7 +36,7 @@ class AddPlusState extends State<Addplus> {
               _focusNode.unfocus();
               if (_count > 0) {
                 _count -= 1;
-                widget.callback(_count);
+                widget.callback?.call(_count);
               }
             });
           },
@@ -92,7 +92,7 @@ class AddPlusState extends State<Addplus> {
               setState(() {
                 if (_count > 0) {
                   _count += 1;
-                  widget.callback(_count);
+                  widget.callback?.call(_count);
                 }
               });
             }
@@ -112,9 +112,9 @@ class AddPlusState extends State<Addplus> {
     _focusNode.addListener(() {
       if (!_focusNode.hasFocus) {
         print("hasFocus!!!lost");
-        _count = int.tryParse(_countCtrl.text);
+        _count = int.tryParse(_countCtrl.text) ?? 0;
         if (_count >= 0) {
-          widget.callback(_count);
+          widget.callback?.call(_count);
         }
       }else{
         print("hasFocus!!!on");

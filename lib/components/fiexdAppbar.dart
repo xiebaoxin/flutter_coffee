@@ -6,7 +6,7 @@ class FiexdAppbar extends StatefulWidget implements PreferredSizeWidget {
   final Widget contentChild;  //从外部指定内容
   final Color statusBarColor; //设置statusbar的颜色
 
-  FiexdAppbar({this.contentChild, this.contentHeight, this.statusBarColor}): super();
+  FiexdAppbar({required this.contentChild, required this.contentHeight, required this.statusBarColor}): super();
 
   @override
   State<StatefulWidget> createState() {

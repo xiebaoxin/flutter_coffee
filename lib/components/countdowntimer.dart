@@ -11,7 +11,7 @@ class CountDownTimer extends StatefulWidget {
 }
 
 class _CountDownTimerState extends State<CountDownTimer> {
-  Timer _countdownTimer;
+  Timer? _countdownTimer;
   String _codeCountdownStr = '';
 
   @override
@@ -40,7 +40,6 @@ class _CountDownTimerState extends State<CountDownTimer> {
         if (diffDate.difference(newDate).inSeconds <= 0) {
           //取消定时器，避免无限回调
           timer.cancel();
-          timer = null;
           if(mounted)
           setState(() {
             _codeCountdownStr = "";
@@ -82,7 +81,7 @@ class _CountDownTimerState extends State<CountDownTimer> {
   void dispose() {
     _countdownTimer?.cancel();
     _countdownTimer = null;
-    _codeCountdownStr=null;
+    _codeCountdownStr='';
     super.dispose();
   }
 

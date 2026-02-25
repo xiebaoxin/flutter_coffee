@@ -14,8 +14,8 @@ class _WaterIndicatorState extends State<WaterIndicator> with TickerProviderStat
   /// 当前的进度。
   double _currentProgress = 0.0;
   // 动画相关控制器与补间。
-  AnimationController animation;
-  Tween<double> tween;
+  late AnimationController animation;
+  late Tween<double> tween;
 
   @override
   Widget build(BuildContext context) {

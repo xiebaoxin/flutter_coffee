@@ -38,9 +38,9 @@ class UpgGradePageState extends State<UpgGradePage> {
     _deviceinfo=await ComFun().getDeviceInfoName();
     setState(() { });
 
-    Map<String, dynamic> response = await DataUtils.getUpgradeinfo(context);
+    Map<String, dynamic>? response = await DataUtils.getUpgradeinfo(context);
 
-    if (response["VERSIONNUMBER"] != null) {
+    if (response != null && response["VERSIONNUMBER"] != null) {
       int? newVersion = int.tryParse(response["VERSIONNUMBER"].toString());
       if (newVersion != null && newVersion.compareTo(int.tryParse(packageInfo.buildNumber) ?? 0) > 0) {
         setState(() {

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class IconWidthText extends StatelessWidget {
-  final Image icon;
-  final String text;
-  final Color color;
+  final Image? icon;
+  final String? text;
+  final Color? color;
 
   IconWidthText({Key? key, this.color, this.icon, this.text}) : super(key: key);
 
@@ -29,7 +29,7 @@ class IconWidthText extends StatelessWidget {
                 ),
               ),
             ),
-            Expanded(child: Text(text))
+            Expanded(child: Text(text ?? ''))
           ],
         ),
         /*      onTap: () {

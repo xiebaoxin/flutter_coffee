@@ -305,8 +305,8 @@ class _UpgradeDialogState extends State<UpgradeDialog> {
       Permission.storage,
     ].request();
 
-    InstallPlugin.installApk(apkFilePath, 'com.netpei.home').then((result) {
-      print('install apk $result');
+    InstallPlugin.installApk(apkFilePath, 'com.netpei.home').then((_) {
+      print('install apk done');
     }).catchError((error) {
       print('install apk error: $error');
     });

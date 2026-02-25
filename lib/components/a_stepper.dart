@@ -18,7 +18,7 @@ class AStepper extends StatelessWidget {
   /// @param {Function} onChange - 值改变的回调 返回一个num
   /// ```
   const AStepper({
-    Key key,
+    Key? key,
     this.min = 0,
     this.max = 99,
     this.value = 1,

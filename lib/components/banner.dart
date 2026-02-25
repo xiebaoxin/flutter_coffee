@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:card_swiper/card_swiper.dart';
+import 'package:card_swiper/card_swiper.dart' hide PageIndicator, PageIndicatorLayout;
 import 'package:cached_network_image/cached_network_image.dart';
 import '../components/swipper_indicator_style.dart';
 import '../components/loading_gif.dart';
@@ -78,7 +78,7 @@ class SwipperBanner extends StatelessWidget {
               ),
             ),
             placeholder: (context, url) =>  Loading(),
-            imageUrl:  bannerlist!.items[index].picUrl,
+            imageUrl:  bannerlist!.items![index].picUrl ?? '',
             imageBuilder: (context, imageProvider) => Container(
               decoration: BoxDecoration(
                 image: DecorationImage(
@@ -93,7 +93,7 @@ class SwipperBanner extends StatelessWidget {
           )
           );
         },
-        itemCount: bannerlist!.items.length,
+        itemCount: bannerlist!.items!.length,
         pagination:  SwiperPagination(
             alignment:potype?Alignment.bottomRight: Alignment.bottomCenter,
             builder:SwiperCustomPagination(builder:(BuildContext context,SwiperPluginConfig config){
@@ -104,8 +104,8 @@ class SwipperBanner extends StatelessWidget {
         autoplay: true,
         index: defindex,
         onTap: (index){
-          if(bannerlist!.items[index].type==3)
-          Application.webto(context, '/web',url:bannerlist!.items[index].href);
+          if(bannerlist!.items![index].type==3)
+          Application.webto(context, '/web',url:bannerlist!.items![index].href ?? '');
 
         }  ,
       ),
