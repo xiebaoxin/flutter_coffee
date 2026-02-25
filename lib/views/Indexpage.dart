@@ -53,7 +53,7 @@ class HomeIndexPageState extends State<IndexPageHome>
         child: Scaffold(
             backgroundColor: KColorConstant.backgroundColor,
             body: EasyRefresh(
-                header: ClassicHeader()),
+                header: ClassicHeader(),
                 onRefresh: () async {
                   await freshdata();
                 },

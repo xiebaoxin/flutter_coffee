@@ -72,7 +72,7 @@ var _categoryData=categoryData;
             backgroundColor: KColorConstant.backgroundColor,
             key: _scaffoldcgKey,
             body: EasyRefresh(
-                header: ClassicHeader()),
+                header: ClassicHeader(),
                 onRefresh: () async {
                     _futureBuilderFuture = getmachinedata();
                     setState(() {  });
@@ -314,7 +314,7 @@ Widget errobody() {
   }
 
   void shownoopenmsg({String strt = '即将开放，敬请期待'}) {
-    _scaffoldcgKey.currentState.showSnackBar(SnackBar(
+    _scaffoldcgKey.currentState?.showSnackBar(SnackBar(
       content: Text(strt),
     ));
   }

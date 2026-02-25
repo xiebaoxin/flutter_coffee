@@ -47,8 +47,7 @@ class IndexPageHomeState extends State<IndexPageHome>
             key: _scaffoldKey,
             backgroundColor: Color(0xFFFFFFFF),
             body: EasyRefresh(
-                header: ClassicHeader()
-                ),
+                header: ClassicHeader(),
                 onRefresh: () async {
                   _getalldata();
                 },
@@ -77,7 +76,7 @@ class IndexPageHomeState extends State<IndexPageHome>
     );
   }
 
-  TabController _tabController;
+  late TabController _tabController;
 
   Widget mainbody() {
 
@@ -433,7 +432,7 @@ class IndexPageHomeState extends State<IndexPageHome>
     );
   }
 
-  Widget buildIconitem(String asimg, String title,Function callback) {
+  Widget buildIconitem(String asimg, String title, VoidCallback? callback) {
     return
       GestureDetector(
         onTap: callback,
@@ -467,7 +466,7 @@ class IndexPageHomeState extends State<IndexPageHome>
   }
 
   void shownoopenmsg({String strt = '即将开放，敬请期待'}) {
-    _scaffoldKey.currentState.showSnackBar(SnackBar(
+    _scaffoldKey.currentState?.showSnackBar(SnackBar(
       content: Text(strt),
     ));
   }
@@ -568,20 +567,20 @@ class ScreenUtil {
   static ScreenUtil instance = new ScreenUtil();
 
   //设计稿的设备尺寸修改
-  double _designWidth;
-  double _designHeight;
+  late double _designWidth;
+  late double _designHeight;
 
-  static MediaQueryData _mediaQueryData;
-  static double _screenWidth;
-  static double _screenHeight;
-  static double _pixelRatio;
-  static double _statusBarHeight;
+  static late MediaQueryData _mediaQueryData;
+  static late double _screenWidth;
+  static late double _screenHeight;
+  static late double _pixelRatio;
+  static late double _statusBarHeight;
 
-  static double _bottomBarHeight;
+  static late double _bottomBarHeight;
 
-  static double _textScaleFactor;
+  static late double _textScaleFactor;
 
-  ScreenUtil({double width, double height}) {
+  ScreenUtil({double width = 0, double height = 0}) {
     _designWidth = width;
     _designHeight = height;
   }

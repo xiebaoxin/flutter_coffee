@@ -21,22 +21,20 @@ Environment variables are set in `~/.bashrc`:
 
 ### Critical Gotchas
 
-1. **Flutter 2.10.5 / Dart 2.16.2 required**: The `flutter_native_image` git dependency needs Dart >=2.12.0, so Flutter 1.x won't work. Flutter 2.10.5 is the best compatible version.
+1. **Flutter 3.22.3 / Dart 3.4.4**: The project `pubspec.yaml` declares `sdk: ">=3.0.0 <4.0.0"`. The installed Flutter SDK is 3.22.3 with Dart 3.4.4.
 
-2. **Java 11 required**: The project uses Gradle 6.7.1 which is incompatible with Java 17+. Always use JDK 11.
+2. **Java 11 required**: The project uses Gradle 7.5.1 with AGP 7.3.0. Java 17+ has not been tested; use JDK 11.
 
-3. **No `pubspec.lock` in repo**: The project uses `any` version constraints for most dependencies. Without a lock file, `flutter pub get` resolves to latest versions of packages, many of which have been updated to use newer Flutter APIs that are incompatible. This causes **compile errors** during `flutter analyze`, `flutter test`, and `flutter build`. These are pre-existing codebase issues, not environment problems.
+3. **Android build config**: AGP 7.3.0, Kotlin 1.7.10, Gradle 7.5.1, `compileSdkVersion 34`, `targetSdkVersion 34`. The `namespace` is set in `android/app/build.gradle`.
 
-4. **Pre-existing compile errors**: The codebase has naming conflicts (`Router` from fluro vs Flutter, `KeyEvent` from pay_password.dart vs Flutter) and resolved dependency versions that use removed APIs (`DiagnosticableMixin`, `inheritFromWidgetOfExactType`, `RenderToggleable`). A full build or test run will fail with Dart compilation errors.
+4. **Pre-existing Dart compile errors**: The codebase has ~1500+ analysis errors mostly related to incomplete null-safety migration (fields needing `late`/`?`, constructor params needing defaults, type mismatches). These are pre-existing codebase issues. `flutter analyze` runs successfully but reports many errors. `flutter test` and `flutter build apk --debug` fail at Dart compilation due to these errors.
 
-5. **Android embedding v2 migration**: The `AndroidManifest.xml` originally referenced `io.flutter.app.FlutterApplication` (v1 embedding) while declaring v2 embedding metadata. The `android:name` attribute was removed to fix Flutter 2.10's v2 embedding enforcement.
+5. **Stub files in `lib/stubs/`**: Several removed or unavailable packages are replaced by local stubs (e.g., `amap_stub.dart`, `color_dart.dart`, `decorated_flutter_stub.dart`, `fluwx_stub.dart`, `tobias_stub.dart`, `install_plugin_stub.dart`, etc.). These stubs provide minimal API surfaces to allow compilation.
 
-6. **Kotlin 1.5.31**: Updated from 1.3.50 to match dependency requirements (`foundation_fluttify` compiled with Kotlin 1.5.31).
+6. **Migration in progress**: The codebase was migrated from Flutter 1.x/Dart 2.x to Flutter 3.22.3/Dart 3.4.4. Import paths, widget APIs (e.g., `FlatButton` -> `TextButton`), and package names (e.g., `connectivity` -> `connectivity_plus`) have been updated. Null-safety migration is incomplete.
 
-7. **Android Gradle Plugin 4.1.3 / Gradle 6.7.1**: Updated from AGP 3.5.0/Gradle 5.6.2 to support Kotlin 1.5.31.
+7. **Remote APIs**: The app depends entirely on remote backends at `wp-api.wangpeiaiot.com` and `cashier.wangpeiaiot.com:8088`. No local backend is available. The app cannot be functionally tested end-to-end without network access to these servers.
 
-8. **The test file** (`test/widget_test.dart`) is a default Flutter template smoke test with the main app call commented out — it would not pass even without dependency issues.
+8. **SIP UA plugin** (`plugins/sip-ua/`): A bundled VoIP plugin with its own tests. Its analysis errors are expected — it's a separate package not properly wired into the main project.
 
-9. **Remote APIs**: The app depends entirely on remote backends at `wp-api.wangpeiaiot.com` and `cashier.wangpeiaiot.com:8088`. No local backend is available.
-
-10. **SIP UA plugin** (`plugins/sip-ua/`): A bundled VoIP plugin with its own tests. Its test errors in `flutter analyze` are expected — it's a separate package not properly wired into the main project's test infrastructure.
+9. **Test file** (`test/widget_test.dart`): Default Flutter template smoke test with the main app call commented out — it cannot pass due to Dart compilation errors in imported files.

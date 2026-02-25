@@ -53,7 +53,7 @@ class MyInfoPageState extends State<MyInfoPage>
                 backgroundColor: KColorConstant.backgroundColor,
                 key: _scaffoldKey,
                 body:EasyRefresh(
-        header: ClassicHeader()),
+        header: ClassicHeader(),
     onRefresh: () async {
           await DataUtils().freshlogin(context);
     },
