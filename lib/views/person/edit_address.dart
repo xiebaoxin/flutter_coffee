@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 //import '../../globleConfig.dart';
 
 class EditAddressPage extends StatefulWidget {
-  EditAddressPage({Key key, this.addressId = 0, this.address})
+  EditAddressPage({Key? key, this.addressId = 0, this.address})
       : super(key: key);
 
   final int addressId;

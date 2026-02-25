@@ -5,7 +5,7 @@ import '../../../utils/utils.dart';
 class HotSugWidget extends StatelessWidget {
   final List hotWords;
   final ValueChanged<String> goSearchList;
-  HotSugWidget( {Key key,this.hotWords,this.goSearchList}):super(key:key);
+  HotSugWidget( {Key? key,this.hotWords,this.goSearchList}):super(key:key);
   @override
   Widget build(BuildContext context) {
     return Column(

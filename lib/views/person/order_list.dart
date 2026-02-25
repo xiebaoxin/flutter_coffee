@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'order_listpage.dart';
 
 class OrderListPage extends StatefulWidget {
-  OrderListPage({Key key, this.title = '我的订单', this.type = 0}) : super(key: key);
+  OrderListPage({Key? key, this.title = '我的订单', this.type = 0}) : super(key: key);
 
   final int type;
   final String title;

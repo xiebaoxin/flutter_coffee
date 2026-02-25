@@ -5,7 +5,7 @@ class IconWidthText extends StatelessWidget {
   final String text;
   final Color color;
 
-  IconWidthText({Key key, this.color, this.icon, this.text}) : super(key: key);
+  IconWidthText({Key? key, this.color, this.icon, this.text}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

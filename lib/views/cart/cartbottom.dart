@@ -9,7 +9,7 @@ import '../comm/buycoffeecart.dart';
 
 class _TotalWidget extends StatefulWidget {
   final double totalPrice;
-  _TotalWidget({Key key, this.totalPrice}) : super(key: key);
+  _TotalWidget({Key? key, this.totalPrice}) : super(key: key);
   @override
   State<StatefulWidget> createState() => _TotalWidgetState();
 }

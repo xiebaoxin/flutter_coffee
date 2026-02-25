@@ -3,8 +3,7 @@ class SliverTabBarDelegate extends SliverPersistentHeaderDelegate {
   final TabBar widget;
   final Color color;
 
-  const SliverTabBarDelegate(this.widget, {this.color})
-      : assert(widget != null);
+  const SliverTabBarDelegate(this.widget, {this.color = Colors.white});
 
   @override
   Widget build(

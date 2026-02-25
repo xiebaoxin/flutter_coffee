@@ -11,7 +11,7 @@ import '../../globleConfig.dart';
 
 class Category extends StatefulWidget {
   final double rightListViewHeight;
-  Category({Key key, this.rightListViewHeight}) : super(key: key);
+  Category({Key? key, this.rightListViewHeight}) : super(key: key);
   @override
   State<StatefulWidget> createState() => CategoryState();
 }

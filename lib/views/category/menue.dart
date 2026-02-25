@@ -9,7 +9,7 @@ class CategoryMenue extends StatefulWidget {
   final double itemWidth;
   final ValueChanged<int> menueTaped;
   CategoryMenue(
-      {Key key, this.items, this.itemHeight, this.itemWidth, this.menueTaped})
+      {Key? key, this.items, this.itemHeight, this.itemWidth, this.menueTaped})
       : super(key: key);
   @override
   State<StatefulWidget> createState() => CategoryMenueState();

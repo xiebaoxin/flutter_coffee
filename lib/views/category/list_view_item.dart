@@ -14,7 +14,7 @@ import '../../views/cart/cartItem.dart';
 class SecondryCategory extends StatelessWidget {
   final SubCategoryListModel data;
   final Map<String, dynamic> info;
-  SecondryCategory({Key key, this.data,this.info}) : super(key: key);
+  SecondryCategory({Key? key, this.data,this.info}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     double deviceWidth = MediaQuery.of(context).size.width;
@@ -154,7 +154,7 @@ class SubCategoryList extends StatefulWidget {
   final Map<String, dynamic> info;
   final SubCategoryListModel data;
   final void Function(String) goPage;
-  SubCategoryList({Key key, this.height, this.goPage, this.data,this.info})
+  SubCategoryList({Key? key, this.height, this.goPage, this.data,this.info})
       : super(key: key);
   @override
   State<StatefulWidget> createState() => SubCategoryListState();

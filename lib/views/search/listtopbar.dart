@@ -3,7 +3,7 @@ import '../../constants/index.dart';
 
 class SearchListTopBarTitleWidget extends StatelessWidget {
   final String keyworld;
-  SearchListTopBarTitleWidget({Key key, this.keyworld}) : super(key: key);
+  SearchListTopBarTitleWidget({Key? key, this.keyworld}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

@@ -7,7 +7,7 @@ class RightListView extends StatefulWidget {
   final Map<String, dynamic> info;
   final List<SubCategoryListModel> dataItems;
   final ValueChanged<int> listViewChanged;
-  RightListView({Key key, this.height, this.dataItems, this.listViewChanged,this.info})
+  RightListView({Key? key, this.height, this.dataItems, this.listViewChanged,this.info})
       : super(key: key);
   @override
   State<StatefulWidget> createState() => RightListViewState();

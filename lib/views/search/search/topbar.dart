@@ -37,7 +37,7 @@ class SearchTopBarActionWidget extends StatelessWidget {
 class SearchTopBarTitleWidget extends StatelessWidget {
   final ValueChanged<String> seachTxtChanged;
   final TextEditingController controller;
-  SearchTopBarTitleWidget({Key key, this.seachTxtChanged,this.controller}) : super(key: key);
+  SearchTopBarTitleWidget({Key? key, this.seachTxtChanged,this.controller}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
