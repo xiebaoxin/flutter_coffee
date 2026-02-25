@@ -6,13 +6,13 @@ class MsgCell {
   String content;
   String type;
 
-  MsgCell({this.title, this.id, this.createtime, this.content, this.type});
+  MsgCell({this.title = '', this.id = '', this.createtime = '', this.content = '', this.type = ''});
 
   factory MsgCell.fromJson(Map<String, dynamic> json) {
     return MsgCell(
         title: json['title'] ?? '',
         createtime: json['create_time'] ?? '',
-        id: json['id'] ?? '',
+        id: json['id']?.toString() ?? '',
         content: json['content'] ?? '',
         type: json['type'] ?? '');
   }
@@ -26,13 +26,13 @@ class PicsCell {
   String deft;
   String time;
 
-  PicsCell({this.title, this.id, this.imgurl, this.url, this.time, this.deft});
+  PicsCell({this.title = '', this.id = '', this.imgurl = '', this.url = '', this.time = '', this.deft = '0'});
 
   factory PicsCell.fromJson(Map<String, dynamic> json) {
     return PicsCell(
       title: json['title'] ?? '',
       url: json['url'] ?? '',
-      id: json['id'] ?? '',
+      id: json['id']?.toString() ?? '',
       imgurl: json['image_url'] ?? '',
       deft: json['default'] ?? '0',
       time: json['create_time'] ??

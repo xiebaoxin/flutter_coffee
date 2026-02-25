@@ -4,9 +4,9 @@ part 'data.g.dart';
 
 @JsonSerializable()
 class GoodsDetail {
-  int code;
-  GoodsDetailData data;
-  String msg;
+  int? code;
+  GoodsDetailData? data;
+  String? msg;
 
   GoodsDetail({
     this.code,
@@ -23,12 +23,12 @@ class GoodsDetail {
 
 @JsonSerializable()
 class GoodsDetailData {
-  GoodsDetailExtJson extJson;
-  GoodsDetailCategory category;
-  List<GoodsDetailPic> pics;
-  String content;
-  GoodsDetailBasicInfo basicInfo;
-  List<GoodsDetailProperty> properties;
+  GoodsDetailExtJson? extJson;
+  GoodsDetailCategory? category;
+  List<GoodsDetailPic>? pics;
+  String? content;
+  GoodsDetailBasicInfo? basicInfo;
+  List<GoodsDetailProperty>? properties;
 
   GoodsDetailData(
       {this.extJson,
@@ -47,42 +47,42 @@ class GoodsDetailData {
 
 @JsonSerializable()
 class GoodsDetailBasicInfo {
-  int categoryId;
-  String characteristic;
-  double commission;
-  int commissionType;
-  String dateAdd;
-  String dateUpdate;
-  int gotScore;
-  int gotScoreType;
-  int id;
-  bool kanjia;
-  double kanjiaPrice;
-  bool limitation;
-  int logisticsId;
-  bool miaosha;
-  double minPrice;
-  int minScore;
-  String name;
-  int numberFav;
-  int numberGoodReputation;
-  int numberOrders;
-  int numberSells;
-  double originalPrice;
-  int paixu;
-  String pic;
-  bool pingtuan;
-  double pingtuanPrice;
-  int recommendStatus;
-  String recommendStatusStr;
-  int shopId;
-  int status;
-  String statusStr;
-  int stores;
-  int userId;
-  int vetStatus;
-  int views;
-  double weight;
+  int? categoryId;
+  String? characteristic;
+  double? commission;
+  int? commissionType;
+  String? dateAdd;
+  String? dateUpdate;
+  int? gotScore;
+  int? gotScoreType;
+  int? id;
+  bool? kanjia;
+  double? kanjiaPrice;
+  bool? limitation;
+  int? logisticsId;
+  bool? miaosha;
+  double? minPrice;
+  int? minScore;
+  String? name;
+  int? numberFav;
+  int? numberGoodReputation;
+  int? numberOrders;
+  int? numberSells;
+  double? originalPrice;
+  int? paixu;
+  String? pic;
+  bool? pingtuan;
+  double? pingtuanPrice;
+  int? recommendStatus;
+  String? recommendStatusStr;
+  int? shopId;
+  int? status;
+  String? statusStr;
+  int? stores;
+  int? userId;
+  int? vetStatus;
+  int? views;
+  double? weight;
 
   GoodsDetailBasicInfo({
     this.categoryId,
@@ -132,13 +132,13 @@ class GoodsDetailBasicInfo {
 
 @JsonSerializable()
 class GoodsDetailCategory {
-  String dateAdd;
-  int id;
-  bool isUse;
-  String name;
-  int paixu;
-  int pid;
-  int userId;
+  String? dateAdd;
+  int? id;
+  bool? isUse;
+  String? name;
+  int? paixu;
+  int? pid;
+  int? userId;
 
   GoodsDetailCategory({
     this.dateAdd,
@@ -159,7 +159,7 @@ class GoodsDetailCategory {
 
 @JsonSerializable()
 class GoodsDetailExtJson {
-  String defaultSpec;
+  String? defaultSpec;
 
   GoodsDetailExtJson({
     this.defaultSpec,
@@ -174,10 +174,10 @@ class GoodsDetailExtJson {
 
 @JsonSerializable()
 class GoodsDetailPic {
-  int goodsId;
-  int id;
-  String pic;
-  int userId;
+  int? goodsId;
+  int? id;
+  String? pic;
+  int? userId;
 
   GoodsDetailPic({
     this.goodsId,
@@ -195,13 +195,13 @@ class GoodsDetailPic {
 
 @JsonSerializable()
 class GoodsDetailProperty {
-  List<GoodsDetailProperty> childsCurGoods;
-  String dateAdd;
-  int id;
-  String name;
-  int paixu;
-  int userId;
-  int propertyId;
+  List<GoodsDetailProperty>? childsCurGoods;
+  String? dateAdd;
+  int? id;
+  String? name;
+  int? paixu;
+  int? userId;
+  int? propertyId;
 
   GoodsDetailProperty({
     this.childsCurGoods,

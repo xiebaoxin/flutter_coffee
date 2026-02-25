@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:core';
 import 'package:flutter/material.dart';
 import 'cart.dart';
@@ -17,7 +16,7 @@ class CartsProvider with ChangeNotifier {
 
 //-------------------------------
 //以下为购物车
-  List<CartItemModel> _cartitems=List();
+  List<CartItemModel> _cartitems=[];
   List<CartItemModel> get cartitems=>_cartitems;
 
   int get itemsCount {
@@ -68,7 +67,7 @@ class CartsProvider with ChangeNotifier {
   removeItem(index) {
         _cartitems.removeAt(index);
        /* if(index==0){
-          _cartitems=List();
+          _cartitems=[];
         }else{
           _cartitems[index].count =0;
           _cartitems[index].isDeleted = true;
@@ -114,7 +113,7 @@ class CartsProvider with ChangeNotifier {
   }
 
 void initcartdemo(){
-  _cartitems=List();
+  _cartitems=[];
   cartData.forEach((element) {
     CartItemModel item=CartItemModel.fromJson((element));
     _cartitems.add(item);

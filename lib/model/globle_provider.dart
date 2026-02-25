@@ -1,9 +1,10 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:core';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_coffee/utils/dataUtils.dart';
-import 'package:package_info/package_info.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 //import 'package:scoped_model/scoped_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'cart.dart';
@@ -29,8 +30,8 @@ int _userid=0;
   Future setlogin(Map<String, dynamic> userinfojson) async {
     SharedPreferences prefs = await _prefs;
     _loginStatus = true;
-    _token =   prefs.getString("token");
-    _userid= prefs.getInt("userid");
+    _token = prefs.getString("token") ?? '';
+    _userid = prefs.getInt("userid") ?? 0;
 
     print("token :$_token-- userid: $_userid----");
 
@@ -52,8 +53,8 @@ int _userid=0;
     await prefs.remove('PASSWORD');
     await prefs.remove("wellcomeok");
 
-    _token = null;
-    _userid=null;
+    _token = '';
+    _userid = 0;
     _loginStatus = false;
     _userinfo = Userinfo.fromJson({});
 
@@ -64,12 +65,13 @@ int _userid=0;
   bool get iosopen=>_iosopen;
 
   Future getIosOpenVersion({String vs=''}) async {
-    if (Platform.isIOS) {
+    if (!kIsWeb && Platform.isIOS) {
       if (vs.isNotEmpty) {
 
         var packageInfo = await PackageInfo.fromPlatform();
-        if (int.tryParse(vs).compareTo(int.tryParse(packageInfo.buildNumber)) ==
-            0)
+        var parsedVs = int.tryParse(vs);
+        var parsedBuild = int.tryParse(packageInfo.buildNumber);
+        if (parsedVs != null && parsedBuild != null && parsedVs.compareTo(parsedBuild) == 0)
           _iosopen= false;
       }
       notifyListeners();
@@ -88,7 +90,7 @@ int _userid=0;
 
 //-------------------------------
 //以下为购物车
-  List<CartItemModel> _cartitems=List();
+  List<CartItemModel> _cartitems=[];
   List<CartItemModel> get cartitems=>_cartitems;
 
   int get itemsCount {
@@ -139,7 +141,7 @@ int _userid=0;
   removeItem(index) {
         _cartitems.removeAt(index);
        /* if(index==0){
-          _cartitems=List();
+          _cartitems=[];
         }else{
           _cartitems[index].count =0;
           _cartitems[index].isDeleted = true;

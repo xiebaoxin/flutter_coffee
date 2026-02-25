@@ -8,11 +8,11 @@ part of 'data.dart';
 
 GoodsDetail _$GoodsDetailFromJson(Map<String, dynamic> json) {
   return GoodsDetail(
-      code: json['code'] as int,
+      code: json['code'] as int?,
       data: json['data'] == null
           ? null
           : GoodsDetailData.fromJson(json['data'] as Map<String, dynamic>),
-      msg: json['msg'] as String);
+      msg: json['msg'] as String?);
 }
 
 Map<String, dynamic> _$GoodsDetailToJson(GoodsDetail instance) =>
@@ -32,21 +32,23 @@ GoodsDetailData _$GoodsDetailDataFromJson(Map<String, dynamic> json) {
           ? null
           : GoodsDetailCategory.fromJson(
               json['category'] as Map<String, dynamic>),
-      pics: (json['pics'] as List)
+      pics: (json['pics'] as List<dynamic>?)
           ?.map((e) => e == null
               ? null
               : GoodsDetailPic.fromJson(e as Map<String, dynamic>))
-          ?.toList(),
-      content: json['content'] as String,
+          .whereType<GoodsDetailPic>()
+          .toList(),
+      content: json['content'] as String?,
       basicInfo: json['basicInfo'] == null
           ? null
           : GoodsDetailBasicInfo.fromJson(
               json['basicInfo'] as Map<String, dynamic>),
-      properties: (json['properties'] as List)
+      properties: (json['properties'] as List<dynamic>?)
           ?.map((e) => e == null
               ? null
               : GoodsDetailProperty.fromJson(e as Map<String, dynamic>))
-          ?.toList());
+          .whereType<GoodsDetailProperty>()
+          .toList());
 }
 
 Map<String, dynamic> _$GoodsDetailDataToJson(GoodsDetailData instance) =>
@@ -61,42 +63,42 @@ Map<String, dynamic> _$GoodsDetailDataToJson(GoodsDetailData instance) =>
 
 GoodsDetailBasicInfo _$GoodsDetailBasicInfoFromJson(Map<String, dynamic> json) {
   return GoodsDetailBasicInfo(
-      categoryId: json['categoryId'] as int,
-      characteristic: json['characteristic'] as String,
-      commission: (json['commission'] as num)?.toDouble(),
-      commissionType: json['commissionType'] as int,
-      dateAdd: json['dateAdd'] as String,
-      dateUpdate: json['dateUpdate'] as String,
-      gotScore: json['gotScore'] as int,
-      gotScoreType: json['gotScoreType'] as int,
-      id: json['id'] as int,
-      kanjia: json['kanjia'] as bool,
-      kanjiaPrice: (json['kanjiaPrice'] as num)?.toDouble(),
-      limitation: json['limitation'] as bool,
-      logisticsId: json['logisticsId'] as int,
-      miaosha: json['miaosha'] as bool,
-      minPrice: (json['minPrice'] as num)?.toDouble(),
-      minScore: json['minScore'] as int,
-      name: json['name'] as String,
-      numberFav: json['numberFav'] as int,
-      numberGoodReputation: json['numberGoodReputation'] as int,
-      numberOrders: json['numberOrders'] as int,
-      numberSells: json['numberSells'] as int,
-      originalPrice: (json['originalPrice'] as num)?.toDouble(),
-      paixu: json['paixu'] as int,
-      pic: json['pic'] as String,
-      pingtuan: json['pingtuan'] as bool,
-      pingtuanPrice: (json['pingtuanPrice'] as num)?.toDouble(),
-      recommendStatus: json['recommendStatus'] as int,
-      recommendStatusStr: json['recommendStatusStr'] as String,
-      shopId: json['shopId'] as int,
-      status: json['status'] as int,
-      statusStr: json['statusStr'] as String,
-      stores: json['stores'] as int,
-      userId: json['userId'] as int,
-      vetStatus: json['vetStatus'] as int,
-      views: json['views'] as int,
-      weight: (json['weight'] as num)?.toDouble());
+      categoryId: json['categoryId'] as int?,
+      characteristic: json['characteristic'] as String?,
+      commission: (json['commission'] as num?)?.toDouble(),
+      commissionType: json['commissionType'] as int?,
+      dateAdd: json['dateAdd'] as String?,
+      dateUpdate: json['dateUpdate'] as String?,
+      gotScore: json['gotScore'] as int?,
+      gotScoreType: json['gotScoreType'] as int?,
+      id: json['id'] as int?,
+      kanjia: json['kanjia'] as bool?,
+      kanjiaPrice: (json['kanjiaPrice'] as num?)?.toDouble(),
+      limitation: json['limitation'] as bool?,
+      logisticsId: json['logisticsId'] as int?,
+      miaosha: json['miaosha'] as bool?,
+      minPrice: (json['minPrice'] as num?)?.toDouble(),
+      minScore: json['minScore'] as int?,
+      name: json['name'] as String?,
+      numberFav: json['numberFav'] as int?,
+      numberGoodReputation: json['numberGoodReputation'] as int?,
+      numberOrders: json['numberOrders'] as int?,
+      numberSells: json['numberSells'] as int?,
+      originalPrice: (json['originalPrice'] as num?)?.toDouble(),
+      paixu: json['paixu'] as int?,
+      pic: json['pic'] as String?,
+      pingtuan: json['pingtuan'] as bool?,
+      pingtuanPrice: (json['pingtuanPrice'] as num?)?.toDouble(),
+      recommendStatus: json['recommendStatus'] as int?,
+      recommendStatusStr: json['recommendStatusStr'] as String?,
+      shopId: json['shopId'] as int?,
+      status: json['status'] as int?,
+      statusStr: json['statusStr'] as String?,
+      stores: json['stores'] as int?,
+      userId: json['userId'] as int?,
+      vetStatus: json['vetStatus'] as int?,
+      views: json['views'] as int?,
+      weight: (json['weight'] as num?)?.toDouble());
 }
 
 Map<String, dynamic> _$GoodsDetailBasicInfoToJson(
@@ -142,13 +144,13 @@ Map<String, dynamic> _$GoodsDetailBasicInfoToJson(
 
 GoodsDetailCategory _$GoodsDetailCategoryFromJson(Map<String, dynamic> json) {
   return GoodsDetailCategory(
-      dateAdd: json['dateAdd'] as String,
-      id: json['id'] as int,
-      isUse: json['isUse'] as bool,
-      name: json['name'] as String,
-      paixu: json['paixu'] as int,
-      pid: json['pid'] as int,
-      userId: json['userId'] as int);
+      dateAdd: json['dateAdd'] as String?,
+      id: json['id'] as int?,
+      isUse: json['isUse'] as bool?,
+      name: json['name'] as String?,
+      paixu: json['paixu'] as int?,
+      pid: json['pid'] as int?,
+      userId: json['userId'] as int?);
 }
 
 Map<String, dynamic> _$GoodsDetailCategoryToJson(
@@ -164,7 +166,7 @@ Map<String, dynamic> _$GoodsDetailCategoryToJson(
     };
 
 GoodsDetailExtJson _$GoodsDetailExtJsonFromJson(Map<String, dynamic> json) {
-  return GoodsDetailExtJson(defaultSpec: json['defaultSpec']);
+  return GoodsDetailExtJson(defaultSpec: json['defaultSpec'] as String?);
 }
 
 Map<String, dynamic> _$GoodsDetailExtJsonToJson(GoodsDetailExtJson instance) =>
@@ -172,10 +174,10 @@ Map<String, dynamic> _$GoodsDetailExtJsonToJson(GoodsDetailExtJson instance) =>
 
 GoodsDetailPic _$GoodsDetailPicFromJson(Map<String, dynamic> json) {
   return GoodsDetailPic(
-      goodsId: json['goodsId'] as int,
-      id: json['id'] as int,
-      pic: json['pic'] as String,
-      userId: json['userId'] as int);
+      goodsId: json['goodsId'] as int?,
+      id: json['id'] as int?,
+      pic: json['pic'] as String?,
+      userId: json['userId'] as int?);
 }
 
 Map<String, dynamic> _$GoodsDetailPicToJson(GoodsDetailPic instance) =>
@@ -188,17 +190,18 @@ Map<String, dynamic> _$GoodsDetailPicToJson(GoodsDetailPic instance) =>
 
 GoodsDetailProperty _$GoodsDetailPropertyFromJson(Map<String, dynamic> json) {
   return GoodsDetailProperty(
-      childsCurGoods: (json['childsCurGoods'] as List)
+      childsCurGoods: (json['childsCurGoods'] as List<dynamic>?)
           ?.map((e) => e == null
               ? null
               : GoodsDetailProperty.fromJson(e as Map<String, dynamic>))
-          ?.toList(),
-      dateAdd: json['dateAdd'] as String,
-      id: json['id'] as int,
-      name: json['name'] as String,
-      paixu: json['paixu'] as int,
-      userId: json['userId'] as int,
-      propertyId: json['propertyId'] as int);
+          .whereType<GoodsDetailProperty>()
+          .toList(),
+      dateAdd: json['dateAdd'] as String?,
+      id: json['id'] as int?,
+      name: json['name'] as String?,
+      paixu: json['paixu'] as int?,
+      userId: json['userId'] as int?,
+      propertyId: json['propertyId'] as int?);
 }
 
 Map<String, dynamic> _$GoodsDetailPropertyToJson(

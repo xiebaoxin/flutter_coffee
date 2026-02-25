@@ -1,12 +1,12 @@
 class CartItemModel {
-  int cartId;
-  String productName;
-  int goodsId;
-  int storeId;
+  int? cartId;
+  String? productName;
+  int? goodsId;
+  int? storeId;
   int buyLimit;
   int count;
-  String imageUrl;
-  String attr;
+  String? imageUrl;
+  String? attr;
   bool isSelected;
   bool isDeleted;
   double price;
@@ -20,7 +20,7 @@ class CartItemModel {
       this.buyLimit = 100,
       this.imageUrl,
       this.attr,
-      this.price,
+      this.price = 0.0,
       this.isDeleted = false,
       this.isSelected = true,
       this.extrinfo=""});
@@ -29,9 +29,9 @@ class CartItemModel {
         goodsId = json['goods_id'],
         storeId = json['store_id'],
         cartId = json['cart_id'],
-        price = json['price'] ?? 0.0,
+        price = (json['price'] ?? 0.0).toDouble(),
         isDeleted = false,
-        count = json['count'],
+        count = json['count'] ?? 1,
         isSelected = true, // (json['selected'] as int) == 1 ? true : false,
         imageUrl = json['goods_img'] ?? '',
         attr = json['attr'] ?? "",

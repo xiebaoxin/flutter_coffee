@@ -6,7 +6,7 @@ class Userinfo {
   String phone;
   num money;
   bool paypwd;
-  Map<String, dynamic> json;
+  Map<String, dynamic>? json;
 
   Userinfo(
       {
@@ -20,7 +20,7 @@ class Userinfo {
       });
 
   factory Userinfo.fromJson(Map<String, dynamic> json) {
-    if (json == null || json.isEmpty)
+    if (json.isEmpty)
       return Userinfo(
           phone: '未注册',
           name: '未注册',
@@ -34,10 +34,10 @@ class Userinfo {
     return Userinfo(
         phone: json['phone'] ?? '未绑定',
         id: json['id'] ??0,
-        name: json['nickName'],
+        name: json['nickName'] ?? '未注册',
         avtar: json['avatar']??'',
         money: json['money']??0.0,
-        paypwd: json['isPaymentPassword'],
+        paypwd: json['isPaymentPassword'] ?? false,
         json: json
     );
   }
