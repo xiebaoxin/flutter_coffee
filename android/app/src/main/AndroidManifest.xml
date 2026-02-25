@@ -15,7 +15,6 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
-        android:name="io.flutter.app.FlutterApplication"
         android:label="极网咖啡"
         android:icon="@mipmap/ic_launcher"
         android:allowBackup="true"
