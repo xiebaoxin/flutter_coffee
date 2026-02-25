@@ -8,43 +8,26 @@ import 'package:provider/provider.dart';
 import '../views/comm/goods_detail/index.dart';
 
 class Application {
-//  static  FluroRouter router;
-  static Router router;
+  static late FluroRouter router;
   static void goto(context, appuri,
-      {String url, String title, bool withToken = false}) async {
+      {String? url, String? title, bool withToken = false}) async {
     if (appuri.startsWith('/web')) {
-      if (url != '') {
+      if (url != null && url != '') {
         await webto(context, appuri,
             title: title, url: url, withtoken: withToken);
       } else {
         await DialogUtils.showToastDialog(context, '无效网址');
       }
     } else {
-      /*   var transition = (BuildContext context, Animation<double> animation,
-          Animation<double> secondaryAnimation, Widget child) {
-        return new ScaleTransition(
-          scale: animation,
-          child: new RotationTransition(
-            turns: animation,
-            child: child,
-          ),
-        );
-      };
-      return Application.router.navigateTo(
-          context,appuri,
-          transition: TransitionType.custom, /// 指定是自定义动画
-          transitionBuilder: transition, /// 自定义的动画
-          transitionDuration: const Duration(milliseconds: 600)); /// 时间*/
-
       router.navigateTo(context, appuri, transition: TransitionType.fadeIn);
     }
   }
 
   static Future webto(context, appuri,
-      {String url, String title, bool withtoken}) async {
+      {String? url, String? title, bool? withtoken}) async {
     if (appuri.startsWith('/web')) {
       appuri =
-          "/web?url=${Uri.encodeComponent(url)}&title=${Uri.encodeComponent(title ?? '信息浏览')}";
+          "/web?url=${Uri.encodeComponent(url ?? '')}&title=${Uri.encodeComponent(title ?? '信息浏览')}";
       await router.navigateTo(context, appuri,
           transition: TransitionType.fadeIn);
     } else {
@@ -57,11 +40,10 @@ class Application {
     if (model.loginStatus) {
       callBack();
     } else {
-//      await Navigator.pushNamed(context, '/login',)
       await router
           .navigateTo(context, "/login", transition: TransitionType.fadeIn)
           .then((v) {
-        if (v != null && v == true && callBack != null) callBack();
+        if (v != null && v == true) callBack();
       });
     }
   }
@@ -82,18 +64,11 @@ mach: machine,
 
   ///跳转到
   static goodsDetail(context, int goodsId,
-      {Map<String, dynamic> goodsinfo,
+      {Map<String, dynamic>? goodsinfo,
       String shoptype = "W",
-      Map<String, dynamic> shop,
+      Map<String, dynamic>? shop,
       bool shopown = false}) {
     if (shoptype == "W") {
-     /* Navigator.push(
-        context,
-        CupertinoPageRoute(
-          builder: (context) =>
-              DetailsPage(goodsId: goodsId, goodsinfo: goodsinfo),
-        ),
-      );*/
     }
   }
 

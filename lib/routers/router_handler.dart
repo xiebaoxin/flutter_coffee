@@ -9,8 +9,8 @@ import '../components/webView.dart';
 
 /*
 Handler detailsHandle = Handler(
-  handlerFunc: (BuildContext context , Map<String , List<String>> params){
-    String goodsId = params['goodsId'].first;
+  handlerFunc: (BuildContext? context , Map<String , List<String>> params){
+    String? goodsId = params['goodsId']?.first;
     return DetailsPage(goodsId: goodsId,);
   },
 );
@@ -19,39 +19,39 @@ Handler detailsHandle = Handler(
 // /web?url=${Uri.encodeComponent(linkUrl)}&title=${Uri.encodeComponent('掘金沸点')}
 //'/swip?pics=${Uri.encodeComponent(_buildPicsStr())}&currentIndex=${i.toString()}'
 Handler webPageHandler = Handler(
-    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
-      String articleUrl = params['url']?.first;
-      String title = params['title']?.first;
+    handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
+      String? articleUrl = params['url']?.first;
+      String? title = params['title']?.first;
       print('$articleUrl and  $title');
-      return WebViewNew(title, articleUrl);
+      return WebViewNew(title ?? '', articleUrl ?? '');
     }
 );
 
 
 Handler loginPageHandler = Handler(
-    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+    handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
       return LoginPage();
     });
 
 
 Handler wellcomePageHandler = Handler(
-    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+    handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
       return WellCome();
     });
 
 Handler homePageHandler = Handler(
-    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+    handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
       return HomePage();
     });
 
 
 
 Handler userPageHandler = Handler(
-    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+    handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
       return MyInfoPage();//MyInfoPage()user_id,status,phone,name,avatar
     });
 
 Handler cartgoryPageHandler = Handler(
-    handlerFunc: (BuildContext context, Map<String, dynamic> params) {
+    handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
       return CategoryHome();//MyInfoPage()user_id,status,phone,name,avatar
     });

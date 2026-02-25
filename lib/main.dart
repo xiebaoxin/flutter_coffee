@@ -9,9 +9,9 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_coffee/model/carts_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:fluro/fluro.dart';
-import 'package:jpush_flutter/jpush_flutter.dart';
-import 'package:fluwx/fluwx.dart' as fluwx;
-import 'package:tobias/tobias.dart' as tobias;
+import 'package:flutter_coffee/stubs/jpush_stub.dart';
+import 'package:flutter_coffee/stubs/fluwx_stub.dart' as fluwx;
+import 'package:flutter_coffee/stubs/tobias_stub.dart' as tobias;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import './routers/routes.dart';
 import './routers/application.dart';
@@ -20,7 +20,7 @@ import 'homepage.dart';
 import 'globleConfig.dart';
 import 'wellcome.dart';
 
-FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -57,7 +57,7 @@ void main() {
 class InitApp extends StatelessWidget {
 
 //   AppLifecycleState appLifecycleState;
-  final JPush  jpush = new JPush();
+  final JPush  jpush = JPush();
    String debugLable = 'Unknown';
 
   @override
@@ -66,7 +66,7 @@ class InitApp extends StatelessWidget {
     initPlatformState();
     _initPayInstall();
 
-    final router = new Router();
+    final router = FluroRouter();
     Routes.configureRoutes(router);
     Application.router = router;
 
@@ -92,26 +92,15 @@ class InitApp extends StatelessWidget {
 
         theme: ThemeData(
           brightness: Brightness.light,
-          /*
-     * primarySwatch是主题颜色的一个样本。通过这个样本可以在一些条件下生成一些其他的属性。
-     * 例如，若没有指定primaryColor，并且当前主题不是深色主题，那么primaryColor就会默认为primarySwatch指定的颜色，
-     * 还有一些相似的属性：accentColor、indicatorColor等也会受到primarySwatch的影响。
-        accentColor - Color类型，前景色(按钮、文本、覆盖边缘效果等)
-        */
-          //用于导航栏、FloatingActionButton的背景色等
-//            primarySwatch:Colors.blueGrey,
-//            primaryColor  App主要部分的背景色（ToolBar,Tabbar等）
           primaryColor: KColorConstant.mainColor,
           primaryIconTheme:
           const IconThemeData(color: KColorConstant.themeColor),
           appBarTheme: AppBarTheme(
-            brightness: Brightness.dark,
+            systemOverlayStyle: SystemUiOverlayStyle.light,
             iconTheme: IconThemeData(color: Colors.white),
-            textTheme: TextTheme(
-              headline6: TextStyle(
-                color: Colors.white,
-                fontSize: 18.0,
-              ),
+            titleTextStyle: TextStyle(
+              color: Colors.white,
+              fontSize: 18.0,
             ),
           ),
 
@@ -121,7 +110,6 @@ class InitApp extends StatelessWidget {
           buttonTheme: ButtonThemeData(
               textTheme: ButtonTextTheme.primary,
               buttonColor: KColorConstant.mainColor,
-//              highlightColor: Colors.greenAccent
           ),
         ),
 
@@ -136,7 +124,6 @@ class InitApp extends StatelessWidget {
         doOnAndroid: true,
         doOnIOS: true,
         universalLink: "https://aic.wangpeiaiot.com/"
-//        enableMTA: false
     );
     var result = await fluwx.isWeChatInstalled;
     print("===weixin--is installed： $result");
@@ -193,7 +180,7 @@ class InitApp extends StatelessWidget {
     );
 
     jpush.applyPushAuthority(
-        new NotificationSettingsIOS(sound: true, alert: true, badge: true));
+        NotificationSettingsIOS(sound: true, alert: true, badge: true));
 
     // Platform messages may fail, so we use a try/catch PlatformException.
     jpush.getRegistrationID().then((rid) {
@@ -207,20 +194,19 @@ class InitApp extends StatelessWidget {
     // setState to update our non-existent appearance.
   }
 
-  Future _showNotification(String title, String content) async {
-    //安卓的通知配置，必填参数是渠道id, 名称, 和描述, 可选填通知的图标，重要度等等。
+  Future _showNotification(String? title, String? content) async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
     AndroidNotificationDetails(
         'developer-default',
         'developer-default',
-        'jpush developer-default channal',
+        channelDescription: 'jpush developer-default channal',
         importance: Importance.max,
         priority: Priority.high,
         showWhen: false);
     const NotificationDetails platformChannelSpecifics =
     NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
-        0, title, content, platformChannelSpecifics,
+        0, title ?? '', content ?? '', platformChannelSpecifics,
         payload: 'complete'); }
 
   _initNotice() async{
@@ -228,48 +214,27 @@ class InitApp extends StatelessWidget {
     FlutterLocalNotificationsPlugin();
     const AndroidInitializationSettings initializationSettingsAndroid =
     AndroidInitializationSettings('@mipmap/ic_launcher');
-    final IOSInitializationSettings initializationSettingsIOS =
-    IOSInitializationSettings(
-        onDidReceiveLocalNotification: onDidReceiveLocalNotification);
-    final MacOSInitializationSettings initializationSettingsMacOS =
-    MacOSInitializationSettings();
+    final DarwinInitializationSettings initializationSettingsIOS =
+    DarwinInitializationSettings();
+    final DarwinInitializationSettings initializationSettingsMacOS =
+    DarwinInitializationSettings();
     final InitializationSettings initializationSettings = InitializationSettings(
         android: initializationSettingsAndroid,
         iOS: initializationSettingsIOS,
         macOS: initializationSettingsMacOS);
     await flutterLocalNotificationsPlugin.initialize(initializationSettings,
-        onSelectNotification: onSelectNotification);
+        onDidReceiveNotificationResponse: onDidReceiveNotificationResponse);
   }
 
   Future<void> onDidReceiveLocalNotification(
-      int id, String title, String body, String payload) async {
-    // display a dialog with the notification details, tap ok to go to another page
+      int id, String? title, String? body, String? payload) async {
   print("---$id--$title---$body---$payload--");
-    /*  await showDialog(
-      context: context,
-      builder: (BuildContext context) => CupertinoAlertDialog(
-        title: Text(title),
-        content: Text(body),
-        actions: [
-          CupertinoDialogAction(
-            isDefaultAction: true,
-            child: Text('Ok'),
-            onPressed: () async {
-              Navigator.of(context, rootNavigator: true).pop();
-              Application.goto(context, "/home");
-            },
-          )
-        ],
-      ),
-    );*/
   }
 
-  Future<void> onSelectNotification(String payload) async {
-    if (payload != null) {
-      debugPrint('notification payload: ' + payload);
+  void onDidReceiveNotificationResponse(NotificationResponse details) {
+    if (details.payload != null) {
+      debugPrint('notification payload: ${details.payload}');
     }
-//    Application.goto(context, "/home");
   }
 
 }
-

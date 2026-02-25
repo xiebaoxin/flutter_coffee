@@ -11,11 +11,11 @@ class Routes {
   static String homePage = '/home';
   static String userCenterPage = '/user';
 
-  static void configureRoutes(Router router) {
-    router.notFoundHandler = new Handler(
-        handlerFunc: (BuildContext context, Map<String, dynamic> params) {
+  static void configureRoutes(FluroRouter router) {
+    router.notFoundHandler = Handler(
+        handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
       print("ROUTE WAS NOT FOUND !!!");
-      return ;
+      return null;
     });
     router.define(root,handler: homePageHandler);
 

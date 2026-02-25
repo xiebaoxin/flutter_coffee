@@ -1,7 +1,7 @@
 export './constants/config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:color_dart/color_dart.dart';
+import 'package:flutter_coffee/stubs/color_dart.dart';
 import 'components/loading.dart';
 
 class GlobalConfig {
@@ -43,30 +43,30 @@ class G {
   static sleep({ int milliseconds = 1000 }) async => await Future.delayed(Duration(milliseconds: milliseconds));
 
   /// 获取当前的state
-  static NavigatorState getCurrentState() => navigatorKey.currentState;
+  static NavigatorState? getCurrentState() => navigatorKey.currentState;
 
   /// 获取当前的context
-  static BuildContext getCurrentContext() => navigatorKey.currentContext;
+  static BuildContext? getCurrentContext() => navigatorKey.currentContext;
 
   /// 获取屏幕上下边距
   /// 用于兼容全面屏，刘海屏
-  static EdgeInsets screenPadding() => MediaQuery.of(getCurrentContext()).padding;
+  static EdgeInsets screenPadding() => MediaQuery.of(getCurrentContext()!).padding;
 
   /// 获取屏幕宽度
-  static double screenWidth() => MediaQuery.of(getCurrentContext()).size.width;
+  static double screenWidth() => MediaQuery.of(getCurrentContext()!).size.width;
 
   /// 获取屏幕高度
-  static double screenHeight() => MediaQuery.of(getCurrentContext()).size.height;
+  static double screenHeight() => MediaQuery.of(getCurrentContext()!).size.height;
 
   /// 返回页面
-  static void pop() => getCurrentState().pop();
+  static void pop() => getCurrentState()!.pop();
 
   /// 底部border
   /// ```
   /// @param {Color} color
   /// @param {bool} show  是否显示底部border
   /// ```
-  static Border borderBottom({Color color, bool show = true}){
+  static Border borderBottom({Color? color, bool show = true}){
     return Border(
         bottom: BorderSide(
             color: (color == null || !show)  ? (show ? rgba(242, 242, 242, 1) : Colors.transparent) : color,
@@ -76,11 +76,7 @@ class G {
   }
 
   static gotowin(Widget objwin ){
- /*   Navigator.push(navigatorKey.currentContext, CupertinoPageRoute(
-        builder: (BuildContext context) {
-          return objwin;
-        }));*/
-    Navigator.of(navigatorKey.currentContext).push(
+    Navigator.of(navigatorKey.currentContext!).push(
         PageRouteBuilder(
         opaque: false,
         pageBuilder: (BuildContext context, _, __) {

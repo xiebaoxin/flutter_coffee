@@ -3,10 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:core';
 import 'package:flutter_app_badger/flutter_app_badger.dart';
-import 'package:amap_map_fluttify/amap_map_fluttify.dart';
-import 'package:amap_core_fluttify/amap_core_fluttify.dart';
-import 'package:amap_location_fluttify/amap_location_fluttify.dart';
-import 'package:decorated_flutter/decorated_flutter.dart';
+import 'package:flutter_coffee/stubs/amap_stub.dart';
+import 'package:flutter_coffee/stubs/decorated_flutter_stub.dart';
 import 'utils/comUtil.dart';
 import 'views/myInfopage.dart';
 import './globleConfig.dart';
@@ -21,13 +19,13 @@ class HomePage extends StatefulWidget {
   final int tabindex;
   HomePage({this.tabindex=0});
   @override
-  HomePageState createState() => new HomePageState();
+  HomePageState createState() => HomePageState();
 }
 
 class HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin{
   @override
   bool get wantKeepAlive => true;
-  AppLifecycleState appLifecycleState;
+  AppLifecycleState? appLifecycleState;
   int _tabIndex = 0;
 
   // 底部菜单栏图标数组
@@ -90,7 +88,7 @@ class HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin{
 
   // 获取标题文本
   Text getTabTitle(int curIndex) {
-    return new Text(
+    return Text(
       tabTitles[curIndex],
       style: getTabTextStyle(curIndex),
     );
@@ -98,15 +96,15 @@ class HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin{
 
   // 生成image组件
   Image getTabImage(path) {
-    return new Image.asset(path, width: 20.0, height: 20.0);
+    return Image.asset(path, width: 20.0, height: 20.0);
   }
 
   // 获取BottomNavigationBarItem
   List<BottomNavigationBarItem> getBottomNavigationBarItem() {
-    List<BottomNavigationBarItem> list = new List();
+    List<BottomNavigationBarItem> list = [];
     for (int i = 0; i < _pages.length; i++) {
-      list.add(new BottomNavigationBarItem(
-          icon: getTabIcon(i), title: getTabTitle(i)));
+      list.add(BottomNavigationBarItem(
+          icon: getTabIcon(i), label: tabTitles[i]));
     }
     return list;
   }
@@ -151,7 +149,6 @@ super.build(context);
         ));
   }
 
-  @override
   Widget buildqq(BuildContext context) {
     int i=-1;
     super.build(context);

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:core';
-import 'package:package_info/package_info.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'routers/application.dart';
 import './utils/DialogUtils.dart';
@@ -10,7 +10,7 @@ import './utils/dataUtils.dart';
 class WellCome extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return new SplashScreenState();
+    return SplashScreenState();
   }
 }
 
@@ -20,13 +20,13 @@ class SplashScreenState extends State<WellCome>{
   bool isClicking1 = false;
 
   //屏幕的宽高
-  double width;
-  double height;
+  double width = 0;
+  double height = 0;
 
   //状态栏的高度
-  double statebar_height;
+  double statebar_height = 0;
   int pageViewIndex = 0;
-  Timer timer;
+  Timer? timer;
   bool _isupdate = false;
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
@@ -47,23 +47,23 @@ class SplashScreenState extends State<WellCome>{
     statebar_height = MediaQuery.of(context).padding.top;
 
     //stack布局:后进后显示原则。设置绝对定位使用Positined left top bottom right实现上下左右间距，可以只设置一个
-    return new Scaffold(
-        body: new Stack(
+    return Scaffold(
+        body: Stack(
       children: <Widget>[
-        new Positioned(
+        Positioned(
           child: getPageView(),
           left: 0,
           right: 0,
           top: 0,
           bottom: 0,
         ),
-        new Positioned(
+        Positioned(
           //给view添加点击事件，使用GestureDetector便签包裹
-          child: new GestureDetector(
-            child: new Container(
+          child: GestureDetector(
+            child: Container(
               padding:
                   const EdgeInsets.only(left: 10, top: 2, right: 10, bottom: 2),
-              decoration: new ShapeDecoration(
+              decoration: ShapeDecoration(
                 color: !isClicking1 ? Colors.green : Color(0xff898989),
                 shape: StadiumBorder(
                     side: BorderSide(
@@ -95,9 +95,11 @@ class SplashScreenState extends State<WellCome>{
           top: 10 + statebar_height,
           right: 10,
         ),
-        new Positioned(
-          child: FlatButton(
-                  color: Colors.green,
+        Positioned(
+          child: TextButton(
+                  style: TextButton.styleFrom(
+                    backgroundColor: Colors.green,
+                  ),
                   onPressed: () {
 //                    print('点击了立即开启');
                     gohome();
@@ -116,20 +118,20 @@ class SplashScreenState extends State<WellCome>{
     PageView pageView;
     PageController pageController;
     var images;
-    pageController = new PageController();
+    pageController = PageController();
     images = ["assets/page1.png", "assets/page2.jpeg", "assets/page3.png"];
     //加载asset目录下的图片===在项目中新建一个images文件夹，然后把文件放进去，在pubspec.yaml里面配置如下
     //  assets:
     //  - images/welcome1.png
     //调用使用 Image.Asset('images/a.png')或者下面的new AssetImage('images/a.png')
-    pageView = new PageView.builder(
+    pageView = PageView.builder(
       itemBuilder: (context, index) {
-        return new ConstrainedBox(
-          child: new Image(
-            image: new AssetImage(images[index]),
+        return ConstrainedBox(
+          child: Image(
+            image: AssetImage(images[index]),
             fit: BoxFit.fill,
           ),
-          constraints: new BoxConstraints.expand(),
+          constraints: BoxConstraints.expand(),
         );
       },
       itemCount: images.length,
@@ -162,7 +164,7 @@ class SplashScreenState extends State<WellCome>{
 
   int _tims = 0;
   _startTimer() {
-    timer = new Timer.periodic(new Duration(seconds: 1), (timer) async {
+    timer = Timer.periodic(Duration(seconds: 1), (timer) async {
       if (_tims == 1) {
         gohome();
       } else if (_tims <= 0) {
@@ -221,7 +223,7 @@ class SplashScreenState extends State<WellCome>{
   void dispose() {
     // 前后台切换3：销毁的注销他
     if (mounted) {
-      if (timer != null) timer.cancel();
+      if (timer != null) timer!.cancel();
     }
 
     // TODO: implement dispose
