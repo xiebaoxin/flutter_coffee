@@ -185,7 +185,7 @@ class ComFun {
   }
 
 
-  static String getImgPath(String name, {String format: 'png'}) {
+  static String getImgPath(String name, {String format = 'png'}) {
     return 'images/$name.$format';
   }
 

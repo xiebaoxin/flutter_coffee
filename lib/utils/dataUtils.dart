@@ -114,7 +114,7 @@ class DataUtils {
     Map<String, dynamic>? userinfo= await  DataUtils().getuserinfo(context,customerId: userid);
     print(userinfo);
     final model =  Provider.of<GlobleProvider>(context);
-    await model.setlogin(userinfo);
+    await model.setlogin(userinfo ?? {});
 
     loginstat=true;
   }
