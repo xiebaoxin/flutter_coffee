@@ -22,7 +22,7 @@ class AStepper extends StatelessWidget {
     this.min = 0,
     this.max = 99,
     this.value = 1,
-    @required this.onChange,
+    required this.onChange,
   }) : super(key: key);
 
 

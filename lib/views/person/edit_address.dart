@@ -241,8 +241,8 @@ class EditAddressPageState extends State<EditAddressPage> {
       return;
     }
 */
-    if (form.validate()) {
-      form.save();
+    if (form?.validate() ?? false) {
+      form?.save();
 
       Map<String, String> params = {
         "consignee": _cscontroller.text.toString(),

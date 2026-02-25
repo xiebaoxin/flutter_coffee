@@ -374,7 +374,7 @@ String _cache="";
 
   void upSubmitted() async {
     final form = _formKey.currentState;
-    form.save();
+    form?.save();
 
     if (_ncCtrl.text != '') {
       Map<String, String> params = {

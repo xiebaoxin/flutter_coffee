@@ -435,8 +435,8 @@ class GoodsBuyState extends State<CoffeeCartsBuy> {
   void submit(CartsProvider carts) async {
     final form = _formKey.currentState;
 
-    if (form.validate()) {
-      form.save();
+    if (form?.validate() ?? false) {
+      form?.save();
       showLoadingDialog("订单提交中……");
 
       List<dynamic> coffeedata = [];

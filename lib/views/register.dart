@@ -201,8 +201,8 @@ if(await DataUtils().captcha(context, _phoneNo))
       return;
     }
 
-    if (form.validate()) {
-      form.save();
+    if (form?.validate() ?? false) {
+      form?.save();
 
    if(await DataUtils().register(context, _phoneNo, _password,_verifyCode))
           Navigator.of(context).pop();

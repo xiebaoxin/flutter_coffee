@@ -147,28 +147,28 @@ class CustomButton {
   _setColor(){
     Map buttonColor = _getType();
 
-    Color \$color = color ?? buttonColor['color'];
-    Color \$bgColor = bgColor ?? buttonColor['bgColor'];
-    Color \$borderColor =  borderColor ?? buttonColor['borderColor'];
+    Color effectiveColor = color ?? buttonColor['color'];
+    Color effectiveBgColor = bgColor ?? buttonColor['bgColor'];
+    Color effectiveBorderColor = borderColor ?? buttonColor['borderColor'];
 
     if(plain) { 
       if(color == null) {
-        _color = onPressed == null ? \$bgColor.withOpacity(.5): \$bgColor;
+        _color = onPressed == null ? effectiveBgColor.withOpacity(.5): effectiveBgColor;
       } else {
-        _color = onPressed == null ? \$color.withOpacity(.5): \$color;
+        _color = onPressed == null ? effectiveColor.withOpacity(.5): effectiveColor;
       }
       
       if(borderColor == null) {
-        _borderColor = onPressed == null ? \$bgColor.withOpacity(.5): \$bgColor;
+        _borderColor = onPressed == null ? effectiveBgColor.withOpacity(.5): effectiveBgColor;
       } else {
-        _borderColor = onPressed == null ? \$borderColor.withOpacity(.5): \$borderColor;
+        _borderColor = onPressed == null ? effectiveBorderColor.withOpacity(.5): effectiveBorderColor;
       }
 
       _bgColor = bgColor ?? hex('#fff');
     } else {
-      _color = onPressed == null ? \$color.withOpacity(.5): \$color;
-      _bgColor = onPressed == null ? \$bgColor.withOpacity(.5): \$bgColor;
-      _borderColor = onPressed == null ? \$borderColor.withOpacity(.5): \$borderColor;
+      _color = onPressed == null ? effectiveColor.withOpacity(.5): effectiveColor;
+      _bgColor = onPressed == null ? effectiveBgColor.withOpacity(.5): effectiveBgColor;
+      _borderColor = onPressed == null ? effectiveBorderColor.withOpacity(.5): effectiveBorderColor;
     }
   }
 }

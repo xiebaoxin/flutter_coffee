@@ -165,8 +165,8 @@ Widget payto(){
     }
 
 
-    if (form.validate()) {
-      form.save();
+    if (form?.validate() ?? false) {
+      form?.save();
 
       Application().checklogin(context, () async {
 

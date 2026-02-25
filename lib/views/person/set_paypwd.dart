@@ -208,8 +208,8 @@ class SetPaywsdPageState extends State<SetPaywsdPage> {
       return;
     }
 
-    if (form.validate()) {
-      form.save();
+    if (form?.validate() ?? false) {
+      form?.save();
 
    if(await DataUtils().setPayPassword(context, widget.phone, _PasswordCtrl.text.toString(), _verifyCode)) ;
 //      DataUtils().freshlogin(context);

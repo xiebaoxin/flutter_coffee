@@ -8,9 +8,9 @@ class SelectRow extends StatelessWidget {
   final int initv;
 
   SelectRow({
-    @required this.data,
-    @required this.onChange,
-    @required this.initv,
+    required this.data,
+    required this.onChange,
+    required this.initv,
   });
 
   Container _createRadio({

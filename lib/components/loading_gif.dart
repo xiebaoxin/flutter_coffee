@@ -9,22 +9,19 @@ class Loading extends StatefulWidget {
   final double lineWidth;
 
   const Loading({
-    Key key,
+    Key? key,
     this.color=Colors.black12,
     this.lineWidth = 3.0,
     this.size = 50.0,
-  })  : assert(color != null),
-        assert(lineWidth != null),
-        assert(size != null),
-        super(key: key);
+  })  : super(key: key);
 
   @override
   _LoadingState createState() => _LoadingState();
 }
 
 class _LoadingState extends State<Loading> with SingleTickerProviderStateMixin {
-  AnimationController _controller;
-  Animation<double> _animation1, _animation2, _animation3;
+  late AnimationController _controller;
+  late Animation<double> _animation1, _animation2, _animation3;
 
   @override
   void initState() {
@@ -101,10 +98,10 @@ class RingPainter extends CustomPainter {
   final double startAngle;
 
   RingPainter({
-    this.paintWidth,
-    this.progressPercent,
-    this.startAngle,
-    this.trackColor,
+    required this.paintWidth,
+    required this.progressPercent,
+    required this.startAngle,
+    required this.trackColor,
   }) : trackPaint = Paint()
     ..color = trackColor
     ..style = PaintingStyle.stroke
