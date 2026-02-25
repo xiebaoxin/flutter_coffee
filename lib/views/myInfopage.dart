@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:core';
 import 'package:provider/provider.dart';
-import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:easy_refresh/easy_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_luban/flutter_luban.dart';
@@ -34,7 +34,7 @@ class MyInfoPageState extends State<MyInfoPage>
   @override
   bool get wantKeepAlive => true;
 
-  final double statusBarHeight = MediaQueryData.fromWindow(window).padding.top;
+  final double statusBarHeight = MediaQueryData.fromView(PlatformDispatcher.instance.implicitView!).padding.top;
   final double userwidgetheight = 65.0;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   ScrollController _strollCtrl = ScrollController();
@@ -78,7 +78,7 @@ Widget mainbody(){
                           topbgheight: 180.0, bottomheight: 80),
                       ComWidget.topTitleWidget("个人中心"),
                       Positioned(
-                        top: MediaQueryData.fromWindow(window)
+                        top: MediaQueryData.fromView(PlatformDispatcher.instance.implicitView!)
                             .padding
                             .top,
                         right: 10,
@@ -487,15 +487,13 @@ Widget mainbody(){
 
   @override
   void dispose() {
-    // TODO: implement dispose
+    _strollCtrl.dispose();
     super.dispose();
-    _strollCtrl = null;
-    _prefs = null;
   }
 
   final picker = ImagePicker();
   Future<void> _openImage() async {
-    final pickedFile = await picker.getImage(
+    final pickedFile = await picker.pickImage(
         source: await DialogUtils().showSelectImageType(context)
             ? ImageSource.camera
             : ImageSource.gallery);

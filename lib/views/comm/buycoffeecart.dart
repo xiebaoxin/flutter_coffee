@@ -12,7 +12,7 @@ import '../../utils/comUtil.dart';
 import '../cart/cartItem.dart';
 import 'gotopay.dart';
 import '../../model/userinfo.dart';
-import 'package:color_dart/color_dart.dart';
+import 'package:flutter_coffee/stubs/color_dart.dart';
 
 class CoffeeCartsBuy extends StatefulWidget {
   @override
@@ -25,7 +25,7 @@ class GoodsBuyState extends State<CoffeeCartsBuy> {
   double _point_rate = 1.0;
   int _count = 0;
   double _money = 0.0;
-  List<CartItemModel> _cartlist = List();
+  List<CartItemModel> _cartlist = [];
 
   bool _switchValue = false; //jif
   bool _switchValueye = false; //余额
@@ -54,7 +54,7 @@ class GoodsBuyState extends State<CoffeeCartsBuy> {
                       child: Form(
                           //绑定状态属性
                           key: _formKey,
-                          autovalidate: true,
+                          autovalidateMode: AutovalidateMode.always,
                           child: Container(
                               width: MediaQuery.of(context).size.width,
                               child: Padding(
@@ -439,7 +439,7 @@ class GoodsBuyState extends State<CoffeeCartsBuy> {
       form.save();
       showLoadingDialog("订单提交中……");
 
-      List<dynamic> coffeedata = List();
+      List<dynamic> coffeedata = [];
 
       List<CartItemModel> cartlist = carts.cartitems;
       cartlist.forEach((item) {

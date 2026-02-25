@@ -12,89 +12,84 @@ class MyKeyboard extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return new MyKeyboardStat();
+    return MyKeyboardStat();
   }
 }
 
 class MyKeyboardStat extends State<MyKeyboard> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  /// 定义 确定 按钮 接口  暴露给调用方
-  ///回调函数执行体
   var backMethod;
   void onCommitChange() {
-    widget.callback(new KeyEvent("commit"));
+    widget.callback(PayKeyEvent("commit"));
   }
 
   void onOneChange(BuildContext cont) {
-    widget.callback(new KeyEvent("1"));
+    widget.callback(PayKeyEvent("1"));
   }
 
   void onTwoChange(BuildContext cont) {
-    widget.callback(new KeyEvent("2"));
+    widget.callback(PayKeyEvent("2"));
   }
 
   void onThreeChange(BuildContext cont) {
-    widget.callback(new KeyEvent("3"));
+    widget.callback(PayKeyEvent("3"));
   }
 
   void onFourChange(BuildContext cont) {
-    widget.callback(new KeyEvent("4"));
+    widget.callback(PayKeyEvent("4"));
   }
 
   void onFiveChange(BuildContext cont) {
-    widget.callback(new KeyEvent("5"));
+    widget.callback(PayKeyEvent("5"));
   }
 
   void onSixChange(BuildContext cont) {
-    widget.callback(new KeyEvent("6"));
+    widget.callback(PayKeyEvent("6"));
   }
 
   void onSevenChange(BuildContext cont) {
-    widget.callback(new KeyEvent("7"));
+    widget.callback(PayKeyEvent("7"));
   }
 
   void onEightChange(BuildContext cont) {
-    widget.callback(new KeyEvent("8"));
+    widget.callback(PayKeyEvent("8"));
   }
 
   void onNineChange(BuildContext cont) {
-    widget.callback(new KeyEvent("9"));
+    widget.callback(PayKeyEvent("9"));
   }
 
   void onZeroChange(BuildContext cont) {
-    widget.callback(new KeyEvent("0"));
+    widget.callback(PayKeyEvent("0"));
   }
 
-  /// 点击删除
   void onDeleteChange() {
-    widget.callback(new KeyEvent("del"));
+    widget.callback(PayKeyEvent("del"));
   }
 
   @override
   Widget build(BuildContext context) {
-    return new Container(
+    return Container(
       key: _scaffoldKey,
       width: double.infinity,
       height: 250.0,
       color: Colors.white,
-      child: new Column(
+      child: Column(
         children: <Widget>[
-          new Container(
+          Container(
             height:30.0,
             color: Colors.white,
             alignment: Alignment.center,
-            child: new Text(
+            child: Text(
               '下滑隐藏',
-              style: new TextStyle(fontSize: 12.0, color: Color(0xff999999)),
+              style: TextStyle(fontSize: 12.0, color: Color(0xff999999)),
             ),
           ),
 
-          ///  键盘主体
-          new Column(
+          Column(
             children: <Widget>[
-              ///  第一行
-              new Row(
+              Row(
                 children: <Widget>[
                   CustomKbBtn(
                       text: '1', callback: (val) => onOneChange(context)),
@@ -105,8 +100,7 @@ class MyKeyboardStat extends State<MyKeyboard> {
                 ],
               ),
 
-              ///  第二行
-              new Row(
+              Row(
                 children: <Widget>[
                   CustomKbBtn(
                       text: '4', callback: (val) => onFourChange(context)),
@@ -117,8 +111,7 @@ class MyKeyboardStat extends State<MyKeyboard> {
                 ],
               ),
 
-              ///  第三行
-              new Row(
+              Row(
                 children: <Widget>[
                   CustomKbBtn(
                       text: '7', callback: (val) => onSevenChange(context)),
@@ -129,8 +122,7 @@ class MyKeyboardStat extends State<MyKeyboard> {
                 ],
               ),
 
-              ///  第四行
-              new Row(
+              Row(
                 children: <Widget>[
                   CustomKbBtn(text: '删除', callback: (val) => onDeleteChange()),
                   CustomKbBtn(

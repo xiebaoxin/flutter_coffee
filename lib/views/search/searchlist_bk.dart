@@ -30,7 +30,7 @@ class SearchResultListPage extends StatefulWidget {
 class SearchResultListState extends State<SearchResultListPage> {
   ScrollController scrollController = ScrollController(); //listview的控制器
 
-  List itm = List();
+  List itm = [];
   bool _price_sort = false, _selnum_sort = false;
 
   String _dropdownValue1 = '新品';
@@ -74,7 +74,7 @@ class SearchResultListState extends State<SearchResultListPage> {
                       },
                     ),
                   ),
-                  FlatButton(
+                  TextButton(
                       onPressed: () {
                         setState(() {
 
@@ -84,7 +84,7 @@ class SearchResultListState extends State<SearchResultListPage> {
                           redoseach();
                         });
                       },
-                      textColor: Colors.black54,
+                      style: TextButton.styleFrom(foregroundColor: Colors.black54),
                       child: Row(
                         children: <Widget>[
                           Text("价格"),
@@ -93,8 +93,8 @@ class SearchResultListState extends State<SearchResultListPage> {
                               : Icons.unfold_more,)
                         ],
                       )),
-                  FlatButton(
-                    textColor: Colors.black54,
+                  TextButton(
+                    style: TextButton.styleFrom(foregroundColor: Colors.black54),
                       onPressed: () {
                         setState(() {
                           _selnum_sort = !_selnum_sort;
@@ -111,8 +111,8 @@ class SearchResultListState extends State<SearchResultListPage> {
                               : Icons.unfold_more,color: Colors.black45,)
                         ],
                       )),
-                  FlatButton(
-                      textColor: Colors.black54,
+                  TextButton(
+                      style: TextButton.styleFrom(foregroundColor: Colors.black54),
                       onPressed: () {
                         setState(() {
                           _selnum_sort = !_selnum_sort;
@@ -292,13 +292,13 @@ class SearchResultListState extends State<SearchResultListPage> {
   }
 
   int page = 1;
-  List<Map<String, dynamic>> listData = List();
+  List<Map<String, dynamic>> listData = [];
   String keyword;
   int catid;
 
   void redoseach() async {
     page = 1;
-    listData = List();
+    listData = [];
     await getSearchList();
   }
 
@@ -342,9 +342,7 @@ class SearchResultListState extends State<SearchResultListPage> {
   @override
   void dispose() {
     // TODO: implement dispose
-    scrollController = null;
-    listData = null;
-    page = null;
+    scrollController.dispose();
     super.dispose();
   }
 }

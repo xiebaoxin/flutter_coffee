@@ -50,7 +50,7 @@ class registerState extends State<register> {
             child: Form(
               //绑定状态属性
               key: _formKey,
-//              autovalidate: true,
+//              autovalidateMode: AutovalidateMode.always,
               child: Padding(
                 padding: new EdgeInsets.all(0),
                 child: ListView(

@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../model/globle_provider.dart';
-import 'package:fluwx/fluwx.dart' as fluwx;
+import 'package:flutter_coffee/stubs/fluwx_stub.dart' as fluwx;
 import '../utils/HttpUtils.dart';
 import '../globleConfig.dart';
 import '../utils/DialogUtils.dart';

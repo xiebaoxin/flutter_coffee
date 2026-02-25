@@ -32,7 +32,7 @@ class SearchResultListPage extends StatefulWidget {
       this.is_recom=-1,
       this.is_hot=0,
       this.is_new=0
-      });
+      }) : keyword = keyword;
 
   @override
   State<StatefulWidget> createState() => SearchResultListState();
@@ -83,7 +83,7 @@ class SearchResultListState extends State<SearchResultListPage> {
                       },
                     ),
                   ),
-                  FlatButton(
+                  TextButton(
                       onPressed: () {
                         setState(() {
                           _price_sort = !_price_sort;
@@ -92,7 +92,7 @@ class SearchResultListState extends State<SearchResultListPage> {
                           redoseach();
                         });
                       },
-                      textColor: Colors.black54,
+                      style: TextButton.styleFrom(foregroundColor: Colors.black54),
                       child: Row(
                         children: <Widget>[
                           Text("价格"),
@@ -103,8 +103,8 @@ class SearchResultListState extends State<SearchResultListPage> {
                           )
                         ],
                       )),
-                  FlatButton(
-                      textColor: Colors.black54,
+                  TextButton(
+                      style: TextButton.styleFrom(foregroundColor: Colors.black54),
                       onPressed: () {
                         setState(() {
                           _selnum_sort = !_selnum_sort;
@@ -124,8 +124,8 @@ class SearchResultListState extends State<SearchResultListPage> {
                           )
                         ],
                       )),
-                  FlatButton(
-                      textColor: Colors.black54,
+                  TextButton(
+                      style: TextButton.styleFrom(foregroundColor: Colors.black54),
                       onPressed: () {
                         Navigator.of(context)
                             .push(PageRouteBuilder(
@@ -245,7 +245,7 @@ class SearchResultListState extends State<SearchResultListPage> {
   bool _showmore = false;
   int _rcount = 5;
   Widget catlist() {
-    List itm = List();
+    List itm = [];
     if (widget.catitem == null)
       return SizedBox(
         height: 2,
@@ -380,10 +380,10 @@ class SearchResultListState extends State<SearchResultListPage> {
   var _attrindex = new Map<int, String>();
   String _attrarea = "";
 
-  List<Map<String, dynamic>> _priceListData = List();
-  List<Map<String, dynamic>> _brandListData = List();
-  List<dynamic> _specListData = List();
-  List<dynamic> _attrListData = List();
+  List<Map<String, dynamic>> _priceListData = [];
+  List<Map<String, dynamic>> _brandListData = [];
+  List<dynamic> _specListData = [];
+  List<dynamic> _attrListData = [];
 
   Widget bottomShowWidget() {
     return StatefulBuilder(builder: (context, state) {
@@ -534,7 +534,7 @@ class SearchResultListState extends State<SearchResultListPage> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
-                              FlatButton(
+                              TextButton(
                                 child: const Text('取消'),
                                 onPressed: () {
                                   setState(() {
@@ -549,7 +549,7 @@ class SearchResultListState extends State<SearchResultListPage> {
                               SizedBox(
                                 width: 20,
                               ),
-                              FlatButton(
+                              TextButton(
                                 child: const Text('确定'),
                                 onPressed: () {
                                   Navigator.of(context).pop(true);
@@ -697,13 +697,13 @@ class SearchResultListState extends State<SearchResultListPage> {
   }
 
   int page = 1;
-  List<Map<String, dynamic>> listData = List();
+  List<Map<String, dynamic>> listData = [];
   String keyword;
   int catid;
 
   void redoseach() async {
     page = 1;
-    listData = List();
+    listData = [];
     await getSearchList();
   }
 
@@ -752,7 +752,7 @@ class SearchResultListState extends State<SearchResultListPage> {
         if (response['filter'] != null) {
           if (response['filter']['filter_price'] != null) {
             setState(() {
-//            _priceListData = List();
+//            _priceListData = [];
               response['filter']['filter_price'].forEach((ele) {
                 if (ele != null) {
                   var tee = ele as Map;
@@ -852,10 +852,7 @@ class SearchResultListState extends State<SearchResultListPage> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
-    scrollController = null;
-    listData = null;
-    page = null;
+    scrollController.dispose();
     super.dispose();
   }
 }

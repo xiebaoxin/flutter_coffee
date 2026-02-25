@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 class CustomKbBtn extends StatefulWidget {
   final String text;
 
-  CustomKbBtn({Key key, this.text, this.callback}) : super(key: key);
+  CustomKbBtn({Key? key, required this.text, this.callback}) : super(key: key);
   final callback;
 
   @override
@@ -29,18 +29,18 @@ class ButtonState extends State<CustomKbBtn> {
     MediaQueryData mediaQuery = MediaQuery.of(context);
     var _screenWidth = mediaQuery.size.width;
 
-    return new Container(
+    return Container(
         height:50.0,
         width: _screenWidth / 3,
-        child: new OutlineButton(
-          // 直角
-          shape: new RoundedRectangleBorder(
-              borderRadius: new BorderRadius.circular(0.0)),
-          // 边框颜色
-          borderSide: new BorderSide(color: Color(0x10333333)),
-          child: new Text(
+        child: OutlinedButton(
+          style: OutlinedButton.styleFrom(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(0.0)),
+            side: BorderSide(color: Color(0x10333333)),
+          ),
+          child: Text(
             widget.text,
-            style: new TextStyle(color: Color(0xff333333), fontSize: 20.0),
+            style: TextStyle(color: Color(0xff333333), fontSize: 20.0),
           ),
           onPressed: back,
         ));

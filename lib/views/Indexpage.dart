@@ -1,15 +1,13 @@
 import 'dart:io';
 import 'dart:ui';
 import 'dart:convert';
-import 'package:amap_map_fluttify/amap_map_fluttify.dart';
+import 'package:flutter_coffee/stubs/amap_stub.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:easy_refresh/easy_refresh.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:amap_core_fluttify/amap_core_fluttify.dart';
-// import 'package:amap_location_fluttify/amap_location_fluttify.dart';
 import '../routers/application.dart';
 import '../model/banner.dart';
 import 'comm/comwidget.dart';
@@ -29,23 +27,22 @@ import '../utils/shopDataUtils.dart';
 
 class IndexPageHome extends StatefulWidget {
   @override
-  HomeIndexPageState createState() => new HomeIndexPageState();
+  HomeIndexPageState createState() => HomeIndexPageState();
 }
 
 class HomeIndexPageState extends State<IndexPageHome>
     with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
   @override
-  // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
 
   var _futureBannerBuilderFuture;
   var _futureLocationBuilderFuture;
   bool _hasnoread=true;
-  double statusBarHeight = MediaQueryData.fromWindow(window).padding.top;
+  double statusBarHeight = MediaQueryData.fromView(PlatformDispatcher.instance.implicitView!).padding.top;
 
   ScrollController _strollCtrl = ScrollController();
-  Userinfo _userinfo;
-  bool showMore = false; //是否显示底部加载中提示
+  Userinfo? _userinfo;
+  bool showMore = false;
   double topimgheight = 160.0;
 
   @override
@@ -62,7 +59,6 @@ class HomeIndexPageState extends State<IndexPageHome>
                     bgColor: KColorConstant.mainColor,
                     textColor: Color(0xFFFFFFFF)),
                 onRefresh: () async {
-//                  await DataUtils().checkUpdateApp(context);
                   await freshdata();
                 },
                 child: mainbody())));
@@ -83,15 +79,15 @@ class HomeIndexPageState extends State<IndexPageHome>
                   children: <Widget>[
                     Padding(
                       padding: const EdgeInsets.only(left: 10.0, right: 8.0),
-                      child: FlatButton(
+                      child: TextButton(
                         onPressed: () async {
                           String v = await ComFun.scanqr();
                           print(v);
-                          if (v = null) {
+                          if (v == null) {
                             Map<String, dynamic> payoddata = {
                               "drinkId": '61',
-                              "sugarRule": "1", //糖规则（0=无糖，1=少糖，2=标准，3=多糖）
-                              "deviceId": '33', //设备id
+                              "sugarRule": "1",
+                              "deviceId": '33',
                             };
 
                             Navigator.of(context)
@@ -108,7 +104,9 @@ class HomeIndexPageState extends State<IndexPageHome>
                                 .then((value) => Navigator.of(context).pop());
                           }
                         },
-                        color: KColorConstant.mainColor,
+                        style: TextButton.styleFrom(
+                          backgroundColor: KColorConstant.mainColor,
+                        ),
                         child: Image.asset(
                           "images/qrscan.png",
                           height: 25,
@@ -123,7 +121,7 @@ class HomeIndexPageState extends State<IndexPageHome>
                       padding: EdgeInsets.only(left: 8, right: 8),
                       decoration: BoxDecoration(
                         color:
-                            Colors.white, // Color.fromRGBO(240, 240, 240, 0.5),
+                            Colors.white,
                         borderRadius: BorderRadius.circular(17.0),
                         border: Border.all(width: 0.5, color: Color(0xfffffff)),
                       ),
@@ -160,15 +158,8 @@ class HomeIndexPageState extends State<IndexPageHome>
                     Padding(
                       padding: const EdgeInsets.all(0),
                       child:
-//                        使用Consumer -局部刷新而不是整个页面
                           Consumer<GlobleProvider>(
                         builder: (context, GlobleProvider provider, _) =>
-
-                            ///三个参数：(BuildContext context, T model, Widget child)
-                            ///context： context 就是 build 方法传进来的 BuildContext 在这里就不细说了
-                            ///T：获取到的最近一个祖先节点中的数据模型。
-                            ///child：它用来构建那些与 Model 无关的部分，在多次运行 builder 中，child 不会进行重建
-                            ///=>返回一个通过这三个参数映射的 Widget 用于构建自身
                             Center(
                                 child: Stack(
                           children: <Widget>[
@@ -193,7 +184,7 @@ class HomeIndexPageState extends State<IndexPageHome>
                                         : () {
                                             Navigator.push(
                                               context,
-                                              new MaterialPageRoute(
+                                              MaterialPageRoute(
                                                   builder: (context) =>
                                                       MessageList()),
                                             ).then((v) {
@@ -237,12 +228,6 @@ class HomeIndexPageState extends State<IndexPageHome>
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               buildIconitem("无人售卖机", "特价爆款", "", ()async {
-             /*   print("---------=-=-=----------");
-                Map<String, dynamic> param={
-                  "stores_id":"10",
-                  "barcode_id":'13'
-                };
-                print(await ShopDataUtils.goodsDetails(param));*/
               }),
               buildIconitem("优惠劵", "先领劵更划算", "", () {
                 ;
@@ -325,9 +310,9 @@ class HomeIndexPageState extends State<IndexPageHome>
         )),
       ),
     ));
-    if (_location != null && _location.address != null)
+    if (_location != null && _location!.address != null)
       itemlist.add(Text(
-        "${_location.address ?? 'null'}[${_location.latLng.latitude},${_location.latLng.longitude},${_location.altitude}]",
+        "${_location!.address ?? 'null'}[${_location!.latLng.latitude},${_location!.latLng.longitude},${_location!.altitude}]",
         softWrap: true,
         textAlign: TextAlign.center,
       ));
@@ -353,7 +338,7 @@ class HomeIndexPageState extends State<IndexPageHome>
                   child: Text('获取附近咖啡机信息异常', style: TextStyle(fontSize: 10))));
         }
         if (snapshot.hasData && snapshot.data != null) {
-          if (_shopsList != null && _shopsList.length > 0) {
+          if (_shopsList.length > 0) {
             return Column(
               children:
                   _shopsList.map((it) => ComWidget.machineitem(it)).toList(),
@@ -385,14 +370,13 @@ class HomeIndexPageState extends State<IndexPageHome>
     return FutureBuilder(
       future: _futureBannerBuilderFuture,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
-        //snapshot就是_calculation在时间轴上执行过程的状态快照
         switch (snapshot.connectionState) {
           case ConnectionState.none:
             return Center(
                 child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: new Text('需重新加载'),
-            )); //如果_calculation未执行则提示：请点击开始
+              child: Text('需重新加载'),
+            ));
           case ConnectionState.waiting:
             return Container(
                 height: topimgheight,
@@ -403,9 +387,8 @@ class HomeIndexPageState extends State<IndexPageHome>
                       height: topimgheight,
                       fit: BoxFit.fill,
                     )));
-//                  return new Text('Awaiting result...');  //如果_calculation正在执行则提示：加载中
-          default: //如果_calculation执行完毕
-            if (snapshot.hasError) //若_calculation执行出现异常
+          default:
+            if (snapshot.hasError)
               return Container(
                 height: topimgheight,
                 child: ClipRRect(
@@ -440,18 +423,13 @@ class HomeIndexPageState extends State<IndexPageHome>
                   child: ClipRRect(
                       borderRadius: BorderRadius.circular(Klength.circular),
                       child:
-//                      AspectRatio(
-//                          aspectRatio: 16.0 / 12.0,
-//                          child:
                           Image.asset(
                         "images/topbg_img.jpg",
                         fit: BoxFit.cover,
-//                    ),
                       )),
                 );
               }
-            } //若_calculation执行正常完成
-//                    return new Text('Result: ${snapshot.data}');
+            }
         }
       },
     );
@@ -461,10 +439,9 @@ class HomeIndexPageState extends State<IndexPageHome>
       String title, String subtitle, String asimg, Function callback) {
     double deviceWidth = MediaQuery.of(context).size.width;
 
-    var bgColor = Color(0xFFFEFFFF); // string2Color(i.bgColor);
-    double itemWidth = (deviceWidth / 3) - 13; // deviceWidth * 100 / 360;
+    var bgColor = Color(0xFFFEFFFF);
+    double itemWidth = (deviceWidth / 3) - 13;
     ShapeBorder _shape = const RoundedRectangleBorder(
-//      side: BorderSide(color: Color.fromRGBO(238, 238, 238, 0.5)),
       borderRadius: BorderRadius.only(
         topLeft: Radius.circular(5.0),
         topRight: Radius.circular(5.0),
@@ -477,13 +454,12 @@ class HomeIndexPageState extends State<IndexPageHome>
         width: itemWidth,
         margin: EdgeInsets.all(0),
         child: InkWell(
-          onTap: callback,
+          onTap: () => callback(),
           child: Card(
             color: bgColor,
-            // This ensures that the Card's children are clipped correctly.
             clipBehavior: Clip.antiAlias,
             margin: EdgeInsets.all(0),
-            shape: _shape, //,
+            shape: _shape,
             elevation: 1.0,
             child: Container(
               margin: EdgeInsets.all(8),
@@ -505,10 +481,8 @@ class HomeIndexPageState extends State<IndexPageHome>
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
                       subtitle,
-                      softWrap:
-                          true, //是否自动换行 false文字不考虑容器大小  单行显示   超出；屏幕部分将默认截断处理
-                      overflow: TextOverflow
-                          .ellipsis, //文字超出屏幕之后的处理方式  TextOverflow.clip剪裁   TextOverflow.fade 渐隐  TextOverflow.ellipsis省略号
+                      softWrap: true,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                           fontSize: KfontConstant.title12,
                           color: KColorConstant.mainColor),
@@ -525,20 +499,16 @@ class HomeIndexPageState extends State<IndexPageHome>
     await DialogUtils.showToastDialog(context, strt);
   }
 
-  List<Map<String, dynamic>> _shopsList = List();
+  List<Map<String, dynamic>> _shopsList = [];
   Future<List<Map<String, dynamic>>> _getDeviceList() async {
-    if (_location != null && _location.latLng != null) {
+    if (_location != null && _location!.latLng != null) {
       Map<String, String> params = {
         "longitudeLatitude":
-            "${_location.latLng.longitude},${_location.latLng.latitude}",
+            "${_location!.latLng.longitude},${_location!.latLng.latitude}",
         "range": "5000"
       };
       _shopsList = await DataUtils.getNearByDevice(context, params);
-      /*[{latitudeLongitude: 113.926727,22.647089,
-     address: 广东省深圳市宝安区创维科技工业园, serialNumber: 1234567891,
-     distance: 361, name: 测试, id: 9, status: 0},
-    */
-      if (_shopsList != null && _shopsList.length > 0) {
+      if (_shopsList.length > 0) {
         SharedPreferences prefs = await SharedPreferences.getInstance();
 
         for (int i = 0; i < _shopsList.length; i++) {
@@ -548,24 +518,19 @@ class HomeIndexPageState extends State<IndexPageHome>
           }
         }
       }
-//      setState(() {  });
     }
     return _shopsList;
   }
 
   Future _getbannerdata() async {
 
-    BannerList banners;
+    BannerList? banners;
 
-    List<Map<String, dynamic>> imagessList = List();
+    List<Map<String, dynamic>> imagessList = [];
     List<Map<String, dynamic>> listbanner =
         await DataUtils.getIndexTopSwipperBanners(context);
 
-    /*
-    *{"code":200,"message":"成功!","data":[{"orderId":2,"link":1,
-    * "linkUrl":"%","linkType":3,"title":"汽车","picture":"https://dss0.bdstatic.co"}]}
-    * */
-    if (listbanner != null && listbanner.length > 0) {
+    if (listbanner.length > 0) {
       listbanner.forEach((ele) {
         if (ele['picture'] != null) {
           var el = {
@@ -594,7 +559,6 @@ class HomeIndexPageState extends State<IndexPageHome>
     _futureBannerBuilderFuture = _getbannerdata();
     _strollCtrl.addListener(() {
       if (_strollCtrl.position.pixels == _strollCtrl.position.maxScrollExtent) {
-//        print('滑动到了最底部${_strollCtrl.position.pixels}');
         setState(() {
           showMore = true;
         });
@@ -617,7 +581,7 @@ class HomeIndexPageState extends State<IndexPageHome>
 
   void freshdata() async {
     if (mounted) {
-      var cartdemoInfo = Provider.of<CartsProvider>(context);
+      var cartdemoInfo = Provider.of<CartsProvider>(context, listen: false);
       await cartdemoInfo.initcartdemo();
     }
 
@@ -629,7 +593,6 @@ class HomeIndexPageState extends State<IndexPageHome>
   }
 
   bool _loading = false;
-  // 显示加载进度条
   void showLoadingDialog(String msg) async {
     setState(() {
       _loading = true;
@@ -637,7 +600,6 @@ class HomeIndexPageState extends State<IndexPageHome>
     await DialogUtils.showLoadingDialog(context, text: msg);
   }
 
-  // 隐藏加载进度条
   hideLoadingDialog() {
     if (_loading) {
       Navigator.of(context).pop();
@@ -647,7 +609,7 @@ class HomeIndexPageState extends State<IndexPageHome>
     }
   }
 
-  Location _location;
+  Location? _location;
   void fetchLocation() async {
     if (await Permission.location.request().isGranted) {
       final location = await AmapLocation.instance.fetchLocation();

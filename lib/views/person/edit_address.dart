@@ -45,7 +45,7 @@ class EditAddressPageState extends State<EditAddressPage> {
         body: Form(
             //绑定状态属性
             key: _formKey,
-            autovalidate: true,
+            autovalidateMode: AutovalidateMode.always,
             child: SingleChildScrollView(
 //              padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Container(

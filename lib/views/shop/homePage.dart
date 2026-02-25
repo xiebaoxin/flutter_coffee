@@ -93,7 +93,7 @@ class homePageState extends State<homePage> with AutomaticKeepAliveClientMixin {
 
   // 获取BottomNavigationBarItem
   List<BottomNavigationBarItem> getBottomNavigationBarItem() {
-    List<BottomNavigationBarItem> list = new List();
+    List<BottomNavigationBarItem> list = new [];
     for (int i = 0; i < _pages.length; i++) {
       list.add(new BottomNavigationBarItem(
           icon: getTabIcon(i), title: getTabTitle(i)));

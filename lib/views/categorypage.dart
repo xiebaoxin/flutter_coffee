@@ -4,7 +4,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:easy_refresh/easy_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../model/banner.dart';
 import 'comm/comwidget.dart';
@@ -33,7 +33,7 @@ class CategoryHomePageState extends State<CategoryHome>
   // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
 
-  final double statusBarHeight = MediaQueryData.fromWindow(window).padding.top;
+  final double statusBarHeight = MediaQueryData.fromView(PlatformDispatcher.instance.implicitView!).padding.top;
 
   final GlobalKey<ScaffoldState> _scaffoldcgKey = GlobalKey<ScaffoldState>();
   var _futureBuilderFuture;

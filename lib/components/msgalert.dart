@@ -29,7 +29,7 @@ class MessageAlert extends StatelessWidget {
                       style: TextStyle(fontSize: 14),
                     ),
                     SizedBox(height: 20,),
-                    FlatButton(onPressed: (){Navigator.of(context).pop();}, child: Text("确认"))
+                    TextButton(onPressed: (){Navigator.of(context).pop();}, child: Text("确认"))
                   ],
                 ),
               )

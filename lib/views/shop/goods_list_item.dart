@@ -112,9 +112,15 @@ class GoodsListItem extends StatelessWidget {
                       Container(
                           alignment: Alignment.bottomRight,
                           height: 30,
-                          child: RaisedButton(
-                              color: KColorConstant.mainColor,
-                              elevation: 2,
+                          child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: KColorConstant.mainColor,
+                                elevation: 2,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(15)),
+                                ),
+                              ),
                               child: Container(
                                   alignment: Alignment.center,
                                   child: Text(
@@ -122,14 +128,7 @@ class GoodsListItem extends StatelessWidget {
                                     style: TextStyle(
                                         fontSize: 13, color: Colors.white),
                                   )),
-                              shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(15)),
-                              ),
-//                              onPressed: () {
-//                                Application.goodsDetail(
-//                                    context, item['goods_id'].toString());
-//                              }
+                              onPressed: () {},
                               )),
                     ],
                   ),

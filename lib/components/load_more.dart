@@ -24,7 +24,7 @@ class LoadMore extends StatelessWidget {
       height: 70.0,
       child: Center(
         child: Text('亲，我也是有底线的',
-            style: TextStyle(color: Theme.of(context).accentColor)),
+            style: TextStyle(color: Theme.of(context).colorScheme.secondary)),
       ),
     );
   }

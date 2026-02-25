@@ -14,9 +14,23 @@ class WebViewNew extends StatefulWidget {
 }
 
 class _ArticleDetailState extends State<WebViewNew> {
+  late final WebViewController _controller;
+
   @override
   void initState() {
     super.initState();
+    _controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onPageFinished: (String url) {
+            setState(() {
+              _isloaded = true;
+            });
+          },
+        ),
+      )
+      ..loadRequest(Uri.parse(widget.articleUrl));
   }
 
   @override
@@ -28,9 +42,9 @@ class _ArticleDetailState extends State<WebViewNew> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: new AppBar(
+        appBar: AppBar(
           centerTitle: true,
-          title: new Text(widget.title),
+          title: Text(widget.title),
         ),
         body: Container(
           
@@ -58,14 +72,8 @@ class _ArticleDetailState extends State<WebViewNew> {
                     ),
                   )),
               Expanded(
-                  child: WebView(
-                initialUrl: widget.articleUrl,
-                javascriptMode: JavascriptMode.unrestricted,
-                onPageFinished: (String url) {
-                  setState(() {
-                    _isloaded = true;
-                  });
-                },
+                  child: WebViewWidget(
+                controller: _controller,
               ))
             ],
           ),

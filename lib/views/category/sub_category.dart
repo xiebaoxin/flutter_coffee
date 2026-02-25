@@ -16,7 +16,7 @@ class SubCategoryListModel {
   SubCategoryListModel({this.list,this.ucid,this.name});
   factory SubCategoryListModel.fromJson(Map<String, dynamic> json) {
     var items = json['drinkList'] as List;
-    List<Map<String, dynamic>> mlist=List();
+    List<Map<String, dynamic>> mlist=[];
      items.map((item) {
       return mlist.add(item);
     }).toList();

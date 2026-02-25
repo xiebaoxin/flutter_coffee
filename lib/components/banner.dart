@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:card_swiper/card_swiper.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../components/swipper_indicator_style.dart';
 import '../components/loading_gif.dart';
@@ -7,30 +7,20 @@ import '../routers/application.dart';
 import '../model/banner.dart';
 
 class RectSwiperPaginationBuilder extends SwiperPlugin {
-  ///color when current index,if set null , will be Theme.of(context).primaryColor
-  final Color activeColor;
-
-  ///,if set null , will be Theme.of(context).scaffoldBackgroundColor
-  final Color color;
-
-  ///Size of the rect when activate
+  final Color? activeColor;
+  final Color? color;
   final Size activeSize;
-
-  ///Size of the rect
   final Size size;
-
-  /// Space between rects
   final double space;
-
-  final Key key;
+  final Key? key;
 
   const RectSwiperPaginationBuilder(
       {this.activeColor,
         this.color,
         this.key,
-        this.size: const Size(10.0, 2.0),
-        this.activeSize: const Size(10.0, 2.0),
-        this.space: 3.0});
+        this.size = const Size(10.0, 2.0),
+        this.activeSize = const Size(10.0, 2.0),
+        this.space = 3.0});
 
   @override
   Widget build(BuildContext context, SwiperPluginConfig config) {
@@ -51,7 +41,7 @@ class RectSwiperPaginationBuilder extends SwiperPlugin {
       ));
     }
 
-    return new Row(
+    return Row(
       key: key,
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.end,
@@ -61,7 +51,7 @@ class RectSwiperPaginationBuilder extends SwiperPlugin {
 }
 
 class SwipperBanner extends StatelessWidget {
-  final BannerList bannerlist;
+  final BannerList? bannerlist;
   final bool potype;
   final double nheight;
   final int defindex;
@@ -88,14 +78,12 @@ class SwipperBanner extends StatelessWidget {
               ),
             ),
             placeholder: (context, url) =>  Loading(),
-            imageUrl:  bannerlist.items[index].picUrl,
+            imageUrl:  bannerlist!.items[index].picUrl,
             imageBuilder: (context, imageProvider) => Container(
               decoration: BoxDecoration(
                 image: DecorationImage(
                   image: imageProvider,
                   fit: BoxFit.cover,
-//                        colorFilter:
-//                        ColorFilter.mode(Colors.red, BlendMode.colorBurn)
                 ),
               ),
             ),
@@ -105,36 +93,19 @@ class SwipperBanner extends StatelessWidget {
           )
           );
         },
-        itemCount: bannerlist.items.length,
-        //viewportFraction: 0.9,
-        /*   pagination:  SwiperPagination(
-            alignment:potype?Alignment.bottomRight: Alignment.bottomCenter,
-            builder: potype?FractionPaginationBuilder(
-                color: Colors.grey,
-                activeColor: Colors.redAccent,
-                activeFontSize: 20
-            ):DotSwiperPaginationBuilder(
-//              RectSwiperPaginationBuilder
-                color: Color(0xFF999999),
-                activeColor: Colors.white,
-//                size: Size(5.0, 2),
-//                activeSize: Size(5, 5)
-            )),
-        */
+        itemCount: bannerlist!.items.length,
         pagination:  SwiperPagination(
             alignment:potype?Alignment.bottomRight: Alignment.bottomCenter,
             builder:SwiperCustomPagination(builder:(BuildContext context,SwiperPluginConfig config){
-              return PageIndicator(layout: PageIndicatorLayout.NIO,count: config.itemCount,controller: config.pageController,size: 10,);
+              return PageIndicator(layout: PageIndicatorLayout.NIO,count: config.itemCount,controller: config.pageController!,size: 10,);
             } ) ),
 
         scrollDirection: Axis.horizontal,
         autoplay: true,
         index: defindex,
         onTap: (index){
-//          print('点击了第$index个');
-//          print(bannerlist.items[index].href);
-          if(bannerlist.items[index].type==3)
-          Application.webto(context, '/web',url:bannerlist.items[index].href);
+          if(bannerlist!.items[index].type==3)
+          Application.webto(context, '/web',url:bannerlist!.items[index].href);
 
         }  ,
       ),

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'loading_gif.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter_drag_scale/flutter_drag_scale.dart';
 
 class ShowNetImage extends StatelessWidget {
   final String image;
@@ -44,7 +43,6 @@ class ShowNetImage extends StatelessWidget {
       ),
       placeholder: (context, url) => Loading(),
       imageUrl: this.image,
-//              height: this.height==0.0 ? MediaQuery.of(context).size.width / 5:this.width,
       width: this.width==0.0 ? MediaQuery.of(context).size.width / 5:this.width,
       fit: BoxFit.fill,
     );
@@ -58,14 +56,11 @@ class ShowImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-        //创建透明层
-//        type: MaterialType.transparency, //透明类型
         child: Container(
             child: Stack(
       children: <Widget>[
         Container(
-          child: DragScaleContainer(
-              doubleTapStillScale: true,
+          child: InteractiveViewer(
               child: CachedNetworkImage(
             errorWidget: (context, url, error) => Container(
               width: MediaQuery.of(context).size.width / 10,
@@ -86,7 +81,6 @@ class ShowImage extends StatelessWidget {
             imageUrl: this.image,
             width: MediaQuery.of(context).size.width,
             fit: BoxFit.contain,
-//            fit: BoxFit.fill,
           ),
           )
         ),

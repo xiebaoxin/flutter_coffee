@@ -2,7 +2,7 @@ import 'dart:io';
 import 'dart:ui';
 import 'dart:convert';
 import 'dart:async';
-import 'package:decorated_flutter/decorated_flutter.dart';
+import 'package:flutter_coffee/stubs/decorated_flutter_stub.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -71,7 +71,7 @@ class ComWidget {
   }
 
   static Widget topTitleWidget(String title) {
-    final double statusBarHeight = MediaQueryData.fromWindow(window).padding.top;
+    final double statusBarHeight = MediaQueryData.fromView(PlatformDispatcher.instance.implicitView!).padding.top;
     return Positioned(
         top: statusBarHeight,
         left: 0,

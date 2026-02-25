@@ -6,51 +6,45 @@ import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:core';
-import 'package:package_info/package_info.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import '../globleConfig.dart';
 import '../utils/comUtil.dart';
 import '../utils/dataUtils.dart';
 import 'upsetapp.dart';
-//import '../components/down_install.dart';
-import 'package:r_upgrade/r_upgrade.dart';
 
 class UpgGradePage extends StatefulWidget {
   @override
-  UpgGradePageState createState() => new UpgGradePageState();
+  UpgGradePageState createState() => UpgGradePageState();
 }
 
 class UpgGradePageState extends State<UpgGradePage> {
-  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  Future<SharedPreferences>? _prefs = SharedPreferences.getInstance();
 
-  String _packageInfovs, _packageInfobn;
-  String _newVersioncontent;
-  String _conntent;
+  String? _packageInfovs, _packageInfobn;
+  String? _newVersioncontent;
+  String? _conntent;
   String _deviceinfo="";
   String _copappid="";
   String _copappname=GlobalConfig.appName;
 
-  String _downurl;
-bool _updown=false;
+  String? _downurl;
+  bool _updown=false;
 
   Future<bool> checkInfo() async {
     bool retslt = false;
-//    _ipAddress = await GetIp.ipAddress;
     final packageInfo = await PackageInfo.fromPlatform();
-//    _ostypename = ComFun.defaultTargetPlatform;
-    _packageInfovs = packageInfo.version; //1.0.0
-    _packageInfobn = packageInfo.buildNumber; //1
+    _packageInfovs = packageInfo.version;
+    _packageInfobn = packageInfo.buildNumber;
     _deviceinfo=await ComFun().getDeviceInfoName();
     setState(() { });
 
     Map<String, dynamic> response = await DataUtils.getUpgradeinfo(context);
 
     if (response["VERSIONNUMBER"] != null) {
-      int newVersion = int.tryParse(response["VERSIONNUMBER"].toString());
-      if (newVersion.compareTo(int.tryParse(packageInfo.buildNumber)) > 0) {
-//            print(newVersion + "|compareTo|" + packageInfo.buildNumber);
-
+      int? newVersion = int.tryParse(response["VERSIONNUMBER"].toString());
+      if (newVersion != null && newVersion.compareTo(int.tryParse(packageInfo.buildNumber) ?? 0) > 0) {
         setState(() {
-          _newVersioncontent = "($newVersion)"; //${response["update"]['ver']}
+          _newVersioncontent = "($newVersion)";
           _conntent = response["MEMO"];
           _downurl = response["URL"];
         });
@@ -80,10 +74,10 @@ bool _updown=false;
           child: Container(
             padding: EdgeInsets.all(20),
             height: 500,
-            decoration: new BoxDecoration(
+            decoration: BoxDecoration(
                 color: Color(0xFFFFFFFF),
                 borderRadius: BorderRadius.all(Radius.circular(14.0)),
-                border: new Border.all(
+                border: Border.all(
                   width: 0.33,
                 )),
             child: Column(
@@ -137,8 +131,7 @@ bool _updown=false;
                     visible: _downurl != null && !_updown,
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: RaisedButton(
-//                      elevation: 4,
+                      child: ElevatedButton(
                           child: Container(
                               alignment: Alignment.center,
                               width: 100,
@@ -151,8 +144,10 @@ bool _updown=false;
                                     color: Colors.white),
                                 maxLines: 1,
                               )),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(8)),
+                            ),
                           ),
                           onPressed: upgradeHandle
                           ),
@@ -165,22 +160,11 @@ bool _updown=false;
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-            /*            FlatButton(
-                          child: new Text("取消"),
+                        TextButton(
+                          child: Text("确定"),
                           onPressed: () async{
 
-                            SharedPreferences prefs = await _prefs;
-                            prefs.remove('update');
-                            _prefs=null;
-
-                            Navigator.of(context).pop(false);
-                          },
-                        ),*/
-                        FlatButton(
-                          child: new Text("确定"),
-                          onPressed: () async{
-
-                            SharedPreferences prefs = await _prefs;
+                            SharedPreferences prefs = await _prefs!;
                             prefs.remove('update');
                             _prefs=null;
                             Navigator.of(context).pop(true);
@@ -200,21 +184,16 @@ bool _updown=false;
   }
 
 
-  /*
-  * 更新处理事件
-  * */
   upgradeHandle() async{
     if (_updown) return;
     Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
     SharedPreferences prefs = await _prefs;
     await prefs.remove('update');
-    await Clipboard.setData(ClipboardData(text: prefs.getString("ClipboardDataString")));
+    await Clipboard.setData(ClipboardData(text: prefs.getString("ClipboardDataString") ?? ''));
 
     _updown=true;
-    _prefs=null;
-    // 必须保证当前状态安全，才能进行状态刷新
+    this._prefs=null;
     if (mounted) setState(() {});
-    // 进行平台判断
     if (Platform.isAndroid) {
       _updateAndriod();
     } else if (Platform.isIOS) {
@@ -223,10 +202,9 @@ bool _updown=false;
   }
 
 
-  ///跳转本地浏览器
- Future launchURL() async {
-    if (await canLaunch(_downurl)) {
-      await launch(_downurl);
+  Future launchURL() async {
+    if (await canLaunchUrl(Uri.parse(_downurl!))) {
+      await launchUrl(Uri.parse(_downurl!));
     } else {
 
       setState(() {
@@ -237,9 +215,9 @@ bool _updown=false;
 
   void _updateAndriod() async {
       Map  mockData = {
-          'isForceUpdate': true,// 是否强制更新
+          'isForceUpdate': true,
           'content': "系统升级",
-          'url': _downurl,// 安装包的链接
+          'url': _downurl,
         'iosurl': _downurl
         };
 

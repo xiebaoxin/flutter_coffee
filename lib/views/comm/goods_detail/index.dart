@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:color_dart/color_dart.dart';
+import 'package:flutter_coffee/stubs/color_dart.dart';
 import '../../../utils/utils.dart';
 import '../../../utils/comUtil.dart';
 import '../../../components/showimage.dart';

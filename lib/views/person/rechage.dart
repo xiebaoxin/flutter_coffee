@@ -53,7 +53,7 @@ class _MobileRechargeState extends State<Recharge> {
         body: Form(
             //绑定状态属性
             key: _formKey,
-            autovalidate: true,
+            autovalidateMode: AutovalidateMode.always,
             child: Container(
                 color: Color(0xFFFFFFFF),
                 height: MediaQuery.of(context).size.height,

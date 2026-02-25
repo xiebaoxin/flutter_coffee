@@ -29,7 +29,7 @@ class SearchBarState extends State<SearchBar> {
             Container(
               margin: EdgeInsets.only(left: 5) ,
               child: Form(
-                autovalidate: true,
+                autovalidateMode: AutovalidateMode.always,
                 child:Container(
                   width: 260,
                   child: TextField(

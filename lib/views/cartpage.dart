@@ -28,7 +28,7 @@ class CartHomePageState extends State<CartHomePage>
 
   final GlobalKey<ScaffoldState> _scaffoldcpKey = GlobalKey<ScaffoldState>();
 
-  final double statusBarHeight = MediaQueryData.fromWindow(window).padding.top;
+  final double statusBarHeight = MediaQueryData.fromView(PlatformDispatcher.instance.implicitView!).padding.top;
 
   ScrollController _strollCtrl = ScrollController();
   Userinfo _userinfo = Userinfo.fromJson({});

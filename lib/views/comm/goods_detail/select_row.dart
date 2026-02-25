@@ -1,4 +1,4 @@
-import 'package:color_dart/color_dart.dart';
+import 'package:flutter_coffee/stubs/color_dart.dart';
 import 'package:flutter/material.dart';
 import '../../../components/a_button/index.dart';
 

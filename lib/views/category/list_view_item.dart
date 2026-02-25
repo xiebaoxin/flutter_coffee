@@ -26,7 +26,7 @@ class SecondryCategory extends StatelessWidget {
     print("------list_view_item page --------");
 print(items);
 
- /*   List<CartItemModel>  cartitems=List();
+ /*   List<CartItemModel>  cartitems=[];
     items.forEach((element) {
       var jsonvalue={
         'goods_name':element['coffeeName'],

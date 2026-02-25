@@ -4,7 +4,7 @@ import '../../globleConfig.dart';
 import 'edit_address.dart';
 
 class AddressPage extends StatefulWidget {
-  AddressPage({Key key, this.title}) : super(key: key);
+  AddressPage({Key? key, this.title}) : super(key: key);
 
   final String title;
 
@@ -39,13 +39,13 @@ class AddressPageState extends State<AddressPage> {
             ),
           ),
           actions: <Widget>[
-            FlatButton(
+            TextButton(
               child: Text('取消'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
-            FlatButton(
+            TextButton(
               child: Text('确认'),
               onPressed: () {
                 Navigator.of(context).pop();
@@ -158,7 +158,7 @@ deletefun(String addressid) async{
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
-                      FlatButton(onPressed: () {
+                      TextButton(onPressed: () {
                         Navigator.push(
                           context,
                           new MaterialPageRoute(
@@ -172,7 +172,7 @@ deletefun(String addressid) async{
                           Text("编辑",style: KfontConstant.listTitleStyle),
                         ],
                       )),
-                      FlatButton(onPressed: (){  _deleteAddress(address['address_id'].toString());}, child: Row(
+                      TextButton(onPressed: (){  _deleteAddress(address['address_id'].toString());}, child: Row(
                         children: <Widget>[
                           Icon(Icons.delete_forever,color: Colors.grey,),
                           Text("删除",style: KfontConstant.listTitleStyle),

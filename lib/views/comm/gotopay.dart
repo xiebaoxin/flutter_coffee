@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:fluwx/fluwx.dart' as fluwx;
-import 'package:tobias/tobias.dart';
+import 'package:flutter_coffee/stubs/fluwx_stub.dart' as fluwx;
+import 'package:flutter_coffee/stubs/tobias_stub.dart';
 import 'package:flutter_coffee/globleConfig.dart';
 import 'package:flutter_coffee/utils/comUtil.dart';
 import 'package:flutter_coffee/utils/dataUtils.dart';

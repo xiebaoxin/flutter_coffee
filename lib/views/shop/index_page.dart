@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:easy_refresh/easy_refresh.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../utils/shopDataUtils.dart';
 import '../../globleConfig.dart';
@@ -181,7 +181,7 @@ class IndexPageHomeState extends State<IndexPageHome>
         Map<String, dynamic> item = {};
         if (it['active'] != null) item = it['active'];
 
-        List<Map<String, dynamic>> ddtl = List();
+        List<Map<String, dynamic>> ddtl = [];
         if (it['list'] != null)
           it['list'].forEach((ele) {
             if (ele.isNotEmpty) {
@@ -475,14 +475,14 @@ class IndexPageHomeState extends State<IndexPageHome>
       content: Text(strt),
     ));
   }
-  List<Map<String, dynamic>> _floorAdImagesList = List();
-  List<Map<String, dynamic>> _floorImagesList = List();
+  List<Map<String, dynamic>> _floorAdImagesList = [];
+  List<Map<String, dynamic>> _floorImagesList = [];
 
-  List<Map<String, dynamic>> _recommondList = List();
-  List<Map<String, dynamic>> _recommondList1 = List();
-  List<Map<String, dynamic>> _recommondList2 = List();
+  List<Map<String, dynamic>> _recommondList = [];
+  List<Map<String, dynamic>> _recommondList1 = [];
+  List<Map<String, dynamic>> _recommondList2 = [];
 
-  List<Map<String, dynamic>> _goodsList = List();
+  List<Map<String, dynamic>> _goodsList = [];
 
   List _listbanner = [];
   Future _getbannerdata() async {

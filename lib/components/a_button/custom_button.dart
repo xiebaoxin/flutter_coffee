@@ -4,7 +4,7 @@
  * @lastTime: 2019-09-23 16:19:54
  * @LastEditors: meetqy
  */
-import 'package:color_dart/color_dart.dart';
+import 'package:flutter_coffee/stubs/color_dart.dart';
 import 'package:flutter/material.dart';
 
 class CustomButton {  
@@ -103,19 +103,18 @@ class CustomButton {
     return Container(
       width: width,
       height: height,
-      child: FlatButton(
-        padding: padding == null ? EdgeInsets.all(0) : padding,
-        shape:  RoundedRectangleBorder(
-          borderRadius: borderRadius == null ? BorderRadius.circular(4) : borderRadius,
-          side: BorderSide(width: 1, color: !plain ? Colors.transparent : _borderColor)
+      child: TextButton(
+        style: TextButton.styleFrom(
+          padding: padding == null ? EdgeInsets.all(0) : padding,
+          shape: RoundedRectangleBorder(
+            borderRadius: borderRadius == null ? BorderRadius.circular(4) : borderRadius,
+            side: BorderSide(width: 1, color: !plain ? Colors.transparent : _borderColor)
+          ),
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          foregroundColor: _color,
+          backgroundColor: _bgColor,
         ),
-        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
         child: child,
-        textColor: _color,
-        color: _bgColor,
-        splashColor: onPressed == null ? Colors.transparent : null,
-        highlightColor: onPressed == null ? Colors.transparent : null,
-        disabledColor: _bgColor,
         onPressed: onPressed == null ? (){} : onPressed,
       ),
     );

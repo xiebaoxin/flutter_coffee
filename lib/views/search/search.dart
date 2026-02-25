@@ -61,7 +61,7 @@ class SearchPageState extends State<SearchPage> {
 
   void seachTxtChanged(String q) async {
     //添加到热搜此条
-    var result =List();// await getSuggest(q) as List;
+    var result =[];// await getSuggest(q) as List;
     recomendWords = result.map((dynamic i) {
       List item = i as List;
       return item[0] as String;

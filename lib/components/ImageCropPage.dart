@@ -3,8 +3,6 @@ import 'dart:io';
 import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_native_image/flutter_native_image.dart';
-import 'package:image_crop/image_crop.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ImageCropperPage extends StatefulWidget {
@@ -13,20 +11,13 @@ class ImageCropperPage extends StatefulWidget {
 }
 
 class _ImageCropperPageState extends State<ImageCropperPage> {
-  final cropKey = GlobalKey<CropState>();
-  File _file;
-  File _sample;
-  File _lastCropped;
+  File? _file;
 
   @override
   void dispose() {
     super.dispose();
     _file?.delete();
-    _sample?.delete();
-    _lastCropped?.delete();
   }
-
-  bool firstLoad = true;
 
   @override
   void initState() {
@@ -36,18 +27,15 @@ class _ImageCropperPageState extends State<ImageCropperPage> {
     });
   }
 
-
   Widget _buildCroppingImage() {
     return Container(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Expanded(
-            child: Crop.file(
-              _sample,
-              key: cropKey,
-              aspectRatio: 1,
-            ),
+            child: _file != null
+                ? Image.file(_file!, fit: BoxFit.contain)
+                : Container(),
           ),
           Container(
             padding: EdgeInsets.only(top: 20.0),
@@ -55,12 +43,12 @@ class _ImageCropperPageState extends State<ImageCropperPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
-                FlatButton(
+                TextButton(
                   child: Text(
                     '上传图片',
-                    style: Theme.of(context).textTheme.button.copyWith(color: Colors.white),
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(color: Colors.white),
                   ),
-                  onPressed: () => _cropImage(),
+                  onPressed: () => uploadImage(_file!),
                 ),
                 _buildOpenImage(),
               ],
@@ -72,92 +60,36 @@ class _ImageCropperPageState extends State<ImageCropperPage> {
   }
 
   Widget _buildOpenImage() {
-    return FlatButton(
+    return TextButton(
       child: Text(
         '选择图片',
-        style: Theme.of(context).textTheme.button.copyWith(color: Colors.white),
+        style: Theme.of(context).textTheme.labelLarge?.copyWith(color: Colors.white),
       ),
       onPressed: () => _openImage(),
     );
   }
-  final picker = ImagePicker();
-  Future<void> _openImage() async {
-    final pfile = await picker.getImage(source: ImageSource.gallery);
-    final sample = await ImageCrop.sampleImage(
-      file: File(pfile.path),
-      preferredSize: context.size.longestSide.ceil(),
-    );
 
-    _sample?.delete();
-//    _file?.delete();
+  final picker = ImagePicker();
+
+  Future<void> _openImage() async {
+    final pfile = await picker.pickImage(source: ImageSource.gallery);
+    if (pfile == null) return;
 
     setState(() {
-      _sample = sample;
-      _file =  File(pfile.path);
+      _file = File(pfile.path);
     });
   }
-
-  Future<void> _cropImage() async {
-    final scale = cropKey.currentState.scale;
-    final area = cropKey.currentState.area;
-    if (area == null) return;
-
-    final sample = await ImageCrop.sampleImage(
-      file: _file,
-      preferredSize: (640 / scale).round(),
-    );
-//    print((640 / scale).round());
-
-    final file = await ImageCrop.cropImage(
-      file: sample,
-      area: area,
-    );
-
-    File compressedFile = await FlutterNativeImage.compressImage(
-        file.path,
-        quality: 100,
-        targetWidth: 640,
-        targetHeight: 640
-    );
-
-    sample.delete();
-
-    _lastCropped?.delete();
-    _lastCropped = file;
-
-    uploadImage(compressedFile);
-  }
-
-
 
   Future uploadImage(File image) async {
-    /*  String path = image.path;
-//    var name = path.substring(path.lastIndexOf("/") + 1, path.length);
-       FormData formData = new FormData.fromMap({
-      "file": await MultipartFile.fromFile(path)
-    });
-
-  DialogUtils.showToastDialog(context,  '正在更新头像');
-        await HttpUtils.dioFormAppi(
-    'User/userAvatar',
-            formData,
-            withToken: true,
-            context: context)
-            .then((response) {
-          if(response['message']!=null )
-          Navigator.of(context).pop();
-          DialogUtils.showToastDialog(context,  response['message']);
-        });*/
-
+    // Upload logic placeholder - original used image_crop and flutter_native_image
+    // which are no longer available
   }
-
 
   Future createForm(File file) async {
     return FormData.fromMap({
       "offset": 0,
       "md5": md5.convert(await file.readAsBytes()),
       "photo": await MultipartFile.fromFile(file.path),
-//      "photo": UploadFileInfo(file, path.basename(file.path)),
       "filesize": await file.length(),
       "wizard": 1
     });
@@ -181,7 +113,7 @@ class _ImageCropperPageState extends State<ImageCropperPage> {
                 ),
                 Expanded(
                     child: Container(
-                      child: _sample == null ? Container() : _buildCroppingImage(),
+                      child: _file == null ? Container() : _buildCroppingImage(),
                     )
                 ),
               ],
